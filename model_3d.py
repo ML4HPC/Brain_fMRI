@@ -192,12 +192,19 @@ def train(epoch, input_data, target, batch_size):
 
 #input_data = torch.FloatTensor(input_data)
 #print(input_data.size())
-
-
-
 #model = CombineRNN()
+
+# Setting device
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 model = CNN()
 
+# Data Parallelism if multiple GPUs available
+if torch.cuda.device_count() > 1:
+    print('Using Data Parallelism with multiple GPUs available')
+    model = nn.DataParallel(model)
+
+model.to(device)
 lr = 0.01 * 1000
 momentum = 0.5
 optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)

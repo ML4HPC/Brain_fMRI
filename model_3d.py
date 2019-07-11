@@ -9,6 +9,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.autograd import Variable
 from mri_dataset import MRIDataset
+from sklearn.metrics import mean_squared_error
 
 
 def flatten(t):
@@ -122,20 +123,34 @@ def eval(model, valid_loader):
     model.cuda()
     loss = loss.cuda()
     
+    target_true = []
+    target_pred = []
+
     for batch_idx, (batch_img, batch_target) in enumerate(valid_loader):
         batch_img = batch_img.unsqueeze(1)
-        batch_img, batch_target = Variable(batch_img), Variable(batch_target)
-        optimizer.zero_grad()
 
         batch_img = batch_img.cuda()
-        batch_target = batch_target.cuda()
+        batch_target = batch_target.float().cuda()
 
         output = model(batch_img)
         print('current output is: ', output.cpu().detach().numpy(), 'the ground truth is: ', batch_target.cpu().detach().numpy())
         res = loss(output.squeeze(), batch_target)
-        #res.backward() 
-        #optimizer.step()
+
+        # Adding predicted and true targets
+        target_true.extend(batch_target.cpu())
+        for pred in output:
+            target_pred.extend(pred.cpu())       
+
         print('current residue is: ', res.cpu().detach().numpy())
+    
+    print('Mean squared error: {}'.format(mean_squared_error(target_true, target_pred)))
+
+    print('Saved predictions and ground truth to file')
+    np.save('target_true.npy', target_true)
+    np.save('target_pred.npy', target_pred)
+
+    
+
 
 """
 # Setting device
@@ -151,7 +166,7 @@ if torch.cuda.device_count() > 1:
 model.to(device)
 lr = 0.01 * 1000
 momentum = 0.5
-optimizer = optimizer.SGD(model.parameters(), lr=lr, momentum=momentum)
+optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
 
 # Load and create datasets
 train_img = np.load('train_data_img.npy')

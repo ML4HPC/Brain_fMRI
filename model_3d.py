@@ -92,7 +92,7 @@ class Args:
 args = Args()
 
 
-def train(model, epoch, train_loader):
+def train(model, epoch, train_loader, optimizer):
     model.train()
     loss = nn.L1Loss()
 
@@ -151,7 +151,7 @@ if torch.cuda.device_count() > 1:
 model.to(device)
 lr = 0.01 * 1000
 momentum = 0.5
-optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
+optimizer = optimizer.SGD(model.parameters(), lr=lr, momentum=momentum)
 
 # Load and create datasets
 train_img = np.load('train_data_img.npy')

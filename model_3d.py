@@ -137,7 +137,7 @@ def eval(model, valid_loader):
         #optimizer.step()
         print('current residue is: ', res.cpu().detach().numpy())
 
-
+"""
 # Setting device
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
@@ -181,7 +181,7 @@ print('Saving model')
 #output = output.detach().numpy()
 #print(output)
 #print(output.shape)
-
+"""
 
 
 

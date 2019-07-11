@@ -152,7 +152,7 @@ if torch.cuda.device_count() > 1:
 model.to(device)
 lr = 0.01 * 1000
 momentum = 0.5
-optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum).to(device)
+optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
 
 # Load and create datasets
 train_img = np.load('train_data_img.npy')

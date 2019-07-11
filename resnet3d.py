@@ -223,7 +223,7 @@ def pipelined_resnet3D50(devices, **kwargs):
     return PipelinedResNet3d(Bottleneck3d, [3, 4, 6, 3], devices, **kwargs)
 
 
-class PipelinedResNet3dRegressor(ResNet3d):
+class PipelinedResNet3dRegressor(nn.Module):
     def __init__(self, devices):
         super(PipelinedResNet3dRegressor, self).__init__()
         self.pipelinedresnet = pipelined_resnet3D50(devices=devices, num_classes=512)

@@ -98,7 +98,6 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
     model.train()
     loss = nn.L1Loss()
 
-    model.cuda()
     loss = loss.cuda()
     best_mse = float('inf')
 
@@ -127,7 +126,7 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
         
         cur_mse = eval(model, valid_loader)
         results.write('Epoch {}: {}\n'.format(epoch, cur_mse))
-            
+
         if cur_mse < best_mse:
             best_mse = cur_mse
             torch.save(model.state_dict(), os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))

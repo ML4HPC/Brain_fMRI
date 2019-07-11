@@ -181,3 +181,56 @@ class ResNet3DRegressor(nn.Module):
 
         return x
     
+class PipelinedResNet3d(ResNet3d):
+    def __init__(self, block, layers, devices, num_classes=1000, zero_init_residual=False,
+                 groups=1, width_per_group=64, replace_stride_with_dilation=None,
+                 norm_layer=None):
+        super(PipelinedResNet3d, self).__init__(block, layers, num_classes, zero_init_residual,
+        groups, width_per_group, replace_stride_with_dilation)
+        assert( len(devices) == 2 and torch.cuda.is_available() )
+        self.dev1, self.dev2 = devices
+        self.conv1    =  self.conv1.to(self.dev1)
+        self.bn1      =  self.bn1.to(self.dev1)
+        self.relu     =  self.relu.to(self.dev1)
+        self.maxpool  =  self.maxpool.to(self.dev1)
+        self.layer1   =  self.layer1.to(self.dev1)
+        self.layer2   =  self.layer2.to(self.dev1)
+        self.layer3   =  self.layer3.to(self.dev2)
+        self.layer4   =  self.layer4.to(self.dev2)
+        self.avgpool  =  self.avgpool.to(self.dev2)
+        self.fc       =  self.fc.to(self.dev2)
+
+    def forward(self, x): 
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.maxpool(x)
+        x = self.layer1(x)
+        x = self.layer2(x)
+
+        x = x.to(self.dev2)
+        x = self.layer3(x)
+        x = self.layer4(x)
+        x = self.avgpool(x)
+        x = x.view(x.size(0), -1) 
+        x = self.fc(x)
+        x = x.to(self.dev1)
+        return x
+
+
+
+def pipelined_resnet3D50(devices, **kwargs):
+    return PipelinedResNet3d(Bottleneck3d, [3, 4, 6, 3], devices, **kwargs)
+
+
+class PipelinedResNet3dRegressor(ResNet3d):
+    def __init__(self, devices):
+        super(PipelinedResNet3dRegressor, self).__init__()
+        self.pipelinedresnet = pipelined_resnet3D50(devices=devices, num_classes=512)
+        self.fc2 = nn.Linear(512, 1)
+    
+    def forward(self, x):
+        x = self.pipelinedresnet(x)
+        x = self.fc2(x)
+
+        return x

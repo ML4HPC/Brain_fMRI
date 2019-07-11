@@ -102,12 +102,11 @@ def train(model, epoch, train_loader):
     for i in range(epoch):
         for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
             batch_img = batch_img.unsqueeze(1)
-            batch_img, batch_target = Variable(batch_img), Variable(batch_target)
 
             optimizer.zero_grad()
 
             batch_img = batch_img.cuda()
-            batch_target = batch_target.cuda()
+            batch_target = batch_target.float().cuda()
 
             output = model(batch_img)
             print('current output is: ', output.cpu().detach().numpy(), 'the ground truth is: ', batch_target.cpu().detach().numpy())

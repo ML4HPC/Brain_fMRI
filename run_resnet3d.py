@@ -12,6 +12,7 @@ if __name__ == "__main__":
     # Parsing arguments
     parser = argparse.ArgumentParser(description='ResNet3D for regression')
     parser.add_argument('--data_dir')
+    parser.add_argument('--output_dir')
     parser.add_argument('--epoch', type=int, default=30)
     parser.add_argument('--train_batch_size', type=int, default=2)
     parser.add_argument('--valid_batch_size', type=int, default=4)
@@ -38,7 +39,7 @@ if __name__ == "__main__":
 
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
 
-    train(model, args.epoch, train_loader, optimizer)
+    train(model, args.epoch, train_loader, valid_loader, optimizer, args.output_dir)
     eval(model, valid_loader)
     
     

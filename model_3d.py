@@ -10,6 +10,7 @@ import torch.optim as optim
 from torch.autograd import Variable
 from mri_dataset import MRIDataset
 from sklearn.metrics import mean_squared_error
+import os
 
 
 def flatten(t):
@@ -93,12 +94,20 @@ class Args:
 args = Args()
 
 
-def train(model, epoch, train_loader, optimizer):
+def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
     model.train()
     loss = nn.L1Loss()
 
     model.cuda()
     loss = loss.cuda()
+    best_mse = float('inf')
+
+    # Create output directory and results file
+    try:
+        os.mkdir(output_dir)
+        results = open(os.path.join(output_dir, 'results.txt'), 'w+')
+    except: 
+        raise Exception('Output directory / results file cannot be created')
 
     for i in range(epoch):
         for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
@@ -115,6 +124,14 @@ def train(model, epoch, train_loader, optimizer):
             res.backward() 
             optimizer.step()
             print('current residue is: ', res.cpu().detach().numpy())
+        
+        cur_mse = eval(model, valid_loader)
+        results.write('Epoch {}: {}\n'.format(epoch, cur_mse))
+            
+        if cur_mse < best_mse:
+            best_mse = cur_mse
+            torch.save(model.state_dict(), os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
+            
 
 def eval(model, valid_loader):
     model.eval()
@@ -143,12 +160,10 @@ def eval(model, valid_loader):
 
         print('current residue is: ', res.cpu().detach().numpy())
     
-    print('Mean squared error: {}'.format(mean_squared_error(target_true, target_pred)))
+    mse = mean_squared_error(target_true, target_pred)
+    print('Mean squared error: {}'.format(mse))
 
-    print('Saved predictions and ground truth to file')
-    np.save('target_true.npy', target_true)
-    np.save('target_pred.npy', target_pred)
-
+    return mse
     
 
 

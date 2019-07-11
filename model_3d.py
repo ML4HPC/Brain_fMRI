@@ -3,13 +3,12 @@
 
 import numpy as np
 import random
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.autograd import Variable
-
+from mri_dataset import MRIDataset
 
 
 def flatten(t):
@@ -93,106 +92,52 @@ class Args:
 args = Args()
 
 
-
-
-
-
-'''
-input_data = np.ndarray(shape=(20,30,1,28,28), dtype='float')  ## batch,time,H,W
-print("input data dimension: ", input_data.size)
-
-target = np.ones(shape=(20, 1), dtype='float') # batch, score
-print("input target dimension: ", target)
-'''
-
-train_img = np.load('train_data_img.npy')
-valid_img = np.load('valid_data_img.npy')
-train_target = np.load('train_data_target.npy')
-valid_target = np.load('valid_data_target.npy')
-
-'''
-for _, train_list in enumerate(train_data.item().values()):
-    train_img, train_target = train_list[0], train_list[1]
-
-for _, valid_list in enumerate(valid_data.item().values()):
-    valid_img, valid_target = valid_list[0], valid_list[1]
-'''
-
-
-#train_img = np.array(list(train_img), dtype=np.float)
-#valid_img = np.asarray(valid_img)
-
-#print(valid_img.shape)
-
-'''
-train_img = torch.FloatTensor(train_img)
-train_target = torch.FloatTensor(train_target)
-valid_img = torch.FloatTensor(valid_img)
-valid_target = torch.FloatTensor(valid_target)
-'''
-
-
-
-def train(epoch, input_data, target, batch_size):
+def train(epoch, train_loader):
     model.train()
     loss = nn.L1Loss()
 
     model.cuda()
     loss = loss.cuda()
-    
-
-
-
 
     for i in range(epoch):
+        for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
+            batch_img = batch_img.unsqueeze(1)
+            batch_img, batch_target = Variable(batch_img), Variable(batch_target)
 
+            optimizer.zero_grad()
 
-        
-        batch_idx = random.sample(range(1, len(target)), batch_size)
-        print(batch_idx)
+            batch_img = batch_img.cuda()
+            batch_target = batch_target.cuda()
 
+            output = model(batch_img)
+            print('current output is: ', output.cpu().detach().numpy(), 'the ground truth is: ', batch_target.cpu().detach().numpy())
+            res = loss(output.squeeze(), batch_target)
+            res.backward() 
+            optimizer.step()
+            print('current residue is: ', res.cpu().detach().numpy())
 
-        batch_img = []
-        batch_target = []
-        for i in batch_idx:
-            batch_img.append(np.array(input_data[i].dataobj))
-            batch_target.append(target[i])
-        
-        batch_img = np.array(batch_img)
-        batch_target = np.array(batch_target)
+def eval(valid_loader):
+    model.eval()
+    loss = nn.L1Loss()
+
+    model.cuda()
+    loss = loss.cuda()
     
-
-        batch_img = torch.FloatTensor(batch_img)
-        batch_target = torch.FloatTensor(batch_target)
-
+    for batch_idx, (batch_img, batch_target) in enumerate(valid_loader):
         batch_img = batch_img.unsqueeze(1)
-
-
         batch_img, batch_target = Variable(batch_img), Variable(batch_target)
         optimizer.zero_grad()
-
-
 
         batch_img = batch_img.cuda()
         batch_target = batch_target.cuda()
 
-
         output = model(batch_img)
         print('current output is: ', output.cpu().detach().numpy(), 'the ground truth is: ', batch_target.cpu().detach().numpy())
         res = loss(output.squeeze(), batch_target)
-        res.backward() 
-        optimizer.step()
+        #res.backward() 
+        #optimizer.step()
         print('current residue is: ', res.cpu().detach().numpy())
 
-
-
-
-
-
-
-#input_data = torch.FloatTensor(input_data)
-#print(input_data.size())
-#model = CombineRNN()
 
 # Setting device
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -207,14 +152,25 @@ if torch.cuda.device_count() > 1:
 model.to(device)
 lr = 0.01 * 1000
 momentum = 0.5
-optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
+optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum).to(device)
 
+# Load and create datasets
+train_img = np.load('train_data_img.npy')
+valid_img = np.load('valid_data_img.npy')
+train_target = np.load('train_data_target.npy')
+valid_target = np.load('valid_data_target.npy')
 
-
+train_dataset = MRIDataset(train_img, train_target)
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=8)
+valid_dataset = MRIDataset(valid_img, valid_target)
+valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=8)
 
 print("now in training!\n")
-train(1000, train_img, train_target, 8)
+train(10, train_loader)
 print("training finished!\n")
+
+torch.save(model.state_dict(), './model_saved.pth')
+print('Saving model')
 
 #print("now in evaluation!\n")
 #model.eval()

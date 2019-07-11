@@ -168,3 +168,16 @@ def resnext3D101_32x8d( **kwargs):
     kwargs['groups'] = 32
     kwargs['width_per_group'] = 8
     return ResNet3d(Bottleneck3d, [3, 4, 23, 3], **kwargs)
+
+class ResNet3DRegressor(nn.Module):
+    def __init__(self):
+        super(ResNet3DRegressor, self).__init__()
+        self.resnet = resnet3D50(num_classes=512)
+        self.fc2 = nn.Linear(512, 1)
+    
+    def forward(self, x):
+        x = self.resnet(x)
+        x = self.fc2(x)
+
+        return x
+    

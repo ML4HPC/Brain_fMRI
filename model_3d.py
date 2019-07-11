@@ -92,7 +92,7 @@ class Args:
 args = Args()
 
 
-def train(epoch, train_loader):
+def train(model, epoch, train_loader):
     model.train()
     loss = nn.L1Loss()
 
@@ -116,7 +116,7 @@ def train(epoch, train_loader):
             optimizer.step()
             print('current residue is: ', res.cpu().detach().numpy())
 
-def eval(valid_loader):
+def eval(model, valid_loader):
     model.eval()
     loss = nn.L1Loss()
 
@@ -166,7 +166,7 @@ valid_dataset = MRIDataset(valid_img, valid_target)
 valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=8)
 
 print("now in training!\n")
-train(10, train_loader)
+train(model, 10, train_loader)
 print("training finished!\n")
 
 torch.save(model.state_dict(), './model_saved.pth')

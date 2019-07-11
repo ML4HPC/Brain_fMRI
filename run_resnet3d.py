@@ -9,6 +9,8 @@ import os
 
 
 if __name__ == "__main__":
+    torch.cuda.set_device(0)
+
     # Parsing arguments
     parser = argparse.ArgumentParser(description='ResNet3D for regression')
     parser.add_argument('--data_dir')
@@ -24,7 +26,7 @@ if __name__ == "__main__":
     #model = resnet3d.ResNet3DRegressor()
     model = resnet3d.PipelinedResNet3dRegressor(devices=[0,1])
     
-    torch.cuda.set_device(0)
+    
     # Setting device
     #device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     #model = model.to(device)

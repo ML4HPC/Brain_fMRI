@@ -226,8 +226,8 @@ def pipelined_resnet3D50(devices, **kwargs):
 class PipelinedResNet3dRegressor(nn.Module):
     def __init__(self, devices):
         super(PipelinedResNet3dRegressor, self).__init__()
-        self.pipelinedresnet = pipelined_resnet3D50(devices=devices, num_classes=512)
-        self.fc2 = nn.Linear(512, 1)
+        self.pipelinedresnet = pipelined_resnet3D50(devices, num_classes=512)
+        self.fc2 = nn.Linear(512, 1).to(devices[0])
     
     def forward(self, x):
         x = self.pipelinedresnet(x)

@@ -194,7 +194,7 @@ class PipelinedResNet3d(ResNet3d):
         self.relu     =  self.relu.to(self.dev1)
         self.maxpool  =  self.maxpool.to(self.dev1)
         self.layer1   =  self.layer1.to(self.dev1)
-        self.layer2   =  self.layer2.to(self.dev1)
+        self.layer2   =  self.layer2.to(self.dev2)
         self.layer3   =  self.layer3.to(self.dev2)
         self.layer4   =  self.layer4.to(self.dev2)
         self.avgpool  =  self.avgpool.to(self.dev2)

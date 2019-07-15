@@ -1,5 +1,6 @@
 import torch
 import torch.optim as optim
+import torch.nn as nn
 import numpy as np
 from mri_dataset import MRIDataset
 from model_3d import CNN, train, eval

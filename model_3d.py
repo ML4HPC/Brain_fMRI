@@ -123,9 +123,9 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
             optimizer.step()
 
         if batch_idx % 10 == 0:
-                print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                    i, batch_idx * len(batch_img), len(train_loader.dataset), 
-                    train_loader.batch_size * batch_idx / len(train_loader), res.item())
+            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+                i, batch_idx * len(batch_img), len(train_loader.dataset), 
+                train_loader.batch_size * batch_idx / len(train_loader), res.item())
         
         cur_mse = eval(model, valid_loader)
         results.write('Epoch {}: {}\n'.format(epoch, cur_mse))

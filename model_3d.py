@@ -118,11 +118,14 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
             batch_target = batch_target.float().cuda()
 
             output = model(batch_img)
-            print('current output is: ', output.cpu().detach().numpy(), 'the ground truth is: ', batch_target.cpu().detach().numpy())
             res = loss(output.squeeze(), batch_target)
             res.backward() 
             optimizer.step()
-            print('current residue is: ', res.cpu().detach().numpy())
+
+        if batch_idx % 10 == 0:
+                print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+                    i, batch_idx * len(batch_img), len(train_loader.dataset), 
+                    train_loader.batch_size * batch_idx / len(train_loader), res.item())
         
         cur_mse = eval(model, valid_loader)
         results.write('Epoch {}: {}\n'.format(epoch, cur_mse))
@@ -155,9 +158,12 @@ def eval(model, valid_loader):
         # Adding predicted and true targets
         target_true.extend(batch_target.cpu())
         for pred in output:
-            target_pred.extend(pred.cpu())       
+            target_pred.extend(pred.cpu())
 
-        print('current residue is: ', res.cpu().detach().numpy())
+        if batch_idx % 10 == 0:
+            print('Eval Progress: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+            batch_idx * len(batch_img), len(valid_loader.dataset), 
+            valid_loader.batch_size * batch_idx / len(valid_loader), res.item())       
     
     mse = mean_squared_error(target_true, target_pred)
     print('Mean squared error: {}'.format(mse))

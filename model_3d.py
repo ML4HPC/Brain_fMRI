@@ -161,7 +161,7 @@ def eval(model, valid_loader):
         if batch_idx % 10 == 0:
             print('Eval Progress: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
             batch_idx * len(batch_img), len(valid_loader.dataset), 
-            valid_loader.batch_size * batch_idx / len(valid_loader), res.item())       
+            valid_loader.batch_size * batch_idx / len(valid_loader), res.item()))     
     
     mse = mean_squared_error(target_true, target_pred)
     print('Mean squared error: {}'.format(mse))

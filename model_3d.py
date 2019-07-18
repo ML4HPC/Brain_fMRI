@@ -103,13 +103,15 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
 
     # Create output directory and results file
     try:
-        os.mkdir(output_dir)
-        results = open(os.path.join(output_dir, 'results.txt'), 'w+')
+#        os.mkdir(output_dir)
+        #results = open(os.path.join(output_dir, 'results.txt'), 'w+')
+        results = open((output_dir+'/results.txt'), 'w+')
     except: 
         raise Exception('Output directory / results file cannot be created')
 
     for i in range(epoch):
         for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
+            print('Starting batch {}'.format(batch_idx))
             batch_img = batch_img.unsqueeze(1)
 
             optimizer.zero_grad()
@@ -121,6 +123,7 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
             res = loss(output.squeeze(), batch_target)
             res.backward() 
             optimizer.step()
+            print('End batch {}'.format(batch_idx))
 
             if batch_idx % 10 == 0:
                 print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, batch_idx * len(batch_img), len(train_loader.dataset), train_loader.batch_size * batch_idx / len(train_loader), res.item()))

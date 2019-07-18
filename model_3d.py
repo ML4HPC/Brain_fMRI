@@ -10,7 +10,16 @@ import torch.optim as optim
 from torch.autograd import Variable
 from mri_dataset import MRIDataset
 from sklearn.metrics import mean_squared_error
-import os
+import logging
+import os, sys
+
+# Setting up logger
+LOGGER = logging.getLogger(__name__)
+out_hdlr = logging.StreamHandler(sys.stdout)
+out_hdlr.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
+out_hdlr.setLevel(logging.INFO)
+LOGGER.addHandler(out_hdlr)
+LOGGER.setLevel(logging.INFO)
 
 
 def flatten(t):
@@ -111,7 +120,7 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
 
     for i in range(epoch):
         for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
-            print('Starting batch {}'.format(batch_idx))
+            LOGGER.info('Starting batch {}'.format(batch_idx))
             batch_img = batch_img.unsqueeze(1)
 
             optimizer.zero_grad()
@@ -123,10 +132,10 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
             res = loss(output.squeeze(), batch_target)
             res.backward() 
             optimizer.step()
-            print('End batch {}'.format(batch_idx))
+            LOGGER.info('End batch {}'.format(batch_idx))
 
             if batch_idx % 10 == 0:
-                print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, batch_idx * len(batch_img), len(train_loader.dataset), train_loader.batch_size * batch_idx / len(train_loader), res.item()))
+                LOGGER.info('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, batch_idx * len(batch_img), len(train_loader.dataset), train_loader.batch_size * batch_idx / len(train_loader), res.item()))
         
         cur_mse = eval(model, valid_loader)
         results.write('Epoch {}: {}\n'.format(epoch, cur_mse))
@@ -153,7 +162,7 @@ def eval(model, valid_loader):
         batch_target = batch_target.float().cuda()
 
         output = model(batch_img)
-        print('current output is: ', output.cpu().detach().numpy(), 'the ground truth is: ', batch_target.cpu().detach().numpy())
+        LOGGER.info('current output is: {}\nground truth is: {}'.format(output.cpu().detach().numpy(), batch_target.cpu().detach().numpy()))
         res = loss(output.squeeze(), batch_target)
 
         # Adding predicted and true targets
@@ -162,7 +171,7 @@ def eval(model, valid_loader):
             target_pred.extend(pred.cpu())
 
         if batch_idx % 10 == 0:
-            print('Eval Progress: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+            LOGGER.info('Eval Progress: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
             batch_idx * len(batch_img), len(valid_loader.dataset), 
             valid_loader.batch_size * batch_idx / len(valid_loader), res.item()))     
     

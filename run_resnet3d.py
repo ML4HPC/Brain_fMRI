@@ -7,6 +7,8 @@ from model_3d import train, eval
 import argparse
 import os
 
+import nibabel as nib
+
 
 if __name__ == "__main__":
     torch.cuda.set_device(0)
@@ -24,7 +26,7 @@ if __name__ == "__main__":
 
     #model = resnet3d.resnet3D50(num_classes=10)
     #model = resnet3d.ResNet3DRegressor()
-    model = resnet3d.PipelinedResNet3dRegressor(devices=[0,1])
+    model = resnet3d.PipelinedResNet3dRegressor(devices=[0,1,2,3])
     
     
     # Setting device
@@ -32,10 +34,18 @@ if __name__ == "__main__":
     #model = model.to(device)
 
     # Load and create datasets
-    train_img = np.load(os.path.join(args.data_dir, 'train_data_img.npy'))
-    valid_img = np.load(os.path.join(args.data_dir, 'valid_data_img.npy'))
-    train_target = np.load(os.path.join(args.data_dir, 'train_data_target.npy'))
-    valid_target = np.load(os.path.join(args.data_dir, 'valid_data_target.npy'))
+#    print(os.path.join(args.data_dir, 'train_data_img.npy'))
+#    train_img = np.load(os.path.join(args.data_dir, 'train_data_img.npy'))
+#    valid_img = np.load(os.path.join(args.data_dir, 'valid_data_img.npy'))
+#    train_target = np.load(os.path.join(args.data_dir, 'train_data_target.npy'))
+#    valid_target = np.load(os.path.join(args.data_dir, 'valid_data_target.npy'))
+    train_img = np.load('train_data_img.npy', allow_pickle=True)
+    valid_img = np.load('valid_data_img.npy', allow_pickle=True)
+    train_target = np.load('train_data_target.npy', allow_pickle=True)
+    valid_target = np.load('valid_data_target.npy', allow_pickle=True)
+
+    print('data loaded!')
+
 
     train_dataset = MRIDataset(train_img, train_target)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size)
@@ -43,6 +53,8 @@ if __name__ == "__main__":
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
 
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+
+    print('begin training now!')
 
     train(model, args.epoch, train_loader, valid_loader, optimizer, args.output_dir)
     eval(model, valid_loader)

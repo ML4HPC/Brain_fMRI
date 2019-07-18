@@ -188,6 +188,7 @@ class PipelinedResNet3d(ResNet3d):
         super(PipelinedResNet3d, self).__init__(block, layers, num_classes, zero_init_residual,
         groups, width_per_group, replace_stride_with_dilation)
         assert( len(devices) == 2 and torch.cuda.is_available() )
+        devices = ['cuda:{}'.format(device) for device in devices]
         self.dev1, self.dev2 = devices
         self.conv1    =  self.conv1.to(self.dev1)
         self.bn1      =  self.bn1.to(self.dev1)

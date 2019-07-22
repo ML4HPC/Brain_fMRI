@@ -163,28 +163,30 @@ def eval(model, valid_loader):
     target_true = []
     target_pred = []
 
-    for batch_idx, (batch_img, batch_target) in enumerate(valid_loader):
-        batch_img = batch_img.unsqueeze(1)
+    with torch.no_grad():
+        for batch_idx, (batch_img, batch_target) in enumerate(valid_loader):
+            LOGGER.info('Evaluating batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(valid_loader.dataset)))
+            batch_img = batch_img.unsqueeze(1)
 
-        batch_img = batch_img.cuda()
-        batch_target = batch_target.float().cuda()
+            batch_img = batch_img.cuda()
+            batch_target = batch_target.float().cuda()
 
-        output = model(batch_img)
-        LOGGER.info('current output is: {}\nground truth is: {}'.format(output.cpu().detach().numpy(), batch_target.cpu().detach().numpy()))
-        res = loss(output.squeeze(), batch_target)
+            output = model(batch_img)
+            LOGGER.info('current output is: {}\nground truth is: {}'.format(output.cpu().detach().numpy(), batch_target.cpu().detach().numpy()))
+            res = loss(output.squeeze(), batch_target)
 
-        # Adding predicted and true targets
-        target_true.extend(batch_target.cpu())
-        for pred in output:
-            target_pred.extend(pred.cpu())
+            # Adding predicted and true targets
+            target_true.extend(batch_target.cpu())
+            for pred in output:
+                target_pred.extend(pred.cpu())
 
-        if batch_idx % 10 == 0:
-            LOGGER.info('Eval Progress: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-            batch_idx * len(batch_img), len(valid_loader.dataset), 
-            valid_loader.batch_size * batch_idx / len(valid_loader), res.item()))     
+            if batch_idx % 10 == 0:
+                LOGGER.info('Eval Progress: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+                batch_idx * len(batch_img), len(valid_loader.dataset), 
+                valid_loader.batch_size * batch_idx / len(valid_loader), res.item()))     
     
     mse = mean_squared_error(target_true, target_pred)
-    print('Mean squared error: {}'.format(mse))
+    LOGGER.info('Mean squared error: {}'.format(mse))
 
     return mse
     

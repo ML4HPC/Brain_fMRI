@@ -11,7 +11,7 @@ from torch.autograd import Variable
 from mri_dataset import MRIDataset
 from sklearn.metrics import mean_squared_error
 import logging
-import os, sys
+import os, sys, time
 
 # Setting up logger
 LOGGER = logging.getLogger(__name__)
@@ -119,6 +119,8 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
         raise Exception('Output directory / results file cannot be created')
 
     for i in range(epoch):
+        epoch_start = time.time()
+
         for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
             LOGGER.info('Starting batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
             batch_img = batch_img.unsqueeze(1)
@@ -137,8 +139,12 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
             if batch_idx % 10 == 0:
                 LOGGER.info('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, batch_idx * len(batch_img), len(train_loader.dataset), train_loader.batch_size * batch_idx / len(train_loader), res.item()))
         
+        epoch_end = time.time()
+        epoch_train_time = epoch_end - epoch_start
+
         cur_mse = eval(model, valid_loader)
-        results.write('Epoch {}: {}\n'.format(epoch, cur_mse))
+        results.write('Epoch {}: {} ({} s)\n'.format(epoch, cur_mse, epoch_train_time))
+        
 
         if cur_mse < best_mse:
             best_mse = cur_mse

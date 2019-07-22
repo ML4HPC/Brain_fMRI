@@ -120,7 +120,7 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
 
     for i in range(epoch):
         for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
-            LOGGER.info('Starting batch {}'.format(batch_idx))
+            LOGGER.info('Starting batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
             batch_img = batch_img.unsqueeze(1)
 
             optimizer.zero_grad()
@@ -132,7 +132,7 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
             res = loss(output.squeeze(), batch_target)
             res.backward() 
             optimizer.step()
-            LOGGER.info('End batch {}'.format(batch_idx))
+            LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
 
             if batch_idx % 10 == 0:
                 LOGGER.info('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, batch_idx * len(batch_img), len(train_loader.dataset), train_loader.batch_size * batch_idx / len(train_loader), res.item()))

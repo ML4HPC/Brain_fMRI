@@ -36,8 +36,10 @@ class CNN(nn.Module):
         self.conv2 = nn.Conv3d(10,20, kernel_size=5)
         self.conv3 = nn.Conv3d(20,40, kernel_size=6)
         self.conv4 = nn.Conv3d(40,80, kernel_size=5)
+        self.bn1 = nn.BatchNorm3d(80)
         self.drop = nn.Dropout2d()
         self.fc1 = nn.Linear(11*11*11*80, 4840)   # 11x11x11 x80
+        self.bn2 = nn.BatchNorm3d(4840)
         self.fc2 = nn.Linear(4840, 2420)
         self.fc3 = nn.Linear(2420, 1)
 
@@ -52,8 +54,10 @@ class CNN(nn.Module):
         x = F.relu(F.max_pool3d(self.conv4(x),2))
         x = self.drop(x)
         
+        x = self.bn1(x)
         x = x.view(-1, 11*11*11*80)
         x = self.fc1(x)
+        x = self.bn2(x)
         x = self.drop(x)
         x = self.fc2(x)
         x = self.fc3(x)

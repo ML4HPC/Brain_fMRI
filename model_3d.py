@@ -137,7 +137,6 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
 
             output = model(batch_img)
             res = loss(output.squeeze(), batch_target)
-            IPython.embed()
             res.backward() 
             optimizer.step()
             LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))

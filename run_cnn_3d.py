@@ -25,12 +25,11 @@ if __name__ == "__main__":
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     model = CNN()
     model.cuda()
-    """ 
+    
     # Setting up data parallelism, if available
     if torch.cuda.device_count() > 1:
         print('Using Data Parallelism with multiple GPUs available')
         model = nn.DataParallel(model)
-    """
 
     # Load and create datasets
     train_img = np.load('train_data_img.npy')

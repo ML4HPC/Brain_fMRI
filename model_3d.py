@@ -39,7 +39,7 @@ class CNN(nn.Module):
         self.bn1 = nn.BatchNorm3d(80)
         self.drop = nn.Dropout2d()
         self.fc1 = nn.Linear(11*11*11*80, 4840)   # 11x11x11 x80
-        self.bn2 = nn.BatchNorm3d(4840)
+        self.bn2 = nn.BatchNorm1d(4840)
         self.fc2 = nn.Linear(4840, 2420)
         self.fc3 = nn.Linear(2420, 1)
 

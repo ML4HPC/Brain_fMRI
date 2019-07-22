@@ -112,7 +112,7 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
 
     # Create output directory and results file
     try:
-#        os.mkdir(output_dir)
+        os.mkdir(output_dir)
         #results = open(os.path.join(output_dir, 'results.txt'), 'w+')
         results = open((output_dir+'/results.txt'), 'w+')
     except: 

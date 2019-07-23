@@ -12,7 +12,6 @@ from mri_dataset import MRIDataset
 from sklearn.metrics import mean_squared_error
 import logging
 import os, sys, time
-import IPython
 
 # Setting up logger
 LOGGER = logging.getLogger(__name__)
@@ -148,7 +147,7 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
         epoch_train_time = epoch_end - epoch_start
 
         cur_mse = eval(model, valid_loader)
-        results.write('Epoch {}: {} ({} s)\n'.format(epoch, cur_mse, epoch_train_time))
+        results.write('Epoch {}: {} ({} s)\n'.format(i, cur_mse, epoch_train_time))
         
 
         if cur_mse < best_mse:

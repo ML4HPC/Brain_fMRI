@@ -6,7 +6,10 @@ class MRIDataset(Dataset):
     def __init__(self, input_data, target, resize):
         self.X_data = input_data
         self.Y_data = target
-        self.resize = (resize, resize, resize)
+        if resize:
+            self.resize = (resize, resize, resize)
+        else:
+            self.resize = 0
     
     def __len__(self):
         return len(self.Y_data)

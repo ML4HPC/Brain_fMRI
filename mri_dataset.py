@@ -3,9 +3,10 @@ import numpy as np
 from scipy.ndimage import zoom
 
 class MRIDataset(Dataset):
-    def __init__(self, input_data, target):
+    def __init__(self, input_data, target, resize):
         self.X_data = input_data
         self.Y_data = target
+        self.resize = (resize, resize, resize)
     
     def __len__(self):
         return len(self.Y_data)

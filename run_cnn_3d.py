@@ -18,6 +18,7 @@ if __name__ == "__main__":
     parser.add_argument('--train_batch_size', type=int, default=2)
     parser.add_argument('--valid_batch_size', type=int, default=4)
     parser.add_argument('--checkpoint_state', default='')
+    parser.add_argument('--resize', type=float)
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
     args = parser.parse_args()
@@ -31,13 +32,12 @@ if __name__ == "__main__":
     if torch.cuda.device_count() > 1:
         print('Using Data Parallelism with multiple GPUs available')
         model = nn.DataParallel(model)
-        
+
     # Load from checkpoint, if available
     if args.checkpoint_state:
         saved_state = torch.load(args.checkpoint_state)
         model.load_state_dict(saved_state)
         print('Loaded model from checkpoint')
-
 
     # Load and create datasets
     train_img = np.load(os.path.join(args.data_dir, 'train_data_img.npy'), allow_pickle=True)
@@ -45,9 +45,9 @@ if __name__ == "__main__":
     train_target = np.load(os.path.join(args.data_dir, 'train_data_target.npy'), allow_pickle=True)
     valid_target = np.load(os.path.join(args.data_dir, 'valid_data_target.npy'), allow_pickle=True)
 
-    train_dataset = MRIDataset(train_img, train_target)
+    train_dataset = MRIDataset(train_img, train_target, args.resize)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size)
-    valid_dataset = MRIDataset(valid_img, valid_target)
+    valid_dataset = MRIDataset(valid_img, valid_target, args.resize)
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
 
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)

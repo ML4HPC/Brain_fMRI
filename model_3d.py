@@ -141,18 +141,18 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
             LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
 
             if batch_idx % 10 == 0:
-                LOGGER.info('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, batch_idx * len(batch_img), len(train_loader.dataset), train_loader.batch_size * batch_idx / len(train_loader), res.item()))
+                LOGGER.info('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, batch_idx * len(batch_img), len(train_loader.dataset), len(batch_img) * batch_idx / len(train_loader), res.item()))
         
         epoch_end = time.time()
         epoch_train_time = epoch_end - epoch_start
 
         cur_mse = eval(model, valid_loader)
         results.write('Epoch {}: {} ({} s)\n'.format(i, cur_mse, epoch_train_time))
-        
+        torch.save(model.state_dict(), os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
 
         if cur_mse < best_mse:
             best_mse = cur_mse
-            torch.save(model.state_dict(), os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
+            torch.save(model.state_dict(), os.path.join(output_dir, 'best_{}_epoch_{}.pth'.format(model._get_name(), i)))
             
 
 def eval(model, valid_loader):

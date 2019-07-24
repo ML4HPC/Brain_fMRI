@@ -17,6 +17,7 @@ if __name__ == "__main__":
     parser.add_argument('--epoch', type=int, default=30)
     parser.add_argument('--train_batch_size', type=int, default=2)
     parser.add_argument('--valid_batch_size', type=int, default=4)
+    parser.add_argument('--checkpoint_state', default='')
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
     args = parser.parse_args()
@@ -25,6 +26,11 @@ if __name__ == "__main__":
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     model = CNN()
     model.cuda()
+
+    # Load from checkpoint, if available
+    if args.checkpoint_state:
+        saved_state = torch.load(args.checkpoint_state)
+        model.load_state_dict(saved_state)
     
     # Setting up data parallelism, if available
     if torch.cuda.device_count() > 1:

@@ -126,6 +126,7 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
         epoch_start = time.time()
 
         for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
+            IPython.embed()
             LOGGER.info('Starting batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
             batch_img = batch_img.unsqueeze(1)
 
@@ -141,7 +142,7 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
             LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
 
             if batch_idx % 10 == 0:
-                LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, batch_idx * len(batch_img), len(train_loader.dataset), len(batch_img) * batch_idx / len(train_loader.dataset), res.item()))
+                LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, batch_idx * len(batch_img), len(train_loader.dataset), len(batch_img) * batch_idx / len(train_loader.dataset) * 100, res.item()))
         
         epoch_end = time.time()
         epoch_train_time = epoch_end - epoch_start
@@ -152,7 +153,9 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
 
         if cur_mse < best_mse:
             best_mse = cur_mse
-            torch.save(model.state_dict(), os.path.join(output_dir, 'best_{}_epoch_{}.pth'.format(model._get_name(), i)))
+            torch.save(model.state_dict(), os.path.join(output_dir, 'best_{}_epoch.pth'.format(model._get_name(), i)))
+    
+    results.close()
             
 
 def eval(model, valid_loader):
@@ -174,7 +177,7 @@ def eval(model, valid_loader):
             batch_target = batch_target.float().cuda()
 
             output = model(batch_img)
-            LOGGER.info('current output is: {}\nground truth is: {}'.format(output.cpu().detach().numpy(), batch_target.cpu().detach().numpy()))
+            #LOGGER.info('current output is: {}\nground truth is: {}'.format(output.cpu().detach().numpy(), batch_target.cpu().detach().numpy()))
             res = loss(output.squeeze(), batch_target)
 
             # Adding predicted and true targets

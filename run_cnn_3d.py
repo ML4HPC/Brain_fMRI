@@ -32,10 +32,10 @@ if __name__ == "__main__":
         model = nn.DataParallel(model)
 
     # Load and create datasets
-    train_img = np.load('train_data_img.npy')
-    valid_img = np.load('valid_data_img.npy')
-    train_target = np.load('train_data_target.npy')
-    valid_target = np.load('valid_data_target.npy')
+    train_img = np.load(os.path.join(args.data_dir, 'train_data_img.npy'), allow_pickle=True)
+    valid_img = np.load(os.path.join(args.data_dir, 'valid_data_img.npy'), allow_pickle=True)
+    train_target = np.load(os.path.join(args.data_dir, 'train_data_target.npy'), allow_pickle=True)
+    valid_target = np.load(os.path.join(args.data_dir, 'valid_data_target.npy'), allow_pickle=True)
 
     train_dataset = MRIDataset(train_img, train_target)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size)

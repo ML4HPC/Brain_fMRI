@@ -141,7 +141,7 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
             LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
 
             if batch_idx % 10 == 0:
-                LOGGER.info('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, batch_idx * len(batch_img), len(train_loader.dataset), len(batch_img) * batch_idx / len(train_loader), res.item()))
+                LOGGER.info('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, batch_idx * len(batch_img), len(train_loader.dataset), len(batch_img) * batch_idx / len(train_loader.dataset), res.item()))
         
         epoch_end = time.time()
         epoch_train_time = epoch_end - epoch_start

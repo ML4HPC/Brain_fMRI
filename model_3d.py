@@ -12,6 +12,7 @@ from mri_dataset import MRIDataset
 from sklearn.metrics import mean_squared_error
 import logging
 import os, sys, time
+import IPython
 
 # Setting up logger
 LOGGER = logging.getLogger(__name__)
@@ -37,7 +38,8 @@ class CNN(nn.Module):
         self.conv4 = nn.Conv3d(40,80, kernel_size=5)
         self.bn1 = nn.BatchNorm3d(80)
         self.drop = nn.Dropout2d()
-        self.fc1 = nn.Linear(11*11*11*80, 4840)   # 11x11x11 x80
+        #self.fc1 = nn.Linear(11*11*11*80, 4840)   # 11x11x11 x80
+        self.fc1 = nn.Linear(3*3*3*80, 4840)
         self.bn2 = nn.BatchNorm1d(4840)
         self.fc2 = nn.Linear(4840, 2420)
         self.fc3 = nn.Linear(2420, 1)
@@ -54,7 +56,8 @@ class CNN(nn.Module):
         x = self.drop(x)
         
         x = self.bn1(x)
-        x = x.view(-1, 11*11*11*80)
+        #x = x.view(-1, 11*11*11*80)
+        x = x.view(-1, 3*3*3*80)
         x = self.fc1(x)
         x = self.bn2(x)
         x = self.drop(x)
@@ -126,7 +129,6 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
         epoch_start = time.time()
 
         for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
-            IPython.embed()
             LOGGER.info('Starting batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
             batch_img = batch_img.unsqueeze(1)
 

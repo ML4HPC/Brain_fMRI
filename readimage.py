@@ -25,10 +25,10 @@ def readimages(path, data_for, lattername, resize):
 
         # Resize, if necessary
         dim = 120
-        x = np.array(img.dataobj)
-        x = np.resize(x, (dim, dim, dim))
+        img = np.array(img.dataobj)
+        img = np.resize(img, (dim, dim, dim))
 
-        images[name] = x
+        images[name] = img
 #        print(img)
     return images
 

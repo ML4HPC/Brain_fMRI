@@ -24,13 +24,11 @@ def readimages(path, data_for, lattername, resize):
         img = nib.load(full_path)
 
         # Resize, if necessary
-        img_data = np.array(img.dataobj)
-        if resize:
-            img_data = zoom(img_data, resize)
+        dim = 120
+        x = np.array(img.dataobj)
+        x = np.resize(x, (dim, dim, dim))
 
-        resized_img = nib.Nifti1Image(img_data, img.affine, img.header)
-
-        images[name] = resized_img
+        images[name] = x
 #        print(img)
     return images
 

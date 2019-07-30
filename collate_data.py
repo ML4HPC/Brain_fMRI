@@ -14,7 +14,7 @@ LOGGER.setLevel(logging.INFO)
 
 def agg_data(data_dir, output_dir):
     LOGGER.info('Aggregating data')
-    filenames = os.listdir(args.data_dir)
+    filenames = sorted(os.listdir(args.data_dir))
 
     agg = {}
     

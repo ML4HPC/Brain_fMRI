@@ -33,8 +33,8 @@ def readimages(path, data_for, lattername, resize, output_dir):
 
         images[name] = resized_img
 
-        if i % 1000 == 0 or i == (len(filenames) - 1):
-            np.save(os.path.join(args.output_dir, '{}_img_{}.npy'.format(data_for, batch_idx)), train_img)
+        if (i != 0)  and (i % 1000 == 0 or i == (len(filenames) - 1)):
+            np.save(os.path.join(args.output_dir, '{}_img_{}.npy'.format(data_for, batch_idx)), images)
             images.clear()
 
 

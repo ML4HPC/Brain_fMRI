@@ -5,9 +5,9 @@ import argparse
 from scipy.ndimage import zoom
 
 #path = '/global/cscratch1/sd/yanzhang/data_brain/image03/'
-train = 'training/'
-valid = 'validation/'
-test = 'testing/'
+train = 'training'
+valid = 'validation'
+test = 'testing'
 lattername = '/baseline/structural/t1_brain.nii.gz'
 
 
@@ -21,7 +21,7 @@ def readimages(path, data_for, lattername, resize, output_dir):
         if i % 100 == 0:
             print(i)
         #print(name)
-        full_path = path+data_for+name+lattername
+        full_path = path+data_for+'/'+name+lattername
         img = nib.load(full_path)
 
         # Resize, if necessary

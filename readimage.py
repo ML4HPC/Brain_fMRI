@@ -30,7 +30,7 @@ def readimages(path, data_for, lattername, resize):
 
         resized_img = nib.Nifti1Image(img_data, img.affine, img.header)
 
-        images[name] = img
+        images[name] = resized_img
 #        print(img)
     return images
 
@@ -47,16 +47,15 @@ if __name__ == "__main__":
         raise Exception('Could not create output directory')
 
     print('processing training!')
-    train_img = readimages(args.data_dir, train, lattername, args.resize)
+    train_img = readimages(args.data_dir, train, lattername, args.resize) 
+    np.save(os.path.join(args.output_dir, 'train_img.npy'), train_img)
+    print('saved train')
     print('processing valid!')
-    valid_img = readimages(args.data_dir, valid, lattername, args.resize)
+    valid_img = readimages(args.data_dir, valid, lattername, args.resize) 
+    np.save(os.path.join(args.output_dir, 'valid_img.npy'), valid_img)
+    print('saved train')
     print('processing test!')
     test_img = readimages(args.data_dir, test, lattername, args.resize)
-
-
-    print('saving images!')
-    np.save(os.path.join(args.output_dir, 'train_img.npy'), train_img)
-    np.save(os.path.join(args.output_dir, 'valid_img.npy'), valid_img)
     np.save(os.path.join(args.output_dir, 'test_img.npy'), test_img)
     print('done saving!')
 

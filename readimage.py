@@ -11,26 +11,32 @@ test = 'testing/'
 lattername = '/baseline/structural/t1_brain.nii.gz'
 
 
-def readimages(path, data_for, lattername, resize):
+def readimages(path, data_for, lattername, resize, output_dir):
     filenames = os.listdir(path+data_for)
     images = {}
-    i = 0
-    for name in filenames:
-        i += 1
-        if i % 300 == 0:
+    batch_idx = 0
+    for i in range(len(filenames)):
+        batch_idx += 1
+        name = filenames[i]
+        if i % 100 == 0:
             print(i)
         #print(name)
         full_path = path+data_for+name+lattername
         img = nib.load(full_path)
 
         # Resize, if necessary
-        dim = 120
-        img = np.array(img.dataobj)
-        img = np.resize(img, (dim, dim, dim))
+        img_data = np.array(img.dataobj)
+        if resize:
+            img_data = zoom(img_data, resize)
 
-        images[name] = img
-#        print(img)
-    return images
+        resized_img = nib.Nifti1Image(img_data, img.affine, img.header)
+
+        images[name] = resized_img
+
+        if i % 1000 == 0 or i == (len(filenames) - 1):
+            np.save(os.path.join(args.output_dir, '{}_img_{}.npy'.format(data_for, batch_idx)), train_img)
+            images.clear()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Read and process images')
@@ -45,16 +51,16 @@ if __name__ == "__main__":
         raise Exception('Could not create output directory')
 
     print('processing training!')
-    train_img = readimages(args.data_dir, train, lattername, args.resize) 
-    np.save(os.path.join(args.output_dir, 'train_img.npy'), train_img)
-    print('saved train')
+    readimages(args.data_dir, train, lattername, args.resize, args.output_dir) 
+    #np.save(os.path.join(args.output_dir, 'train_img.npy'), train_img)
+    #print('saved train')
     print('processing valid!')
-    valid_img = readimages(args.data_dir, valid, lattername, args.resize) 
-    np.save(os.path.join(args.output_dir, 'valid_img.npy'), valid_img)
+    readimages(args.data_dir, valid, lattername, args.resize, args.output_dir) 
+    # np.save(os.path.join(args.output_dir, 'valid_img.npy'), valid_img)
     print('saved train')
     print('processing test!')
-    test_img = readimages(args.data_dir, test, lattername, args.resize)
-    np.save(os.path.join(args.output_dir, 'test_img.npy'), test_img)
+    readimages(args.data_dir, test, lattername, args.resize, args.output_dir)
+    #np.save(os.path.join(args.output_dir, 'test_img.npy'), test_img)
     print('done saving!')
 
 

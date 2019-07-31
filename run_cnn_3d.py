@@ -21,6 +21,7 @@ if __name__ == "__main__":
     parser.add_argument('--resize', type=int, default=0)
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
+    parser.add_argument('--optimizer', default='sgd', help='Optimizer type: adam, sgd')
     args = parser.parse_args()
 
     # Setting device

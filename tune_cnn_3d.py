@@ -37,11 +37,11 @@ if __name__ == "__main__":
         print('Using Data Parallelism with multiple GPUs available')
         model = nn.DataParallel(model)
 
-    # Load from checkpoint, if available
-    if args.checkpoint_state:
-        saved_state = torch.load(args.checkpoint_state)
-        model.load_state_dict(saved_state)
-        print('Loaded model from checkpoint')
+    # # Load from checkpoint, if available
+    # if args.checkpoint_state:
+    #     saved_state = torch.load(args.checkpoint_state)
+    #     model.load_state_dict(saved_state)
+    #     print('Loaded model from checkpoint')
 
     # Load and create datasets
     train_img = np.load(os.path.join(args.data_dir, 'train_data_img.npy'), allow_pickle=True)
@@ -65,7 +65,7 @@ if __name__ == "__main__":
         'lr':[0.001, 0.01, 0.02, 0.04, 0.1]
     }
     
-    gs = GridSearchCV(net, params, refit=False, cv=3, scoring='neg_mean_squared_error')
+    gs = GridSearchCV(net, params, refit=False, cv=3, scoring='neg_mean_squared_error', verbose=1)
     #loss = nn.L1Loss()
     gs.fit(train_dataset.get_x_data(), train_dataset.get_y_data)
     print(gs.best_params_)

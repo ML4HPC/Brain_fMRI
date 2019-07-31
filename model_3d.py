@@ -110,7 +110,7 @@ class Args:
 args = Args()
 
 
-def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
+def train(model, epoch, train_loader, valid_loader, optimizer, loss, output_dir):
     model.train()
     loss = nn.L1Loss()
 
@@ -160,10 +160,10 @@ def train(model, epoch, train_loader, valid_loader, optimizer, output_dir):
     results.close()
             
 
-def eval(model, valid_loader):
+def eval(model, valid_loader, loss):
     model.eval()
     loss = nn.L1Loss()
-
+    
     model.cuda()
     loss = loss.cuda()
     

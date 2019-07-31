@@ -18,7 +18,7 @@ if __name__ == "__main__":
     parser.add_argument('--train_batch_size', type=int, default=2)
     parser.add_argument('--valid_batch_size', type=int, default=4)
     parser.add_argument('--checkpoint_state', default='')
-    parser.add_argument('--resize', type=float)
+    parser.add_argument('--resize', type=int, default=0)
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
     args = parser.parse_args()
@@ -51,6 +51,7 @@ if __name__ == "__main__":
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
 
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+    loss = nn.L1Loss()
 
-    train(model, args.epoch, train_loader, valid_loader, optimizer, args.output_dir)
-    eval(model, valid_loader)
+    train(model, args.epoch, train_loader, valid_loader, optimizer, loss, args.output_dir)
+    eval(model, valid_loader, loss)

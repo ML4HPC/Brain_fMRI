@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     agg = agg_data(args.data_dir, args.output_dir)
     LOGGER.info('Saving aggregated data')
-    np.save(agg, os.path.join(args.output_dir, args.data_class))
+    np.save(os.path.join(args.output_dir, args.data_class), agg)
     
     
     

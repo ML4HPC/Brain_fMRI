@@ -65,7 +65,7 @@ if __name__ == "__main__":
         'lr':[0.001, 0.01, 0.02, 0.04, 0.1]
     }
     
-    gs = GridSearchCV(net, params, refit=False, cv=3, scoring='neg_mean_squared_error', verbose=1)
+    gs = GridSearchCV(net, params, refit=False, cv=3, n_jobs=-1, scoring='neg_mean_squared_error', verbose=10)
     #loss = nn.L1Loss()
     gs.fit(train_dataset.get_x_data(), train_dataset.get_y_data)
     print(gs.best_params_)

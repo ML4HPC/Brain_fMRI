@@ -155,7 +155,7 @@ def train(model, epoch, train_loader, valid_loader, optimizer, loss, output_dir)
 
         if cur_mse < best_mse:
             best_mse = cur_mse
-            torch.save(model.state_dict(), os.path.join(output_dir, 'best_{}_epoch.pth'.format(model._get_name(), i)))
+            torch.save(model.state_dict(), os.path.join(output_dir, 'best_{}_epoch.pth'.format(i)))
     
     results.close()
             

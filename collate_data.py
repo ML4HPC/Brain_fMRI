@@ -22,9 +22,9 @@ def agg_data(data_dir, output_dir):
     for name in filenames:
         LOGGER.info('Collating next file')
         if not agg:
-            agg = np.load(os.path.join(data_dir, name))
+            agg = np.load(os.path.join(data_dir, name), allow_pickle=True).item()
         else:
-            new_data = np.load(os.path.join(data_dir, name))
+            new_data = np.load(os.path.join(data_dir, name), allow_pickle=True).item()
             agg.update(new_data)        
 
     return agg

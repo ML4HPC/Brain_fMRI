@@ -37,11 +37,6 @@ if __name__ == "__main__":
     parser.add_argument('--data_class', help='Class of data: train, valid, test')
     args = parser.parse_args()
 
-    try:
-        os.mkdir(args.output_dir)
-    except:
-        raise Exception('Cannot create output folder')
-
     agg = agg_data(args.data_dir, args.output_dir)
     LOGGER.info('Saving aggregated data')
     np.save(os.path.join(args.output_dir, args.data_class), agg)

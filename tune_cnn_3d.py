@@ -16,9 +16,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='3D CNN for regression')
     parser.add_argument('--data_dir')
     parser.add_argument('--output_dir')
+    parser.add_argument('--epoch', type=int, default=30)
+    parser.add_argument('--train_batch_size', type=int, default=2)
+    parser.add_argument('--valid_batch_size', type=int, default=4)
+    parser.add_argument('--resize', type=float)
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
-    parser.add_argument('--resize', type=float, default=0)
+    parser.add_argument('--tuning', type=bool, default=False)
     args = parser.parse_args()
 
     # Setting device

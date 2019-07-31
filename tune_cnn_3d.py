@@ -21,7 +21,7 @@ if __name__ == "__main__":
     parser.add_argument('--train_batch_size', type=int, default=2)
     parser.add_argument('--valid_batch_size', type=int, default=4)
     parser.add_argument('--checkpoint_state', default='')
-    parser.add_argument('--optimizer', default='sgd', 'Optimizer type')
+    parser.add_argument('--optimizer', default='sgd', help='Optimizer type')
     parser.add_argument('--resize', type=int, default=0)
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)

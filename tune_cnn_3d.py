@@ -18,6 +18,7 @@ if __name__ == "__main__":
     parser.add_argument('--output_dir')
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
+    parser.add_argument('--resize', type=float, default=0)
     args = parser.parse_args()
 
     # Setting device

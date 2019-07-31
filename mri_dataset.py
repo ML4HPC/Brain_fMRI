@@ -12,7 +12,7 @@ class MRIDataset(Dataset):
         return len(self.Y_data)
 
     def get_x_data(self):
-        return [x.dataobj for x in self.X_data]
+        return [np.array(x.dataobj) for x in self.X_data]
     
     def get_y_data(self):
         return [y for y in self.Y_data]

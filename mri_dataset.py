@@ -15,7 +15,7 @@ class MRIDataset(Dataset):
         return [x.dataobj for x in self.X_data]
     
     def get_y_data(self):
-        return [[y] for y in self.Y_data]
+        return [y for y in self.Y_data]
         
     def __getitem__(self, idx):
         # img_data = np.array(self.X_data[idx].dataobj)

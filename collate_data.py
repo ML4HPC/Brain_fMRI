@@ -20,7 +20,7 @@ def agg_data(data_dir, output_dir):
     agg = {}
     
     for name in filenames:
-        LOGGER.info('Collating next file')
+        LOGGER.info('Collating next file: {}'.format(name))
         if not agg:
             agg = np.load(os.path.join(data_dir, name), allow_pickle=True).item()
         else:

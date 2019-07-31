@@ -10,6 +10,12 @@ class MRIDataset(Dataset):
     
     def __len__(self):
         return len(self.Y_data)
+
+    def get_x_data(self):
+        return [x.dataobj for x in self.X_data]
+    
+    def get_y_data(self):
+        return self.Y_data
         
     def __getitem__(self, idx):
         # img_data = np.array(self.X_data[idx].dataobj)

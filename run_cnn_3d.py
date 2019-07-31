@@ -50,7 +50,12 @@ if __name__ == "__main__":
     valid_dataset = MRIDataset(valid_img, valid_target, args.resize)
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
 
-    optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+
+    if args.optimizer == 'sgd':
+        optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+    elif args.optimizer == 'adam':
+        optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0.001)
+    
     loss = nn.L1Loss()
 
     train(model, args.epoch, train_loader, valid_loader, optimizer, loss, args.output_dir)

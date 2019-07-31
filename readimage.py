@@ -25,17 +25,17 @@ def readimages(path, data_for, lattername, resize, output_dir):
         img = nib.load(full_path)
 
         # Resize, if necessary
-        img_data = np.array(img.dataobj)
         if resize:
+            img_data = np.array(img.dataobj)
             img_data = zoom(img_data, resize)
+            img = nib.Nifti1Image(img_data, img.affine, img.header)
 
-        resized_img = nib.Nifti1Image(img_data, img.affine, img.header)
+        images[name] = img
 
-        images[name] = resized_img
-
-        if (i != 0)  and (i % 1000 == 0 or i == (len(filenames) - 1)):
-            np.save(os.path.join(args.output_dir, '{}_img_{}.npy'.format(data_for, batch_idx)), images)
-            images.clear()
+        if resize:
+            if (i != 0)  and (i % 1000 == 0 or i == (len(filenames) - 1)):
+                np.save(os.path.join(args.output_dir, '{}_img_{}.npy'.format(data_for, batch_idx)), images)
+                images.clear()
 
 
 if __name__ == "__main__":

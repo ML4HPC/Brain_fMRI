@@ -149,7 +149,7 @@ def train(model, epoch, train_loader, valid_loader, optimizer, loss, output_dir)
         epoch_end = time.time()
         epoch_train_time = epoch_end - epoch_start
 
-        cur_mse = eval(model, valid_loader)
+        cur_mse = eval(model, valid_loader, loss)
         results.write('Epoch {}: {} ({} s)\n'.format(i, cur_mse, epoch_train_time))
         torch.save(model.state_dict(), os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
 

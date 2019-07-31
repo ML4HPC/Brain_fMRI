@@ -2,6 +2,7 @@ import os
 import numpy as np
 import argparse
 import logging
+import sys
 
 # Setting up logger
 LOGGER = logging.getLogger(__name__)

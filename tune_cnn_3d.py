@@ -30,12 +30,6 @@ if __name__ == "__main__":
         print('Using Data Parallelism with multiple GPUs available')
         model = nn.DataParallel(model)
 
-    # Load from checkpoint, if available
-    if args.checkpoint_state:
-        saved_state = torch.load(args.checkpoint_state)
-        model.load_state_dict(saved_state)
-        print('Loaded model from checkpoint')
-
     # Load and create datasets
     train_img = np.load(os.path.join(args.data_dir, 'train_data_img.npy'), allow_pickle=True)
     valid_img = np.load(os.path.join(args.data_dir, 'valid_data_img.npy'), allow_pickle=True)

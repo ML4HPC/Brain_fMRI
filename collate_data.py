@@ -13,7 +13,7 @@ LOGGER.addHandler(out_hdlr)
 LOGGER.setLevel(logging.INFO)
 
 
-def agg_data(data_dir, output_dir):
+def agg_data(data_dir, output_dir, data_class):
     LOGGER.info('Aggregating data')
     filenames = sorted(os.listdir(args.data_dir))
 
@@ -25,7 +25,10 @@ def agg_data(data_dir, output_dir):
             agg = np.load(os.path.join(data_dir, name), allow_pickle=True).item()
         else:
             new_data = np.load(os.path.join(data_dir, name), allow_pickle=True).item()
-            agg.update(new_data)        
+            agg.update(new_data)  
+
+    LOGGER.info('Saving aggregated data')
+    np.save(os.path.join(output_dir, data_class), agg)      
 
     return agg
 
@@ -37,9 +40,8 @@ if __name__ == "__main__":
     parser.add_argument('--data_class', help='Class of data: train, valid, test')
     args = parser.parse_args()
 
-    agg = agg_data(args.data_dir, args.output_dir)
-    LOGGER.info('Saving aggregated data')
-    np.save(os.path.join(args.output_dir, args.data_class), agg)
+    agg_data(args.data_dir, args.output_dir, args.data_class)
+
     
     
     

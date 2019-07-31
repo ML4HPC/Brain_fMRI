@@ -6,8 +6,9 @@ from mri_dataset import MRIDataset
 from model_3d import CNN, train, eval
 import argparse
 import os
-from lr_finder import LRFinder
-import IPython
+from skorch import NeuralNetRegressor
+from sklearn.model_selection import GridSearchCV
+from scipy.stats import randint as sp_randint
 
 if __name__ == "__main__":
     torch.cuda.set_device(0)
@@ -19,10 +20,11 @@ if __name__ == "__main__":
     parser.add_argument('--epoch', type=int, default=30)
     parser.add_argument('--train_batch_size', type=int, default=2)
     parser.add_argument('--valid_batch_size', type=int, default=4)
-    parser.add_argument('--resize', type=float)
+    parser.add_argument('--checkpoint_state', default='')
+    parser.add_argument('--optimizer', default='sgd', 'Optimizer type')
+    parser.add_argument('--resize', type=int, default=0)
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
-    parser.add_argument('--tuning', type=bool, default=False)
     args = parser.parse_args()
 
     # Setting device
@@ -35,6 +37,12 @@ if __name__ == "__main__":
         print('Using Data Parallelism with multiple GPUs available')
         model = nn.DataParallel(model)
 
+    # Load from checkpoint, if available
+    if args.checkpoint_state:
+        saved_state = torch.load(args.checkpoint_state)
+        model.load_state_dict(saved_state)
+        print('Loaded model from checkpoint')
+
     # Load and create datasets
     train_img = np.load(os.path.join(args.data_dir, 'train_data_img.npy'), allow_pickle=True)
     valid_img = np.load(os.path.join(args.data_dir, 'valid_data_img.npy'), allow_pickle=True)
@@ -46,9 +54,22 @@ if __name__ == "__main__":
     valid_dataset = MRIDataset(valid_img, valid_target, args.resize)
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
 
-    optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
-    loss = nn.L1Loss()
-    lr_finder = LRFinder(model, optimizer, loss, device="cuda")
-    lr_finder.range_test(train_loader, end_lr=100, num_iter=100)
-    lr_finder.plot()
-    IPython.embed()
+    if args.optimizer == 'sgd':
+        optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+    elif args.optimizer == 'adam':
+        optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0.001)
+    
+    net = NeuralNetRegressor(model, max_epochs=5, lr=0.001, verbose=1)
+    
+    params = {
+        'lr':[0.001, 0.01, 0.02, 0.04, 0.1]
+    }
+    
+    gs = GridSearchCV(net, params, refit=False, cv=3, scoring='neg_mean_squared_error')
+    #loss = nn.L1Loss()
+    gs.fit(train_dataset.get_x_data(), train_dataset.get_y_data)
+    print(gs.best_params_)
+
+    # train(model, args.epoch, train_loader, valid_loader, optimizer, loss, args.output_dir)
+    # eval(model, valid_loader, loss)
+

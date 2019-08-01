@@ -122,10 +122,10 @@ def train(model, epoch, train_loader, valid_loader, optimizer, loss, output_dir,
         try:
             os.mkdir(output_dir)
             #results = open(os.path.join(output_dir, 'results.txt'), 'w+')
-            results = open((output_dir+'/results.txt'), 'w+')
         except: 
             raise Exception('Output directory / results file cannot be created')
 
+    results = open((output_dir+'/results.txt'), 'w+')
 
     start_epoch = 0
     if checkpoint_epoch > 0:

@@ -110,7 +110,7 @@ class Args:
 args = Args()
 
 
-def train(model, epoch, train_loader, valid_loader, optimizer, loss, output_dir):
+def train(model, epoch, train_loader, valid_loader, optimizer, loss, output_dir, checkpoint_epoch=0):
     model.train()
     loss = nn.L1Loss()
 
@@ -125,7 +125,12 @@ def train(model, epoch, train_loader, valid_loader, optimizer, loss, output_dir)
     except: 
         raise Exception('Output directory / results file cannot be created')
 
-    for i in range(epoch):
+
+    start_epoch = 0
+    if checkpoint_epoch > 0:
+        start_epoch = checkpoint_epoch
+
+    for i in range(start_epoch, epoch):
         epoch_start = time.time()
 
         for batch_idx, (batch_img, batch_target) in enumerate(train_loader):

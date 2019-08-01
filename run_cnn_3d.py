@@ -18,6 +18,7 @@ if __name__ == "__main__":
     parser.add_argument('--train_batch_size', type=int, default=2)
     parser.add_argument('--valid_batch_size', type=int, default=4)
     parser.add_argument('--checkpoint_state', default='')
+    parser.add_argument('-checkpoint_epoch', type=int, default=0)
     parser.add_argument('--resize', type=int, default=0)
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
@@ -59,5 +60,10 @@ if __name__ == "__main__":
     
     loss = nn.L1Loss()
 
-    train(model, args.epoch, train_loader, valid_loader, optimizer, loss, args.output_dir)
-    eval(model, valid_loader, loss)
+    if not args.checkpoint_state:
+        train(model, args.epoch, train_loader, valid_loader, optimizer, loss, args.output_dir)
+        eval(model, valid_loader, loss)
+    else:
+        train(model, args.epoch, train_loader, valid_loader, optimizer, loss, args.output_dir, checkpoint_epoch=args.checkpoint_epoch)
+
+    

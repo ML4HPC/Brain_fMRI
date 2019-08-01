@@ -117,13 +117,14 @@ def train(model, epoch, train_loader, valid_loader, optimizer, loss, output_dir,
     loss = loss.cuda()
     best_mse = float('inf')
 
-    # Create output directory and results file
-    try:
-        os.mkdir(output_dir)
-        #results = open(os.path.join(output_dir, 'results.txt'), 'w+')
-        results = open((output_dir+'/results.txt'), 'w+')
-    except: 
-        raise Exception('Output directory / results file cannot be created')
+    if checkpoint_epoch <= 0:
+        # Create output directory and results file
+        try:
+            os.mkdir(output_dir)
+            #results = open(os.path.join(output_dir, 'results.txt'), 'w+')
+            results = open((output_dir+'/results.txt'), 'w+')
+        except: 
+            raise Exception('Output directory / results file cannot be created')
 
 
     start_epoch = 0

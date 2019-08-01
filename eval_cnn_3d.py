@@ -17,6 +17,7 @@ if __name__ == "__main__":
     parser.add_argument('--valid_batch_size', type=int, default=4)
     parser.add_argument('--checkpoint_state', default='')
     parser.add_argument('--checkpoint_epoch', type=int, default=0)
+    parser.add_argument('--valid_batch_size', type=int, default=4)
     parser.add_argument('--resize', type=int, default=0)
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
@@ -40,13 +41,13 @@ if __name__ == "__main__":
         print('Loaded model from checkpoint')
 
     # Load and create datasets
-    train_img = np.load(os.path.join(args.data_dir, 'train_data_img.npy'), allow_pickle=True)
+    #train_img = np.load(os.path.join(args.data_dir, 'train_data_img.npy'), allow_pickle=True)
     valid_img = np.load(os.path.join(args.data_dir, 'valid_data_img.npy'), allow_pickle=True)
-    train_target = np.load(os.path.join(args.data_dir, 'train_data_target.npy'), allow_pickle=True)
+    #train_target = np.load(os.path.join(args.data_dir, 'train_data_target.npy'), allow_pickle=True)
     valid_target = np.load(os.path.join(args.data_dir, 'valid_data_target.npy'), allow_pickle=True)
 
-    train_dataset = MRIDataset(train_img, train_target, args.resize)
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size)
+    #train_dataset = MRIDataset(train_img, train_target, args.resize)
+    #train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size)
     valid_dataset = MRIDataset(valid_img, valid_target, args.resize)
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
 

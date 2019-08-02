@@ -9,6 +9,7 @@ import os
 from skorch import NeuralNetRegressor
 from sklearn.model_selection import GridSearchCV
 from scipy.stats import randint as sp_randint
+import IPython
 
 if __name__ == "__main__":
     torch.cuda.set_device(0)
@@ -18,8 +19,8 @@ if __name__ == "__main__":
     parser.add_argument('--data_dir')
     parser.add_argument('--output_dir')
     parser.add_argument('--epoch', type=int, default=30)
-    parser.add_argument('--train_batch_size', type=int, default=2)
-    parser.add_argument('--valid_batch_size', type=int, default=4)
+    #parser.add_argument('--train_batch_size', type=int, default=2)
+    #parser.add_argument('--valid_batch_size', type=int, default=4)
     parser.add_argument('--checkpoint_state', default='')
     parser.add_argument('--optimizer', default='sgd', help='Optimizer type')
     parser.add_argument('--resize', type=int, default=0)
@@ -55,21 +56,23 @@ if __name__ == "__main__":
     #valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
 
     if args.optimizer == 'sgd':
-        optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+        optimizer = torch.optimizer.sgd
     elif args.optimizer == 'adam':
-        optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0.001)
+        optimizer = torch.optimizer.adam
     
-    net = NeuralNetRegressor(model, max_epochs=5, lr=0.001, momentum=0.5,verbose=1)
+    net = NeuralNetRegressor(model, max_epochs=3, lr=0.001, optimizer=optimizer, verbose=1)
     
     params = {
         'lr':[0.001, 0.01, 0.02, 0.04, 0.1]
     }
+
     slice_dataset = SliceMRIDataset(train_dataset)
     gs = GridSearchCV(net, params, refit=False, cv=3, n_jobs=-1, scoring='neg_mean_squared_error', verbose=10)
     #loss = nn.L1Loss()
     
     gs.fit(slice_dataset, train_dataset.get_y_data)
     print(gs.best_params_)
+    IPython.embed()
 
     # train(model, args.epoch, train_loader, valid_loader, optimizer, loss, args.output_dir)
     # eval(model, valid_loader, loss)

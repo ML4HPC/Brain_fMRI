@@ -60,7 +60,7 @@ if __name__ == "__main__":
     elif args.optimizer == 'adam':
         optimizer = torch.optim.Adam
     
-    net = NeuralNetRegressor(model, max_epochs=3, lr=0.001, optimizer=optimizer, verbose=1)
+    net = NeuralNetRegressor(model, max_epochs=3, lr=0.001, optimizer=optimizer, verbose=1, batch_size=10)
     
     params = {
         'lr':[0.001, 0.01, 0.02, 0.04, 0.1]

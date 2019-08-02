@@ -56,9 +56,9 @@ if __name__ == "__main__":
     #valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
 
     if args.optimizer == 'sgd':
-        optimizer = torch.optimizer.sgd
+        optimizer = torch.optim.sgd
     elif args.optimizer == 'adam':
-        optimizer = torch.optimizer.adam
+        optimizer = torch.optim.adam
     
     net = NeuralNetRegressor(model, max_epochs=3, lr=0.001, optimizer=optimizer, verbose=1)
     

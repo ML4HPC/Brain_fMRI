@@ -1,4 +1,5 @@
 from torch.utils.data import Dataset
+from torch.utils.data.dataloader import default_collate
 import numpy as np
 from scipy.ndimage import zoom
 
@@ -30,3 +31,33 @@ class MRIDataset(Dataset):
         return (x, self.Y_data[idx])
 
         # return (img_data, self.Y_data[idx])
+    
+
+class SliceMRIDataset(Dataset):
+    def __init__(self, dataset, collate_fn=default_collate):
+        self.dataset = dataset
+        self.collate_fn = collate_fn
+        self._indices = list(range(len(self.dataset)))
+    
+    def __len__(self):
+        return len(self.dataset)
+    
+    @property
+    def shape(self):
+        return len(self)
+    
+    def __getitem__(self, i):
+        if isinstance(i, (int, np.integer)):
+            Xb = self.dataset[i][0]
+            return Xb
+        
+        if isinstance(i, slice):
+            i = self._indices[i]
+        
+        Xb = self.collate_fn([self.dataset[j][0] for j in i])
+
+        return Xb
+        
+
+            
+        

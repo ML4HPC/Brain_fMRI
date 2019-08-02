@@ -44,7 +44,7 @@ class SliceMRIDataset(Dataset):
     
     @property
     def shape(self):
-        return len(self)
+        return len(self),
     
     def __getitem__(self, i):
         if isinstance(i, (int, np.integer)):

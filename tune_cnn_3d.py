@@ -70,7 +70,7 @@ if __name__ == "__main__":
     gs = GridSearchCV(net, params, refit=False, cv=3, n_jobs=-1, scoring='neg_mean_squared_error', verbose=10)
     #loss = nn.L1Loss()
     
-    gs.fit(slice_dataset, train_dataset.get_y_data)
+    gs.fit(slice_dataset, train_dataset.get_y_data())
     print(gs.best_params_)
     IPython.embed()
 

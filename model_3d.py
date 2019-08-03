@@ -59,12 +59,50 @@ class CNN(nn.Module):
         #x = x.view(-1, 11*11*11*80)
         x = x.view(-1, 3*3*3*80)
         x = self.fc1(x)
+        #x = self.bn2(x)
+        x = self.drop(x)
+        x = self.fc2(x)
+        x = self.fc3(x)
+
+        return x
+
+class CNN1(nn.Module):
+    def __init__(self):
+        super(CNN1, self).__init__()
+        self.conv1 = nn.Conv3d(1,10, kernel_size=5)
+        self.conv2 = nn.Conv3d(10,20, kernel_size=5)
+        self.conv3 = nn.Conv3d(20,40, kernel_size=6)
+        self.conv4 = nn.Conv3d(40,80, kernel_size=5)
+        self.bn1 = nn.BatchNorm3d(80)
+        self.drop = nn.Dropout2d()
+        #self.fc1 = nn.Linear(11*11*11*80, 4840)   # 11x11x11 x80
+        self.fc1 = nn.Linear(3*3*3*80, 2420)
+        self.bn2 = nn.BatchNorm1d(2420)
+        self.fc2 = nn.Linear(2420, 1210)
+        self.fc3 = nn.Linear(1210, 1)
+
+
+    def forward(self,x):
+        x = F.relu(F.max_pool3d(self.conv1(x),2))
+        x = self.drop(x)
+        x = F.relu(F.max_pool3d(self.conv2(x),2))
+        x = self.drop(x)
+        x = F.relu(F.max_pool3d(self.conv3(x),2))
+        x = self.drop(x)
+        x = F.relu(F.max_pool3d(self.conv4(x),2))
+        x = self.drop(x)
+        
+        x = self.bn1(x)
+        #x = x.view(-1, 11*11*11*80)
+        x = x.view(-1, 3*3*3*80)
+        x = self.fc1(x)
         x = self.bn2(x)
         x = self.drop(x)
         x = self.fc2(x)
         x = self.fc3(x)
 
         return x
+
 
 
 
@@ -198,6 +236,12 @@ def eval(model, valid_loader, loss):
                 batch_idx * len(batch_img), len(valid_loader.dataset), 
                 valid_loader.batch_size * batch_idx / len(valid_loader), res.item()))     
     
+    #target_true = np.subtract(np.exp(target_true), 40)
+    #target_pred = np.subtract(np.exp(target_pred),40)
+    print('Target true:')
+    print(target_true)
+    print('Target pred:')
+    print(target_pred)
     mse = mean_squared_error(target_true, target_pred)
     LOGGER.info('Mean squared error: {}'.format(mse))
 

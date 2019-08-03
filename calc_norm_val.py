@@ -28,5 +28,15 @@ if __name__ == "__main__":
     
     mean = 0.0
     for batch_img, _ in train_loader:
-        batch_size = batch_img.size(0)
-        IPython.embed()
+        mean += torch.sum(batch_img)
+    
+    mean /= len(train_loader.dataset) * 120 * 120 * 120
+
+    var = 0.0
+    for batch_img, _ in train_loader:
+        var += torch.sum(np.power(np.subtract(batch_img, mean), 2))
+    
+    var /= len(train_loader.dataset) * 120 * 120 * 120
+    std = np.sqrt(var)
+
+    print('Mean: {}\n Std: {}\n'.format(mean, std))

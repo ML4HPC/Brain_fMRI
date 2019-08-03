@@ -60,11 +60,11 @@ if __name__ == "__main__":
     elif args.optimizer == 'adam':
         optimizer = torch.optim.Adam
     
-    net = NeuralNetRegressor(model, max_epochs=3, lr=0.001, optimizer=optimizer, verbose=1, batch_size=12)
+    net = NeuralNetRegressor(model, max_epochs=3, lr=0.001, optimizer=optimizer, optimizer__weight_decay=0.001, verbose=1, batch_size=12)
     
     params = {
-        'lr':[0.001, 0.01, 0.02, 0.04, 0.1]
-        'weight_decay': [0.001, 0.005, 0.01, 0.05, 0.1]
+        'lr':[0.001, 0.01, 0.02, 0.04, 0.1],
+        'optimizer__weight_decay': [0.001, 0.005, 0.01, 0.05, 0.1]
     }
 
     slice_dataset = SliceMRIDataset(train_dataset)

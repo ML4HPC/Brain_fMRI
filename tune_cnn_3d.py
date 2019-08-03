@@ -32,7 +32,7 @@ if __name__ == "__main__":
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     model = CNN()
     model.cuda()
-
+    
     # Setting up data parallelism, if available
     if torch.cuda.device_count() > 1:
         print('Using Data Parallelism with multiple GPUs available')
@@ -60,19 +60,20 @@ if __name__ == "__main__":
     elif args.optimizer == 'adam':
         optimizer = torch.optim.Adam
     
-    net = NeuralNetRegressor(model, max_epochs=3, lr=0.001, optimizer=optimizer, verbose=1, batch_size=10)
+    net = NeuralNetRegressor(model, max_epochs=3, lr=0.001, optimizer=optimizer, verbose=1, batch_size=12)
     
     params = {
         'lr':[0.001, 0.01, 0.02, 0.04, 0.1]
+        'weight_decay': [0.001, 0.005, 0.01, 0.05, 0.1]
     }
 
     slice_dataset = SliceMRIDataset(train_dataset)
-    gs = GridSearchCV(net, params, refit=False, cv=3, n_jobs=-1, scoring='neg_mean_squared_error', verbose=10)
+    gs = GridSearchCV(net, params, refit=False, cv=3, scoring='neg_mean_squared_error', verbose=10)
     #loss = nn.L1Loss()
     
     gs.fit(slice_dataset, train_dataset.get_y_data())
     print(gs.best_params_)
-    IPython.embed()
+    np.save('gs_best_params.npy', gs.best_params_)
 
     # train(model, args.epoch, train_loader, valid_loader, optimizer, loss, args.output_dir)
     # eval(model, valid_loader, loss)

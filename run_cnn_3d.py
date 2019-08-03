@@ -20,6 +20,7 @@ if __name__ == "__main__":
     parser.add_argument('--checkpoint_state', default='')
     parser.add_argument('--checkpoint_epoch', type=int, default=0)
     parser.add_argument('--resize', type=int, default=0)
+    parser.add_argument('--normalize', type=bool, default=False)
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
     parser.add_argument('--optimizer', default='sgd', help='Optimizer type: adam, sgd')
@@ -47,9 +48,9 @@ if __name__ == "__main__":
     train_target = np.load(os.path.join(args.data_dir, 'train_data_target.npy'), allow_pickle=True)
     valid_target = np.load(os.path.join(args.data_dir, 'valid_data_target.npy'), allow_pickle=True)
 
-    train_dataset = MRIDataset(train_img, train_target, args.resize)
+    train_dataset = MRIDataset(train_img, train_target, args.resize, args.normalize)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size)
-    valid_dataset = MRIDataset(valid_img, valid_target, args.resize)
+    valid_dataset = MRIDataset(valid_img, valid_target, args.resize, args.normalize)
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
 
 

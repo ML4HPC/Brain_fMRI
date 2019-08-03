@@ -4,10 +4,13 @@ import numpy as np
 from scipy.ndimage import zoom
 
 class MRIDataset(Dataset):
-    def __init__(self, input_data, target, resize):
+    def __init__(self, input_data, target, resize, normalize=False):
         self.X_data = input_data
         self.Y_data = target
         self.resize = resize
+        self.normalize = normalize
+        self.mean = 70.4099
+        self.std = 190.856
     
     def __len__(self):
         return len(self.Y_data)
@@ -27,6 +30,9 @@ class MRIDataset(Dataset):
         
         if self.resize > 0:
             x = np.resize(x, (self.resize, self.resize, self.resize))
+        
+        if self.normalize:
+            x = np.divide(np.subtract(x, self.mean), self.std)
     
         return (x, self.Y_data[idx])
 

@@ -19,6 +19,7 @@ if __name__ == "__main__":
     parser.add_argument('--valid_batch_size', type=int, default=4)
     parser.add_argument('--checkpoint_state', default='')
     parser.add_argument('--checkpoint_epoch', type=int, default=0)
+    parser.add_argument('--checkpoint_opt', default='')
     parser.add_argument('--resize', type=int, default=0)
     parser.add_argument('--normalize', type=bool, default=False)
     parser.add_argument('--lr', type=float, default=0.01)
@@ -57,12 +58,15 @@ if __name__ == "__main__":
     valid_dataset = MRIDataset(valid_img, valid_target, args.resize, args.normalize)
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
 
-
     if args.optimizer == 'sgd':
         optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
     elif args.optimizer == 'adam':
         optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0.001)
     
+    if args.checkpoint_state:
+        saved_opt_state = torch.load(args.checkpoint_opt)
+        optimizer.load_state_dict(saved_opt_state)
+        
     loss = nn.L1Loss()
 
     if not args.checkpoint_state:

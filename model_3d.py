@@ -38,8 +38,8 @@ class CNN(nn.Module):
         self.conv4 = nn.Conv3d(40,80, kernel_size=5)
         self.bn1 = nn.BatchNorm3d(80)
         self.drop = nn.Dropout2d()
-        #self.fc1 = nn.Linear(11*11*11*80, 4840)   # 11x11x11 x80
-        self.fc1 = nn.Linear(3*3*3*80, 4840)
+        self.fc1 = nn.Linear(11*11*11*80, 4840)   # 11x11x11 x80
+        #self.fc1 = nn.Linear(3*3*3*80, 4840)
         self.bn2 = nn.BatchNorm1d(4840)
         self.fc2 = nn.Linear(4840, 2420)
         self.fc3 = nn.Linear(2420, 1)
@@ -56,8 +56,8 @@ class CNN(nn.Module):
         x = self.drop(x)
         
         x = self.bn1(x)
-        #x = x.view(-1, 11*11*11*80)
-        x = x.view(-1, 3*3*3*80)
+        x = x.view(-1, 11*11*11*80)
+        #x = x.view(-1, 3*3*3*80)
         x = self.fc1(x)
         #x = self.bn2(x)
         x = self.drop(x)
@@ -75,9 +75,9 @@ class CNN1(nn.Module):
         self.conv4 = nn.Conv3d(40,80, kernel_size=5)
         self.bn1 = nn.BatchNorm3d(80)
         self.drop = nn.Dropout2d()
-        #self.fc1 = nn.Linear(11*11*11*80, 4840)   # 11x11x11 x80
-        self.fc1 = nn.Linear(3*3*3*80, 2420)
-        self.bn2 = nn.BatchNorm1d(2420)
+        self.fc1 = nn.Linear(11*11*11*80, 2420)   # 11x11x11 x80
+        #self.fc1 = nn.Linear(3*3*3*80, 2420)
+        #self.bn2 = nn.BatchNorm1d(2420)
         self.fc2 = nn.Linear(2420, 1210)
         self.fc3 = nn.Linear(1210, 1)
 
@@ -93,10 +93,10 @@ class CNN1(nn.Module):
         x = self.drop(x)
         
         x = self.bn1(x)
-        #x = x.view(-1, 11*11*11*80)
-        x = x.view(-1, 3*3*3*80)
+        x = x.view(-1, 11*11*11*80)
+       # x = x.view(-1, 3*3*3*80)
         x = self.fc1(x)
-        x = self.bn2(x)
+        #x = self.bn2(x)
         x = self.drop(x)
         x = self.fc2(x)
         x = self.fc3(x)
@@ -163,7 +163,7 @@ def train(model, epoch, train_loader, valid_loader, optimizer, loss, output_dir,
         except: 
             raise Exception('Output directory / results file cannot be created')
 
-    results = open((output_dir+'/results.txt'), 'w+')
+    results = open((output_dir+'/results.txt'), 'a+')
 
     start_epoch = 0
     if checkpoint_epoch > 0:
@@ -196,6 +196,7 @@ def train(model, epoch, train_loader, valid_loader, optimizer, loss, output_dir,
         cur_mse = eval(model, valid_loader, loss)
         results.write('Epoch {}: {} ({} s)\n'.format(i, cur_mse, epoch_train_time))
         torch.save(model.state_dict(), os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
+        torch.save(optimizer.state_dict(), os.path.join(output_dir, 'optimizer.pth'))
 
         if cur_mse < best_mse:
             best_mse = cur_mse
@@ -236,8 +237,8 @@ def eval(model, valid_loader, loss):
                 batch_idx * len(batch_img), len(valid_loader.dataset), 
                 valid_loader.batch_size * batch_idx / len(valid_loader), res.item()))     
     
-    #target_true = np.subtract(np.exp(target_true), 40)
-    #target_pred = np.subtract(np.exp(target_pred),40)
+    target_true = np.subtract(np.exp(target_true), 40)
+    target_pred = np.subtract(np.exp(target_pred),40)
     print('Target true:')
     print(target_true)
     print('Target pred:')

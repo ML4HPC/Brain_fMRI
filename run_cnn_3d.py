@@ -24,12 +24,15 @@ if __name__ == "__main__":
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
     parser.add_argument('--optimizer', default='sgd', help='Optimizer type: adam, sgd')
+    parser.add_argument('--model', type=int, default=0, help='CNN or CNN1')
     args = parser.parse_args()
 
     # Setting device
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-    model = CNN()
-    model.cuda()
+    if args.model == 0:
+        model = CNN()
+    elif args.model == 1:
+        model = CNN1()
 
     # Setting up data parallelism, if available
     if torch.cuda.device_count() > 1:
@@ -38,10 +41,11 @@ if __name__ == "__main__":
 
     # Load from checkpoint, if available
     if args.checkpoint_state:
-        saved_state = torch.load(args.checkpoint_state)
+        saved_state = torch.load(args.checkpoint_state, map_location='cpu')
         model.load_state_dict(saved_state)
         print('Loaded model from checkpoint')
 
+    model.cuda()
     # Load and create datasets
     train_img = np.load(os.path.join(args.data_dir, 'train_data_img.npy'), allow_pickle=True)
     valid_img = np.load(os.path.join(args.data_dir, 'valid_data_img.npy'), allow_pickle=True)

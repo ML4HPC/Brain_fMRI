@@ -71,7 +71,7 @@ if __name__ == "__main__":
         optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0.001)
     
     if args.checkpoint_state:
-        saved_opt_state = torch.load(args.checkpoint_opt)
+        saved_opt_state = torch.load(args.checkpoint_opt, map_location='cpu')
         optimizer.load_state_dict(saved_opt_state)
         print('Loaded optimizer from saved state')
         

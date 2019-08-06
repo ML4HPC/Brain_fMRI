@@ -6,6 +6,7 @@ from mri_dataset import MRIDataset
 from model_3d import CNN, CNN1, train, eval
 import argparse
 import os
+import apex
 
 if __name__ == "__main__":
     torch.cuda.set_device(0)
@@ -25,6 +26,7 @@ if __name__ == "__main__":
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
     parser.add_argument('--optimizer', default='sgd', help='Optimizer type: adam, sgd')
+    parser.add_argument('--sync_bn', default=False, help='Use sync batch norm or not (True/False)')
     parser.add_argument('--model', type=int, default=0, help='CNN or CNN1')
     args = parser.parse_args()
 
@@ -45,6 +47,10 @@ if __name__ == "__main__":
         saved_state = torch.load(args.checkpoint_state, map_location='cpu')
         model.load_state_dict(saved_state)
         print('Loaded model from checkpoint')
+
+    # Convert async batch norm to sync batch norm, if applicable
+    if args.sync_bn:
+        model = apex.parallel.convert_syncbn_model(model)
 
     model.cuda()
     # Load and create datasets

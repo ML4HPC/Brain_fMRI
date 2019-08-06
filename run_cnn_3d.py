@@ -71,7 +71,6 @@ if __name__ == "__main__":
 
     if not args.checkpoint_state:
         train(model, args.epoch, train_loader, valid_loader, optimizer, loss, args.output_dir)
-        eval(model, valid_loader, loss)
     else:
         train(model, args.epoch, train_loader, valid_loader, optimizer, loss, args.output_dir, checkpoint_epoch=args.checkpoint_epoch)
 

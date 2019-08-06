@@ -11,6 +11,8 @@ class MRIDataset(Dataset):
         self.normalize = normalize
         self.mean = 70.4099
         self.std = 190.856
+        if self.normalize:
+            print('Normalization applied to dataset')
     
     def __len__(self):
         return len(self.Y_data)
@@ -34,9 +36,9 @@ class MRIDataset(Dataset):
         if self.normalize:
             x = np.divide(np.subtract(x, self.mean), self.std)
     
-        return (x, self.Y_data[idx])
+        return (x, np.log(self.Y_data[idx]+40))
 
-        # return (img_data, self.Y_data[idx])
+        #return (x, self.Y_data[idx])
     
 
 class SliceMRIDataset(Dataset):

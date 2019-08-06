@@ -51,6 +51,7 @@ if __name__ == "__main__":
     # Convert async batch norm to sync batch norm, if applicable
     if args.sync_bn:
         model = apex.parallel.convert_syncbn_model(model)
+        print('Using sync batch norm')
 
     model.cuda()
     # Load and create datasets
@@ -72,6 +73,7 @@ if __name__ == "__main__":
     if args.checkpoint_state:
         saved_opt_state = torch.load(args.checkpoint_opt)
         optimizer.load_state_dict(saved_opt_state)
+        print('Loaded optimizer from saved state')
         
     loss = nn.L1Loss()
 

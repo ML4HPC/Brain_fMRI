@@ -31,7 +31,7 @@ class MRIDataset(Dataset):
         x = np.array(self.X_data[idx].dataobj)
         
         if self.resize > 0:
-            x = np.resize(x, (self.resize, self.resize, self.resize))
+            np.resize(x, (self.resize, self.resize, self.resize))
         
         if self.normalize:
             x = np.divide(np.subtract(x, self.mean), self.std)

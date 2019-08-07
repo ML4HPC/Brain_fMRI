@@ -25,6 +25,7 @@ if __name__ == "__main__":
     parser.add_argument('--normalize', type=bool, default=False)
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
+    parser.add_argument('--weight_decay', type=float, default=0.001)
     parser.add_argument('--optimizer', default='sgd', help='Optimizer type: adam, sgd')
     parser.add_argument('--sync_bn', default=False, help='Use sync batch norm or not (True/False)')
     parser.add_argument('--model', type=int, default=0, help='CNN or CNN1')
@@ -68,7 +69,7 @@ if __name__ == "__main__":
     if args.optimizer == 'sgd':
         optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
     elif args.optimizer == 'adam':
-        optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0.001)
+        optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=args.weight_decay)
     
     if args.checkpoint_state:
         saved_opt_state = torch.load(args.checkpoint_opt, map_location='cpu')

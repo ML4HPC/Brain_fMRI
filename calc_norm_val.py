@@ -1,17 +1,13 @@
 import torch
-import torch.optim as optim
-import torch.nn as nn
 import numpy as np
 from mri_dataset import MRIDataset
-from model_3d import CNN, train, eval
+from model_3d import eval
 import argparse
 import os
 import IPython
 
 
 if __name__ == "__main__":
-    torch.cuda.set_device(0)
-
     # Parsing arguments
     parser = argparse.ArgumentParser(description='Calculating mean & std dev for normalization')
     parser.add_argument('--data_dir')

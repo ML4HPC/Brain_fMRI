@@ -12,6 +12,7 @@ def readcsv(path, filename):
     with open(path+filename) as csvfile:
         csv_dict = {}
         csv_data = csv.reader(csvfile, delimiter=',')
+        next(csv_data)
         for row in csv_data:
             csv_dict[row[0]] = row[1]
     return csv_dict

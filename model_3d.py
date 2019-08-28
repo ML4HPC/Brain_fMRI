@@ -191,8 +191,8 @@ def train(model, epoch, train_loader, valid_loader, optimizer, loss, output_dir,
             if batch_idx % 10 == 0:
                 LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, batch_idx * len(batch_img), len(train_loader.dataset), len(batch_img) * batch_idx / len(train_loader.dataset) * 100, res.item()))
             
-            #torch.cuda.empty_cache()
-            #del batch_img, batch_target
+            torch.cuda.empty_cache()
+            del batch_img, batch_target
         
         epoch_end = time.time()
         epoch_train_time = epoch_end - epoch_start

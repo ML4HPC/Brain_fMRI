@@ -52,15 +52,15 @@ if __name__ == "__main__":
 
     print('processing training!')
     readimages(args.data_dir, train, lattername, args.resize, args.output_dir) 
-    #np.save(os.path.join(args.output_dir, 'train_img.npy'), train_img)
+    np.save(os.path.join(args.output_dir, 'train_img.npy'), train_img)
     #print('saved train')
     print('processing valid!')
     readimages(args.data_dir, valid, lattername, args.resize, args.output_dir) 
-    # np.save(os.path.join(args.output_dir, 'valid_img.npy'), valid_img)
+    np.save(os.path.join(args.output_dir, 'valid_img.npy'), valid_img)
     print('saved train')
     print('processing test!')
     readimages(args.data_dir, test, lattername, args.resize, args.output_dir)
-    #np.save(os.path.join(args.output_dir, 'test_img.npy'), test_img)
+    np.save(os.path.join(args.output_dir, 'test_img.npy'), test_img)
     print('done saving!')
 
 

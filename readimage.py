@@ -36,6 +36,8 @@ def readimages(path, data_for, lattername, resize, output_dir):
             if (i != 0)  and (i % 1000 == 0 or i == (len(filenames) - 1)):
                 np.save(os.path.join(args.output_dir, '{}_img_{}.npy'.format(data_for, batch_idx)), images)
                 images.clear()
+    
+    return images
 
 
 if __name__ == "__main__":
@@ -51,15 +53,15 @@ if __name__ == "__main__":
         raise Exception('Could not create output directory')
 
     print('processing training!')
-    readimages(args.data_dir, train, lattername, args.resize, args.output_dir) 
+    train_img = readimages(args.data_dir, train, lattername, args.resize, args.output_dir) 
     np.save(os.path.join(args.output_dir, 'train_img.npy'), train_img)
     #print('saved train')
     print('processing valid!')
-    readimages(args.data_dir, valid, lattername, args.resize, args.output_dir) 
+    valid_img = readimages(args.data_dir, valid, lattername, args.resize, args.output_dir) 
     np.save(os.path.join(args.output_dir, 'valid_img.npy'), valid_img)
     print('saved train')
     print('processing test!')
-    readimages(args.data_dir, test, lattername, args.resize, args.output_dir)
+    test_img = readimages(args.data_dir, test, lattername, args.resize, args.output_dir)
     np.save(os.path.join(args.output_dir, 'test_img.npy'), test_img)
     print('done saving!')
 

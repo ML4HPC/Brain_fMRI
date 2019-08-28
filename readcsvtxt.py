@@ -20,7 +20,7 @@ def get_covariates(key, acspsw_data, abcd_data, pdemo_data):
     age = int(acspsw_row['interview_age'])
     gender = 0 if (acspsw_row['gender'] == 'M').bool() else 1
     race_ethnicity = int(acspsw_row['race_ethnicity'])
-    high_edu = max(pdemo_row['demo_prnt_ed_v2'].astype(int) if not pdemo_row['demo_prnt_ed_v2'].isnull().bool() else 0, pdemo_row['demo_prtnr_ed_v2'].astype(int) if not pdemo_row['demo_prtnr_ed_v2'].isnull().bool() else 0)
+    high_edu = max(int(pdemo_row['demo_prnt_ed_v2']) if not pdemo_row['demo_prnt_ed_v2'].isnull() else 0, int(pdemo_row['demo_prtnr_ed_v2']) if not pdemo_row['demo_prtnr_ed_v2'].isnull() else 0)
     married = int(pdemo_row['demo_prnt_marital_v2'])
     site = int(abcd_row['site_id_l'].str.strip('site'))
 

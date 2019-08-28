@@ -8,7 +8,7 @@ from model_3d import train, eval
 import argparse
 import os
 import apex
-
+import IPython
 
 if __name__ == "__main__":
     torch.cuda.set_device(0)
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     #model = resnet3d.resnet3D50(num_classes=10)
     #model = resnet3d.ResNet3DRegressor()
     model = resnet3d.PipelinedResNet3dRegressor(devices=[0,1,2,3])
-    
+    IPython.embed()
         # Load from checkpoint, if available
     if args.checkpoint_state:
         saved_state = torch.load(args.checkpoint_state, map_location='cpu')

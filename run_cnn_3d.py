@@ -7,6 +7,7 @@ from model_3d import CNN, CNN1, train, eval
 import argparse
 import os
 import apex
+import IPython
 
 if __name__ == "__main__":
     torch.cuda.set_device(0)

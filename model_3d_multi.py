@@ -39,6 +39,7 @@ class MultiCNN(nn.Module):
         self.fc_edu = nn.Linear(2420, 23)
         self.fc_married = nn.Linear(2420, 2)
         self.fc_site = nn.Linear(2420, 21)
+        self.sigmoid = nn.Sigmoid()
 
 
     def forward(self,x):
@@ -59,11 +60,18 @@ class MultiCNN(nn.Module):
         x = self.drop(x)
         x = self.fc2(x)
         x_fi = self.fc3(x)
+
         x_age = self.fc_age(x)
+
         x_gender = self.fc_gender(x)
+        x_gender = self.sigmoid(x_gender)
+
         x_race = self.fc_race(x)
         x_edu = self.fc_edu(x)
+
         x_married = self.fc_married(x)
+        x_married = self.sigmoid(x_married)
+        
         x_site = self.fc_site(x)
 
         return [x_fi, x_age, x_gender, x_race, x_edu, x_married, x_site]

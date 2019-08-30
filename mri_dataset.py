@@ -4,15 +4,19 @@ import numpy as np
 from scipy.ndimage import zoom
 
 class MRIDataset(Dataset):
-    def __init__(self, input_data, target, resize, normalize=False):
+    def __init__(self, input_data, target, resize, normalize=False, log=False):
         self.X_data = input_data
         self.Y_data = target
         self.resize = resize
         self.normalize = normalize
+        self.log = log
         self.mean = 70.4099
         self.std = 190.856
+
         if self.normalize:
             print('Normalization applied to dataset')
+        if self.log:
+            print('Log applied to dataset')
     
     def __len__(self):
         return len(self.Y_data)
@@ -29,16 +33,61 @@ class MRIDataset(Dataset):
         #     img_data = zoom(img_data, self.resize)
         #dim = 90
         x = np.array(self.X_data[idx].dataobj)
-        
+        y = self.Y_data[idx]
+
         if self.resize > 0:
             np.resize(x, (self.resize, self.resize, self.resize))
         
         if self.normalize:
             x = np.divide(np.subtract(x, self.mean), self.std)
+        
+        if self.log:
+            y = np.log(y+40)
     
-        return (x, np.log(self.Y_data[idx]+40))
+        return (x, y)
 
-        #return (x, self.Y_data[idx])
+class MultiMRIDataset(Dataset):
+    def __init__(self, input_data, target, resize, normalize=False, log=False):
+        self.X_data = input_data
+        self.Y_data = target
+        self.resize = resize
+        self.normalize = normalize
+        self.log = log
+        self.mean = 70.4099
+        self.std = 190.856
+
+        if self.normalize:
+            print('Normalization applied to dataset')
+        if self.log:
+            print('Log applied to dataset')
+    
+    def __len__(self):
+        return len(self.Y_data)
+
+    def get_x_data(self):
+        return [np.array(x.dataobj) for x in self.X_data]
+    
+    def get_y_data(self):
+        return [y for y in self.Y_data]
+        
+    def __getitem__(self, idx):
+        # img_data = np.array(self.X_data[idx].dataobj)
+        # if self.resize:
+        #     img_data = zoom(img_data, self.resize)
+        #dim = 90
+        x = np.array(self.X_data[idx].dataobj)
+        y = self.Y_data[idx]
+
+        if self.resize > 0:
+            np.resize(x, (self.resize, self.resize, self.resize))
+        
+        if self.normalize:
+            x = np.divide(np.subtract(x, self.mean), self.std)
+        
+        if self.log:
+            y[0] = np.log(y[0]+40)
+    
+        return (x, y)
     
 
 class SliceMRIDataset(Dataset):

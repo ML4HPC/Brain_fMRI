@@ -67,12 +67,16 @@ class MultiCNN(nn.Module):
         x_gender = self.sigmoid(x_gender)
 
         x_race = self.fc_race(x)
+        x_race = F.log_softmax(x, dim = 1)
+
         x_edu = self.fc_edu(x)
+        x_edu = F.log_softmax(x_edu, dim = 1)
 
         x_married = self.fc_married(x)
         x_married = self.sigmoid(x_married)
         
         x_site = self.fc_site(x)
+        x_site = F.log_softmax(x_site, dim = 1)
 
         return [x_fi, x_age, x_gender, x_race, x_edu, x_married, x_site]
 

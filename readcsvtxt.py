@@ -36,7 +36,9 @@ def get_covariates(key, acspsw_data, abcd_data, pdemo_data):
         high_edu = max(high_edu_prnt1, high_edu_prnt2)
     
     married = int(pdemo_row['demo_prnt_marital_v2'])
-    site = int(abcd_row['site_id_l'].str.strip('site'))
+    
+    # Normalizing to range [0, 20] from [1, 21]
+    site = int(abcd_row['site_id_l'].str.strip('site')) - 1
 
     return [age, gender, race_ethnicity, high_edu, married, site] 
 
@@ -59,19 +61,18 @@ def readtxt(path, csv_train, csv_valid):
     abcd_data = abcd_data.drop(0)
     pdemo_data = pdemo_data.drop(0)
 
-    for key in csv_train.keys():
-        if key == 'NDAR_INVLDGEWALX':
-            continue
+    if 'NDAR_INVLDGEWALX' in csv_train:
+        del csv_train['NDAR_INVLDGEWALX']
+    if 'NDAR_INVLDGEWALX' in csv_valid:
+        del csv_valid['NDAR_INVLDGEWALX']
 
+    for key in csv_train.keys():
         covar = get_covariates(key, acspsw_data, abcd_data, pdemo_data)
         fluid_intel = float(csv_train[key])
         covar.insert(0, fluid_intel)
         csv_train[key] = covar
     
     for key in csv_valid.keys():
-        if key == 'NDAR_INVLDGEWALX':
-            continue
-
         covar = get_covariates(key, acspsw_data, abcd_data, pdemo_data)
         fluid_intel = float(csv_valid[key])
         covar.insert(0, fluid_intel)

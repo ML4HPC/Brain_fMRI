@@ -107,24 +107,24 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
 
             optimizer.zero_grad()
             batch_img = batch_img.cuda()
-            batch_target = [target.float().cuda() for target in batch_target]
+            batch_target = [target.cuda() for target in batch_target]
 
             outputs = model(batch_img)
             loss = 0
             #res = loss(output.squeeze(), batch_target)
             for j in range(len(outputs)):
-               
                 criterion = losses[j]
                 output = outputs[j]
                 target = batch_target[j]
-                print(j)
-                if j in [3, 4, 6]:
-                    target = target.long()
 
                 if output.shape[1] == 1:
                     output = output.squeeze()
+                
                 IPython.embed()
-                cur_loss = criterion(output, target)
+                if j in [0, 1, 5]:
+                    cur_loss = criterion(output, target.float())
+                else:
+                    cur_loss = criterion(output, target.long())
                 loss += cur_loss
             
             loss.backward() 

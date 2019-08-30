@@ -16,7 +16,8 @@ def get_covariates(key, acspsw_data, abcd_data, pdemo_data):
     abcd_row = abcd_data[(abcd_data['subjectkey']==key) & (abcd_data['eventname']=='baseline_year_1_arm_1')]
     acspsw_row = acspsw_data[(acspsw_data['subjectkey']==key) & (acspsw_data['eventname']=='baseline_year_1_arm_1')]
     pdemo_row = pdemo_data[(pdemo_data['subjectkey']==key) & (pdemo_data['eventname']=='baseline_year_1_arm_1')]
-    
+    #print(key)
+    #print(acspsw_row)
     age = int(acspsw_row['interview_age'])
     gender = 0 if (acspsw_row['gender'] == 'M').bool() else 1
     race_ethnicity = int(acspsw_row['race_ethnicity'])
@@ -59,14 +60,20 @@ def readtxt(path, csv_train, csv_valid):
     pdemo_data = pdemo_data.drop(0)
 
     for key in csv_train.keys():
+        if key == 'NDAR_INVLDGEWALX':
+            continue
+
         covar = get_covariates(key, acspsw_data, abcd_data, pdemo_data)
         fluid_intel = float(csv_train[key])
         covar.insert(0, fluid_intel)
         csv_train[key] = covar
     
     for key in csv_valid.keys():
+        if key == 'NDAR_INVLDGEWALX':
+            continue
+
         covar = get_covariates(key, acspsw_data, abcd_data, pdemo_data)
-        fluid_intel = float(csv_train[key])
+        fluid_intel = float(csv_valid[key])
         covar.insert(0, fluid_intel)
         csv_valid[key] = covar
     

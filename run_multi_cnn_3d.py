@@ -85,8 +85,8 @@ if __name__ == "__main__":
     losses = [loss_fi, loss_age, loss_gender, loss_race, loss_edu, loss_married, loss_site]
 
     if not args.checkpoint_state:
-        train(model, args.epoch, train_loader, valid_loader, optimizer, losses, args.output_dir)
+        train_multi(model, args.epoch, train_loader, valid_loader, optimizer, losses, args.output_dir)
     else:
-        train(model, args.epoch, train_loader, valid_loader, optimizer, losses, args.output_dir, checkpoint_epoch=args.checkpoint_epoch)
+        train_multi(model, args.epoch, train_loader, valid_loader, optimizer, losses, args.output_dir, checkpoint_epoch=args.checkpoint_epoch)
 
     

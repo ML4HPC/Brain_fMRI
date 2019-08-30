@@ -119,7 +119,7 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
 
                 if output.shape[1] == 1:
                     output = output.squeeze()
-                
+
                 IPython.embed()
                 if j in [3, 4, 6]:
                     cur_loss = criterion(output, target.long())
@@ -133,7 +133,7 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
             LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
 
             if batch_idx % 10 == 0:
-                LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, batch_idx * len(batch_img), len(train_loader.dataset), len(batch_img) * batch_idx / len(train_loader.dataset) * 100, res.item()))
+                LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, batch_idx * len(batch_img), len(train_loader.dataset), len(batch_img) * batch_idx / len(train_loader.dataset) * 100, loss.item()))
             
             #torch.cuda.empty_cache()
             #del batch_img, batch_target

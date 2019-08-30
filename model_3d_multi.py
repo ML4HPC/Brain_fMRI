@@ -34,10 +34,10 @@ class MultiCNN(nn.Module):
         self.fc2 = nn.Linear(4840, 2420)
         self.fc3 = nn.Linear(2420, 1)
         self.fc_age = nn.Linear(2420, 1)
-        self.fc_gender = nn.Linear(2420, 2)
+        self.fc_gender = nn.Linear(2420, 1)
         self.fc_race = nn.Linear(2420, 5)
         self.fc_edu = nn.Linear(2420, 23)
-        self.fc_married = nn.Linear(2420, 2)
+        self.fc_married = nn.Linear(2420, 1)
         self.fc_site = nn.Linear(2420, 21)
         self.sigmoid = nn.Sigmoid()
 
@@ -106,17 +106,25 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
             batch_img = batch_img.unsqueeze(1)
 
             optimizer.zero_grad()
-
             batch_img = batch_img.cuda()
-            batch_target = batch_target.float().cuda()
+            batch_target = [target.float().cuda() for target in batch_target]
 
             outputs = model(batch_img)
             loss = 0
-
             #res = loss(output.squeeze(), batch_target)
             for j in range(len(outputs)):
+               
                 criterion = losses[j]
-                cur_loss = criterion(outputs[j], torch.tensor([batch_target[j]]))
+                output = outputs[j]
+                target = batch_target[j]
+                print(j)
+                if j in [3, 4, 6]:
+                    target = target.long()
+
+                if output.shape[1] == 1:
+                    output = output.squeeze()
+                IPython.embed()
+                cur_loss = criterion(output, target)
                 loss += cur_loss
             
             loss.backward() 
@@ -162,10 +170,10 @@ def eval_multi(model, valid_loader, loss):
             batch_img = batch_img.unsqueeze(1)
 
             batch_img = batch_img.cuda()
-            batch_target = batch_target.float().cuda()
+            batch_target = [target.float().cuda() for target in batch_target]
 
             outputs = model(batch_img)
-            fi_output = outputs[0]
+            fi_output = outputs[0].squeeze()
             #LOGGER.info('current output is: {}\nground truth is: {}'.format(output.cpu().detach().numpy(), batch_target.cpu().detach().numpy()))
             #res = loss(output.squeeze(), batch_target)
 

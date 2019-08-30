@@ -121,10 +121,10 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
                     output = output.squeeze()
                 
                 IPython.embed()
-                if j in [0, 1, 5]:
-                    cur_loss = criterion(output, target.float())
-                else:
+                if j in [3, 4, 6]:
                     cur_loss = criterion(output, target.long())
+                else:
+                    cur_loss = criterion(output, target.float())
                 loss += cur_loss
             
             loss.backward() 

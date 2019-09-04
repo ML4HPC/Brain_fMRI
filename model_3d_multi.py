@@ -39,7 +39,6 @@ class MultiCNN(nn.Module):
         self.fc_edu = nn.Linear(2420, 23)
         self.fc_married = nn.Linear(2420, 7)
         self.fc_site = nn.Linear(2420, 22)
-        self.sigmoid = nn.Sigmoid()
 
 
     def forward(self,x):
@@ -64,7 +63,6 @@ class MultiCNN(nn.Module):
         x_age = self.fc_age(x)
 
         x_gender = self.fc_gender(x)
-        x_gender = self.sigmoid(x_gender)
 
         x_race = self.fc_race(x)
         x_race = F.log_softmax(x, dim = 1)
@@ -73,7 +71,7 @@ class MultiCNN(nn.Module):
         x_edu = F.log_softmax(x_edu, dim = 1)
 
         x_married = self.fc_married(x)
-        x_married = self.sigmoid(x_married)
+        x_married = F.log_softmax(x_married, dim = 1)
         
         x_site = self.fc_site(x)
         x_site = F.log_softmax(x_site, dim = 1)

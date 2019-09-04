@@ -76,10 +76,10 @@ if __name__ == "__main__":
         
     loss_fi = nn.L1Loss()
     loss_age = nn.MSELoss()
-    loss_gender = nn.BCELoss()
+    loss_gender = nn.BCEWithLogitsLoss()
     loss_race = nn.CrossEntropyLoss()
     loss_edu = nn.CrossEntropyLoss()
-    loss_married = nn.BCELoss()
+    loss_married = nn.CrossEntropyLoss()
     loss_site = nn.CrossEntropyLoss()
 
     losses = [loss_fi, loss_age, loss_gender, loss_race, loss_edu, loss_married, loss_site]

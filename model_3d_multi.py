@@ -160,7 +160,7 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
     results.close()
             
 
-def eval_multi(model, valid_loader, losses):
+def eval_multi(model, valid_loader, losses, save=False, output_dir=None):
     model.eval()
     model.cuda()
     #loss = loss.cuda()
@@ -188,13 +188,23 @@ def eval_multi(model, valid_loader, losses):
                 batch_idx * len(batch_img), len(valid_loader.dataset), 
                 valid_loader.batch_size * batch_idx / len(valid_loader)))     
     
-    target_true = np.subtract(np.exp(target_true), 40)
-    target_pred = np.subtract(np.exp(target_pred), 40)
+    if valid_loader.dataset.log:
+        target_true = np.subtract(np.exp(target_true), 40)
+        target_pred = np.subtract(np.exp(target_pred), 40)
+
     print('Target true:')
     print(target_true)
     print('Target pred:')
     print(target_pred)
+
     mse = mean_squared_error(target_true, target_pred)
     LOGGER.info('Mean squared error: {}'.format(mse))
+
+    if save:
+        try:
+            np.save(os.path.join(output_dir, 'target_true.npy'), target_true)
+            np.save(os.path.join(output_dir, 'target_pred.npy'), target_pred)
+        except:
+            raise Exception('Could not save ground truth & predictions to file')
 
     return mse

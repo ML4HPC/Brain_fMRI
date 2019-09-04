@@ -37,11 +37,16 @@ def get_covariates(key, acspsw_data, abcd_data, pdemo_data):
     
     married = int(pdemo_row['demo_prnt_marital_v2'])
     
+    if married == 777:
+        married = 7
+    
+    married -= 1
+    
     # Normalizing to range [0, 20] from [1, 21]
     site = int(abcd_row['site_id_l'].str.strip('site')) - 1
 
     assert (gender == 0 or gender == 1)
-    assert (married == 0 or married == 1)
+    assert (married >= 0 or married <= 6)
     assert (race_ethnicity >= 0 and race_ethnicity <= 4)
     assert (high_edu >= 0 and high_edu <= 22)
     assert (site >= 0 and site <= 21)

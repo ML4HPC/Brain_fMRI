@@ -113,6 +113,7 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
 
             outputs = model(batch_img)
             loss = 0
+            loss_print = []
             #res = loss(output.squeeze(), batch_target)
             for j in range(len(outputs)):
                 criterion = losses[j]
@@ -126,7 +127,11 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
                     cur_loss = criterion(output, target.long())
                 else:
                     cur_loss = criterion(output, target.float())
+                
+                loss_print.append(cur_loss)
                 loss += cur_loss
+            
+            LOGGER.info('Loss fi: {}\n Loss age: {}\nLoss gender: {}\nLoss race: {}\nLoss edu: {}\nLoss married: {}\nLoss site: {}\n'.format(*loss_print))
             
             loss.backward() 
             optimizer.step()

@@ -78,6 +78,9 @@ class MultiMRIDataset(Dataset):
         x = np.array(self.X_data[idx].dataobj)
         y = self.Y_data[idx]
 
+        # Converting age from months to year
+        y[1] = y[1] / 12.0
+
         if self.resize > 0:
             np.resize(x, (self.resize, self.resize, self.resize))
         

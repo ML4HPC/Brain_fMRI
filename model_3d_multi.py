@@ -111,7 +111,7 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
 
             optimizer.zero_grad()
             batch_img = batch_img.cuda()
-            batch_target = [target.cuda() for target in batch_target]
+            #batch_target = [target.cuda() for target in batch_target]
 
             outputs = model(batch_img)
             loss = 0
@@ -119,7 +119,7 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
             for j in range(len(outputs)):
                 criterion = losses[j]
                 output = outputs[j]
-                target = torch.tensor([t[j] for t in batch_target]).squeeze()
+                target = torch.tensor([t[j] for t in batch_target]).squeeze().cuda()
 
                 if output.shape[1] == 1:
                     output = output.squeeze()

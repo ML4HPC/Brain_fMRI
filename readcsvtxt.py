@@ -40,6 +40,10 @@ def get_covariates(key, acspsw_data, abcd_data, pdemo_data):
     # Normalizing to range [0, 20] from [1, 21]
     site = int(abcd_row['site_id_l'].str.strip('site')) - 1
 
+    assert (race_ethnicity >= 0 and race_ethnicity <= 4)
+    assert (high_edu >= 0 and high_edu <= 22)
+    assert (site >= 0 and site <= 21)
+
     return [age, gender, race_ethnicity, high_edu, married, site] 
 
 def readcsv(path, filename):

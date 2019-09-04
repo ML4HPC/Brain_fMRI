@@ -16,12 +16,12 @@ def get_covariates(key, acspsw_data, abcd_data, pdemo_data):
     abcd_row = abcd_data[(abcd_data['subjectkey']==key) & (abcd_data['eventname']=='baseline_year_1_arm_1')]
     acspsw_row = acspsw_data[(acspsw_data['subjectkey']==key) & (acspsw_data['eventname']=='baseline_year_1_arm_1')]
     pdemo_row = pdemo_data[(pdemo_data['subjectkey']==key) & (pdemo_data['eventname']=='baseline_year_1_arm_1')]
-    #print(key)
-    #print(acspsw_row)
+    
     age = int(acspsw_row['interview_age'])
     gender = 0 if (acspsw_row['gender'] == 'M').bool() else 1
     race_ethnicity = int(acspsw_row['race_ethnicity']) - 1
 
+    # Renormalizing highest education range to [0, 22] (with 22 as unknown or null)
     high_edu = 0
     high_edu_prnt1 = int(pdemo_row['demo_prnt_ed_v2']) if not pdemo_row['demo_prnt_ed_v2'].isnull().bool() else 777
     high_edu_prnt2 = int(pdemo_row['demo_prtnr_ed_v2']) if not pdemo_row['demo_prtnr_ed_v2'].isnull().bool() else 777
@@ -40,6 +40,8 @@ def get_covariates(key, acspsw_data, abcd_data, pdemo_data):
     # Normalizing to range [0, 20] from [1, 21]
     site = int(abcd_row['site_id_l'].str.strip('site')) - 1
 
+    assert (gender == 0 or gender == 1)
+    assert (married == 0 or married == 1)
     assert (race_ethnicity >= 0 and race_ethnicity <= 4)
     assert (high_edu >= 0 and high_edu <= 22)
     assert (site >= 0 and site <= 21)

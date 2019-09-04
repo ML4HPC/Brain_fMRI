@@ -147,7 +147,7 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
         epoch_end = time.time()
         epoch_train_time = epoch_end - epoch_start
 
-        cur_mse = eval(model, valid_loader, loss)
+        cur_mse = eval_multi(model, valid_loader, losses)
         results.write('Epoch {}: {} ({} s)\n'.format(i, cur_mse, epoch_train_time))
         results.flush()
         torch.save(model.state_dict(), os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
@@ -160,12 +160,10 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
     results.close()
             
 
-def eval_multi(model, valid_loader, loss):
+def eval_multi(model, valid_loader, losses):
     model.eval()
-    loss = nn.L1Loss()
-    
     model.cuda()
-    loss = loss.cuda()
+    #loss = loss.cuda()
     
     target_true = []
     target_pred = []

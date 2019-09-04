@@ -168,18 +168,16 @@ def eval_multi(model, valid_loader, loss):
     with torch.no_grad():
         for batch_idx, (batch_img, batch_target) in enumerate(valid_loader):
             LOGGER.info('Evaluating batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(valid_loader.dataset)))
-            batch_img = batch_img.unsqueeze(1)
-
-            batch_img = batch_img.cuda()
-            batch_target = [target.float().cuda() for target in batch_target]
+            batch_img = batch_img.unsqueeze(1).cuda()
 
             outputs = model(batch_img)
+    
             fi_output = outputs[0].squeeze()
             #LOGGER.info('current output is: {}\nground truth is: {}'.format(output.cpu().detach().numpy(), batch_target.cpu().detach().numpy()))
             #res = loss(output.squeeze(), batch_target)
 
             # Adding predicted and true targets
-            target_true.extend(batch_target[0].cpu())
+            target_true.extend(torch.tensor([t[0] for t in batch_target]).squeeze().cpu())
             for pred in fi_output:
                 target_pred.extend(pred.cpu())
 

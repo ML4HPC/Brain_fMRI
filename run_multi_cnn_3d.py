@@ -75,7 +75,7 @@ if __name__ == "__main__":
         print('Loaded optimizer from saved state')
         
     loss_fi = nn.L1Loss()
-    loss_age = nn.MSELoss()
+    loss_age = nn.L1Loss()
     loss_gender = nn.BCEWithLogitsLoss()
     loss_race = nn.CrossEntropyLoss()
     loss_edu = nn.CrossEntropyLoss()

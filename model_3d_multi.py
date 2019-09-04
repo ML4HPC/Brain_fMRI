@@ -119,7 +119,7 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
             for j in range(len(outputs)):
                 criterion = losses[j]
                 output = outputs[j]
-                target = [t[j] for t in batch_target]
+                target = torch.tensor([t[j] for t in batch_target]).squeeze()
 
                 if output.shape[1] == 1:
                     output = output.squeeze()

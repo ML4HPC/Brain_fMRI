@@ -38,7 +38,7 @@ class MultiCNN(nn.Module):
         self.fc_race = nn.Linear(2420, 5)
         self.fc_edu = nn.Linear(2420, 23)
         self.fc_married = nn.Linear(2420, 1)
-        self.fc_site = nn.Linear(2420, 21)
+        self.fc_site = nn.Linear(2420, 22)
         self.sigmoid = nn.Sigmoid()
 
 

@@ -17,6 +17,7 @@ if __name__ == "__main__":
     parser.add_argument('--valid_batch_size', type=int, default=4)
     parser.add_argument('--checkpoint_state', default='')
     parser.add_argument('--resize', type=int, default=0)
+    parser.add_argument('--log', type=bool, default=False)
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
     args = parser.parse_args()
@@ -57,7 +58,7 @@ if __name__ == "__main__":
     loss_site = nn.CrossEntropyLoss()
     losses = [loss_fi, loss_age, loss_gender, loss_race, loss_edu, loss_married, loss_site]
     
-    cur_mse = eval_multi(model, valid_loader, losses, save=True, output_dir=args.output_dir)
+    cur_mse = eval_multi(model, valid_loader, losses, save=True, log=args.log, output_dir=args.output_dir)
     print('MSE Score: {}'.format(cur_mse))
 
     

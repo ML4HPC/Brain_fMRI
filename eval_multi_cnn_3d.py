@@ -18,6 +18,7 @@ if __name__ == "__main__":
     parser.add_argument('--checkpoint_state', default='')
     parser.add_argument('--resize', type=int, default=0)
     parser.add_argument('--log', type=bool, default=False)
+    parser.add_argument('--normalize', type=bool, default=False)
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
     args = parser.parse_args()
@@ -46,7 +47,7 @@ if __name__ == "__main__":
 
     valid_img = np.load(os.path.join(args.data_dir, 'valid_data_img.npy'), allow_pickle=True)
     valid_target = np.load(os.path.join(args.data_dir, 'valid_data_target.npy'), allow_pickle=True)
-    valid_dataset = MultiMRIDataset(valid_img, valid_target, args.resize)
+    valid_dataset = MultiMRIDataset(valid_img, valid_target, resize=args.resize, normalize=args.normalize, log=args.log)
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
     
     loss_fi = nn.L1Loss()
@@ -58,7 +59,7 @@ if __name__ == "__main__":
     loss_site = nn.CrossEntropyLoss()
     losses = [loss_fi, loss_age, loss_gender, loss_race, loss_edu, loss_married, loss_site]
     
-    cur_mse = eval_multi(model, valid_loader, losses, save=True, log=args.log, output_dir=args.output_dir)
+    cur_mse = eval_multi(model, valid_loader, losses, save=True, output_dir=args.output_dir)
     print('MSE Score: {}'.format(cur_mse))
 
     

@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import numpy as np
 
 def conv3x3_3d(in_planes, out_planes, stride=1, groups=1, dilation=1):
@@ -243,3 +244,36 @@ class PipelinedResNet3dRegressor(nn.Module):
         x = self.fc2(x)
 
         return x
+
+class PipelinedResNet3dMulti(nn.Module):
+    def __init__(self, devices):
+        super(PipelinedResNet3dMulti, self).__init__()
+        self.pipelinedresnet = pipelined_resnet3D50(devices, num_classes=512)
+        self.fc2 = nn.Linear(512, 1).to(devices[0])
+        self.fc_age = nn.Linear(2420, 1)
+        self.fc_gender = nn.Linear(2420, 1)
+        self.fc_race = nn.Linear(2420, 5)
+        self.fc_edu = nn.Linear(2420, 23)
+        self.fc_married = nn.Linear(2420, 7)
+        self.fc_site = nn.Linear(2420, 22)
+    
+    def forward(self, x):
+        x = self.pipelinedresnet(x)
+        x_fi = self.fc2(x)
+
+        x_age = self.fc_age(x)
+        x_gender = self.fc_gender(x)
+
+        x_race = self.fc_race(x)
+        x_race = F.log_softmax(x, dim = 1)
+
+        x_edu = self.fc_edu(x)
+        x_edu = F.log_softmax(x_edu, dim = 1)
+
+        x_married = self.fc_married(x)
+        x_married = F.log_softmax(x_married, dim = 1)
+        
+        x_site = self.fc_site(x)
+        x_site = F.log_softmax(x_site, dim = 1)
+
+        return [x_fi, x_age, x_gender, x_race, x_edu, x_married, x_site]

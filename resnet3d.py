@@ -250,12 +250,12 @@ class PipelinedResNet3dMulti(nn.Module):
         super(PipelinedResNet3dMulti, self).__init__()
         self.pipelinedresnet = pipelined_resnet3D50(devices, num_classes=512)
         self.fc2 = nn.Linear(512, 1).to(devices[0])
-        self.fc_age = nn.Linear(2420, 1)
-        self.fc_gender = nn.Linear(2420, 1)
-        self.fc_race = nn.Linear(2420, 5)
-        self.fc_edu = nn.Linear(2420, 23)
-        self.fc_married = nn.Linear(2420, 7)
-        self.fc_site = nn.Linear(2420, 22)
+        self.fc_age = nn.Linear(512, 1)
+        self.fc_gender = nn.Linear(512, 1)
+        self.fc_race = nn.Linear(512, 5)
+        self.fc_edu = nn.Linear(512, 23)
+        self.fc_married = nn.Linear(512, 7)
+        self.fc_site = nn.Linear(512, 22)
     
     def forward(self, x):
         x = self.pipelinedresnet(x)

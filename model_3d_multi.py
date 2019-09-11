@@ -104,6 +104,11 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
         epoch_start = time.time()
 
         for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
+            print('Device 0: {}'.format(torch.cuda.memory_allocated('cuda:0')))
+            print('Device 1: {}'.format(torch.cuda.memory_allocated('cuda:1')))
+            print('Device 2: {}'.format(torch.cuda.memory_allocated('cuda:2')))
+            print('Device 3: {}'.format(torch.cuda.memory_allocated('cuda:3')))
+            
             LOGGER.info('Starting batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
             batch_img = batch_img.unsqueeze(1)
 

@@ -193,34 +193,31 @@ class PipelinedResNet3d(ResNet3d):
         devices = ['cuda:{}'.format(device) for device in devices]
         self.dev1, self.dev2, self.dev3, self.dev4 = devices[0], devices[1], devices[2], devices[3]
         self.conv1    =  self.conv1.to(self.dev1)
-        self.bn1      =  self.bn1.to(self.dev2)
-        self.relu     =  self.relu.to(self.dev2)
+        self.bn1      =  self.bn1.to(self.dev1)
+        self.relu     =  self.relu.to(self.dev1)
         self.maxpool  =  self.maxpool.to(self.dev2)
-        self.layer1   =  self.layer1.to(self.dev3)
-        self.layer2   =  self.layer2.to(self.dev4)
-        self.layer3   =  self.layer3.to(self.dev4)
-        self.layer4   =  self.layer4.to(self.dev4)
+        self.layer1   =  self.layer1.to(self.dev2)
+        self.layer2   =  self.layer2.to(self.dev3)
+        self.layer3   =  self.layer3.to(self.dev3)
+        self.layer4   =  self.layer4.to(self.dev3)
         self.avgpool  =  self.avgpool.to(self.dev4)
         self.fc       =  self.fc.to(self.dev4)
 
     def forward(self, x): 
         x = self.conv1(x)
-       
-        x = x.to(self.dev2)
-       
         x = self.bn1(x)
         x = self.relu(x)
-        x = self.maxpool(x)
-       
-        x = x.to(self.dev3)
 
+        x = x.to(self.dev2)
+        x = self.maxpool(x)
         x = self.layer1(x)
 
-        x = x.to(self.dev4)
- 
+        x = x.to(self.dev3)
         x = self.layer2(x)
         x = self.layer3(x)
         x = self.layer4(x)
+
+        x = x.to(self.dev4)
         x = self.avgpool(x)
         x = x.view(x.size(0), -1) 
         x = self.fc(x)

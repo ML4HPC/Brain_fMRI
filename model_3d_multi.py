@@ -171,7 +171,7 @@ def eval_multi(model, valid_loader, losses, save=False, output_dir=None):
     with torch.no_grad():
         for batch_idx, (batch_img, batch_target) in enumerate(valid_loader):
             LOGGER.info('Evaluating batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(valid_loader.dataset)))
-            batch_img = batch_img.unsqueeze(1).cuda()
+            batch_img = batch_img.unsqueeze(1).to('cuda:0')
 
             outputs = model(batch_img)
     

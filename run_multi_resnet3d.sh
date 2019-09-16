@@ -1,6 +1,6 @@
-if [$# < 1]
+if [$# -ne 1]
 then
-    echo Provide output directory as command line argument!
+    echo 'Provide output directory as command line argument!'
     exit 1
 fi
 

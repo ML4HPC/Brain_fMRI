@@ -162,7 +162,6 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
 
 def eval_multi(model, valid_loader, losses, save=False, output_dir=None):
     model.eval()
-    model.cuda()
     #loss = loss.cuda()
     
     target_true = []
@@ -171,7 +170,7 @@ def eval_multi(model, valid_loader, losses, save=False, output_dir=None):
     with torch.no_grad():
         for batch_idx, (batch_img, batch_target) in enumerate(valid_loader):
             LOGGER.info('Evaluating batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(valid_loader.dataset)))
-            batch_img = batch_img.unsqueeze(1).to('cuda:0')
+            batch_img = batch_img.unsqueeze(1).cuda()
 
             outputs = model(batch_img)
     

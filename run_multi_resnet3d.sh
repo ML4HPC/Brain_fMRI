@@ -1,4 +1,6 @@
-if [$# -ne 1]
+#!/bin/sh
+
+if ['$#' -ne 1]
 then
     echo 'Provide output directory as command line argument!'
     exit 1

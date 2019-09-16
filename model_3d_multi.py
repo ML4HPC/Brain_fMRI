@@ -162,6 +162,7 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
 
 def eval_multi(model, valid_loader, losses, save=False, output_dir=None):
     model.eval()
+    #model.cuda()
     #loss = loss.cuda()
     
     target_true = []

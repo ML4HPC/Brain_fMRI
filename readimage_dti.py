@@ -21,6 +21,7 @@ def readimages_dti(path, resize,  dti_type, output_dir):
             continue
         
         subject = name[sub_start:sub_end]
+        subject = name[sub_start:sub_start+4] + '_' + name[sub_start+4:sub_end]
 
         # Print progress
         if i % 100 == 0:

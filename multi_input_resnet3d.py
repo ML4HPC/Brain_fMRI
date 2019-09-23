@@ -168,9 +168,9 @@ class TwoInputResNet3d(nn.Module):
         super(TwoInputResNet3d, self).__init__()
         assert( len(devices) == 3 and torch.cuda.is_available() )
         self.devs   =  ['cuda:{}'.format(device) for device in devices]
-        self.head1  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(devs[0])
-        self.head2  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(devs[1])
-        self.tail   =  ResNet3dPost(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(devs[2])
+        self.head1  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[0])
+        self.head2  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[1])
+        self.tail   =  ResNet3dPost(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[2])
 
     def forward(self, x):
         x1 = self.head1(x[0])
@@ -184,7 +184,7 @@ class TwoInputResNet3d(nn.Module):
 
 class ThreeInputResNet3d(nn.Module):
     """
-        require three devices
+        require four devices
     """
     def __init__(self, block, layers, devices, num_classes=1000, zero_init_residual=False,
                  groups=1, width_per_group=64, replace_stride_with_dilation=None,
@@ -192,10 +192,10 @@ class ThreeInputResNet3d(nn.Module):
         super(ThreeInputResNet3d, self).__init__()
         assert( len(devices) == 4 and torch.cuda.is_available() )
         self.devs   =  ['cuda:{}'.format(device) for device in devices]
-        self.head1  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(devs[0])
-        self.head2  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(devs[1])
-        self.head3  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(devs[2])
-        self.tail   =  ResNet3dPost(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(devs[3])
+        self.head1  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[0])
+        self.head2  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[1])
+        self.head3  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[2])
+        self.tail   =  ResNet3dPost(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[3])
 
     def forward(self, x):
         x1 = self.head1(x[0])
@@ -209,5 +209,8 @@ class ThreeInputResNet3d(nn.Module):
         x  = x.to(self.devs[0])
         return x
 
-def biinput_resnet3D50(devices, **kwargs):
+def bi_input_resnet3D50(devices, **kwargs):
     return TwoInputResNet3d(Bottleneck3d,[3, 4, 6, 3], devices, **kwargs)
+
+def tri_input_resnet3D50(devices, **kwargs):
+    return ThreeInputResNet3d(Bottleneck3d,[3, 4, 6, 3], devices, **kwargs)

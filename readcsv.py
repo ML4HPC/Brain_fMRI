@@ -18,6 +18,12 @@ if __name__ == "__main__":
     parser.add_argument('--output_dir', help='Path to directory for saving outputs')
     args = parser.parse_args()
 
+    if not os.path.isdir(args.output_dir):
+        try:
+            os.mkdir(args.output_dir)
+        except:
+            raise Exception('Could not create output directory')
+
     # Using residualized fluid intelligence scores using our own brain volumetric variable
     train = "training_fluid_intelligence_sri.csv"
     valid = "validation_fluid_intelligence_sri.csv"

@@ -1,12 +1,7 @@
+import os
 import csv
 import numpy as np
-
-path = "/global/cscratch1/sd/yanzhang/data_brain/image03/"
-
-train = "training_fluid_intelligenceV1.csv"
-valid = "validation_fluid_intelligenceV1.csv"
-
-
+import argparse
 
 def readcsv(path, filename):
     with open(path+filename) as csvfile:
@@ -17,21 +12,25 @@ def readcsv(path, filename):
             csv_dict[row[0]] = row[1]
     return csv_dict
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Read target csv for dti')
+    parser.add_argument('--data_dir', help='Path to dataset images')
+    parser.add_argument('--output_dir', help='Path to directory for saving outputs')
+    args = parser.parse_args()
 
+    train = "training_fluid_intelligenceV1.csv"
+    valid = "validation_fluid_intelligenceV1.csv"
+    
+    csv_train = readcsv(args.data_dir, train)
+    csv_valid = readcsv(args.data_dir, valid)
 
-csv_train = readcsv(path, train)
-csv_valid = readcsv(path, valid)
+    for key, value in csv_train.items():
+        print(key, value)
 
+    for key, value in csv_valid.items():
+        print(key, value)
 
-for key, value in csv_train.items():
-    print(key, value)
-
-for key, value in csv_valid.items():
-    print(key, value)
-
-
-
-print('saving train dict!')
-np.save('csv_train_target.npy', csv_train)
-print('saving valid dict!')
-np.save('csv_valid_target.npy', csv_valid)
+    print('saving train dict!')
+    np.save(os.path.join(args.data_dir, 'csv_train_target.npy'), csv_train)
+    print('saving valid dict!')
+    np.save(os.path.join(args.data_dir, 'csv_valid_target.npy'), csv_valid)

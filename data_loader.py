@@ -53,14 +53,16 @@ for i in range(len(valid_data_target)):
     valid_data_target[i] = np.float(valid_data_target[i])
 '''
 
-
+assert(len(train_data_img) == len(train_data_target))
+assert(len(valid_data_img) == len(valid_data_target))
+assert(len(test_data_img) == len(test_data_target))
 
 np.save('train_data_img.npy', train_data_img)
 np.save('valid_data_img.npy', valid_data_img)
-np.save('test_data_img.npy', valid_data_img)
+np.save('test_data_img.npy', test_data_img)
 np.save('train_data_target.npy', train_data_target)
 np.save('valid_data_target.npy', valid_data_target)
-np.save('test_data_target.npy', valid_data_target)
+np.save('test_data_target.npy', test_data_target)
 
 
 

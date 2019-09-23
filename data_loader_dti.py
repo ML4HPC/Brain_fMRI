@@ -47,6 +47,13 @@ def create_dataset(path, output_dir):
         if key in all_img_md.item().keys():
             test_data_img_md.append(all_img_md.item()[key])
 
+    assert(len(train_data_img_fa) == len(train_data_img_md))
+    assert(len(valid_data_img_fa) == len(valid_data_img_md))
+    assert(len(test_data_img_fa) == len(test_data_img_md))
+
+    assert(len(train_data_img_fa) == len(train_data_target))
+    assert(len(valid_data_img_fa) == len(valid_data_target))
+    assert(len(test_data_img_fa) == len(test_data_target))
 
     np.save(os.path.join(output_dir, 'train_data_img_fa.npy'), train_data_img_fa)
     np.save(os.path.join(output_dir, 'train_data_img_md.npy'), train_data_img_md)

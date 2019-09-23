@@ -60,7 +60,7 @@ if __name__ == "__main__":
             raise Exception('Could not create output directory')
 
     print('Processing all images: train, valid, and test!')
-    all_img = readimages_dti(args.data_dir, args.resize, args.dti_type, args.output_dir,) 
+    all_img = readimages_dti(args.data_dir, args.resize, args.dti_type, args.output_dir) 
     np.save(os.path.join(args.output_dir, 'all_img_{}.npy'.format(args.dti_type)), all_img)
 
 

@@ -33,9 +33,12 @@ if __name__ == "__main__":
     for key, value in csv_valid.items():
         print(key, value)
 
+    for key, value in csv_test.items():
+        print(key, value)
+
     print('saving train dict!')
-    np.save(os.path.join(args.data_dir, 'csv_train_target.npy'), csv_train)
+    np.save(os.path.join(args.output_dir, 'csv_train_target.npy'), csv_train)
     print('saving valid dict!')
-    np.save(os.path.join(args.data_dir, 'csv_valid_target.npy'), csv_valid)
+    np.save(os.path.join(args.output_dir, 'csv_valid_target.npy'), csv_valid)
     print('saving test dict!')
-    np.save(os.path.join(args.data_dir, 'csv_test_target.npy'), csv_valid)
+    np.save(os.path.join(args.output_dir, 'csv_test_target.npy'), csv_valid)

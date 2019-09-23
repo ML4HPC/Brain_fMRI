@@ -91,6 +91,53 @@ class MultiMRIDataset(Dataset):
             y[0] = np.log(y[0]+40)
     
         return (x, y)
+
+class MultiInputMRIDataset(Dataset):
+    def __init__(self, input_data1, input_data2, input_data3, target, resize, normalize=False, log=False):
+        self.X_data1 = input_data1
+        self.X_data2 = input_data2
+        self.X_data3 = input_data3
+        self.Y_data = target
+        self.resize = resize
+        self.normalize = normalize
+        self.log = log
+
+        # Mean and std for t1-weighted structural MRI
+        self.mean = 70.4099
+        self.std = 190.856
+
+        if self.normalize:
+            print('Normalization applied to t1 structural MRI of dataset')
+        if self.log:
+            print('Log applied to dataset')
+    
+    def __len__(self):
+        return len(self.Y_data)
+
+    def get_x_data(self):
+        return [[np.array(x.dataobj) for x in self.X_data1], [np.array(x.dataobj) for x in self.X_data2], [np.array(x.dataobj) for x in self.X_data2]]
+    
+    def get_y_data(self):
+        return [y for y in self.Y_data]
+        
+    def __getitem__(self, idx):
+        x1 = np.array(self.X_data1[idx].dataobj)
+        x2 = np.array(self.X_data2[idx].dataobj)
+        x3 = np.array(self.X_data3[idx].dataobj)
+        y = self.Y_data[idx]
+
+        # Resize currently only applied to t1-weighted structural MRI, if applicable
+        if self.resize > 0:
+            np.resize(x1, (self.resize, self.resize, self.resize))
+        
+        # Normalization currently only applied to t1-weighted structural MRI, if applicable
+        if self.normalize:
+            x1 = np.divide(np.subtract(x1, self.mean), self.std)
+        
+        if self.log:
+            y = np.log(y+40)
+    
+        return ([x1, x2, x3], y)
     
 
 class SliceMRIDataset(Dataset):

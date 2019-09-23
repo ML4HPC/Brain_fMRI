@@ -47,4 +47,4 @@ if __name__ == "__main__":
     print('saving valid dict!')
     np.save(os.path.join(args.output_dir, 'csv_valid_target.npy'), csv_valid)
     print('saving test dict!')
-    np.save(os.path.join(args.output_dir, 'csv_test_target.npy'), csv_valid)
+    np.save(os.path.join(args.output_dir, 'csv_test_target.npy'), csv_test)

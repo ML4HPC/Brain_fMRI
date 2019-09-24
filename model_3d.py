@@ -148,7 +148,7 @@ class Args:
 args = Args()
 
 
-def train(model, epoch, train_loader, valid_loader, optimizer, loss, output_dir, checkpoint_epoch=0):
+def train(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss, output_dir, checkpoint_epoch=0):
     model.train()
     loss = nn.L1Loss()
 
@@ -186,10 +186,12 @@ def train(model, epoch, train_loader, valid_loader, optimizer, loss, output_dir,
             res.backward() 
             optimizer.step()
             
-            LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
+            LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, batch_idx * train_loader.batch_size, len(train_loader.dataset)))
 
             if batch_idx % 10 == 0:
-                LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, batch_idx * len(batch_img), len(train_loader.dataset), len(batch_img) * batch_idx / len(train_loader.dataset) * 100, res.item()))
+                LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+                    i, batch_idx * train_loader.batch_size, len(train_loader.dataset), 
+                    train_loader.batch_size * batch_idx / len(train_loader.dataset) * 100, res.item()))
             
             #torch.cuda.empty_cache()
             #del batch_img, batch_target
@@ -198,14 +200,27 @@ def train(model, epoch, train_loader, valid_loader, optimizer, loss, output_dir,
         epoch_train_time = epoch_end - epoch_start
 
         cur_mse = eval(model, valid_loader, loss)
-        results.write('Epoch {}: {} ({} s)\n'.format(i, cur_mse, epoch_train_time))
+        test_mse = eval(model, test_loader, loss)
+        results.write('Epoch {}: Validation {} Test {} ({} s)\n'.format(i, cur_mse, test_mse, epoch_train_time))
         results.flush()
-        torch.save(model.state_dict(), os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
-        torch.save(optimizer.state_dict(), os.path.join(output_dir, 'optimizer.pth'))
+        torch.save({
+            'epoch': i,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'loss': loss
+        }, '{}_epoch_{}.pth'.format(model._get_name(), i))
+        #torch.save(model.state_dict(), os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
+        #torch.save(optimizer.state_dict(), os.path.join(output_dir, 'optimizer.pth'))
 
         if cur_mse < best_mse:
             best_mse = cur_mse
-            torch.save(model.state_dict(), os.path.join(output_dir, 'best_{}_epoch.pth'.format(i)))
+            torch.save({
+                'epoch': i,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'loss': loss
+            }, 'best_epoch_{}.pth'.format(i))
+            #torch.save(model.state_dict(), os.path.join(output_dir, 'best_{}_epoch.pth'.format(i)))
     
     results.close()
             
@@ -213,8 +228,6 @@ def train(model, epoch, train_loader, valid_loader, optimizer, loss, output_dir,
 def eval(model, valid_loader, loss):
     model.eval()
     loss = nn.L1Loss()
-    
-    model.cuda()
     loss = loss.cuda()
     
     target_true = []
@@ -222,7 +235,7 @@ def eval(model, valid_loader, loss):
 
     with torch.no_grad():
         for batch_idx, (batch_img, batch_target) in enumerate(valid_loader):
-            LOGGER.info('Evaluating batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(valid_loader.dataset)))
+            LOGGER.info('Evaluating batch {}: [{}/{}]'.format(batch_idx, batch_idx * valid_loader.batch_size, len(valid_loader.dataset)))
             batch_img = batch_img.unsqueeze(1)
 
             batch_img = batch_img.cuda()
@@ -238,9 +251,9 @@ def eval(model, valid_loader, loss):
                 target_pred.extend(pred.cpu())
 
             if batch_idx % 10 == 0:
-                LOGGER.info('Eval Progress: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                batch_idx * len(batch_img), len(valid_loader.dataset), 
-                valid_loader.batch_size * batch_idx / len(valid_loader), res.item()))     
+                LOGGER.info('Eval Progress: [{}/{} ({:.0f}%)]'.format(
+                batch_idx * valid_loader.batch_size, len(valid_loader.dataset), 
+                valid_loader.batch_size * batch_idx / len(valid_loader.dataset) * 100))  
     
     target_true = np.subtract(np.exp(target_true), 40)
     target_pred = np.subtract(np.exp(target_pred),40)

@@ -250,13 +250,17 @@ def train_multi_input(model, epoch, train_loader, valid_loader, test_loader, opt
 
         for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
             LOGGER.info('Starting batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
-            batch_img = torch.tensor([img.unsqueeze(1) for img in batch_img.unsqueeze(1)])
 
             optimizer.zero_grad()
+            
+            new_batch_img = []
+            for i in range(len(batch_img)):
+                
+                new_batch_img.append(batch_img[i].unsqueeze(1).to.model.d
 
-            batch_img = batch_img.cuda()
+            batch_img = [img.unsqueeze(1).to('cuda:0') for img in batch_img]
             batch_target = batch_target.float().cuda()
-
+            IPython.embed()
             output = model(batch_img)
             res = loss(output.squeeze(), batch_target)
             res.backward() 

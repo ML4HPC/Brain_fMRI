@@ -93,54 +93,28 @@ class MultiMRIDataset(Dataset):
     
         return (x, y)
 
-class MultiInputMRIDataset(Dataset):
+class ThreeInputMRIDataset(Dataset):
     def __init__(self, input_data1, input_data2, input_data3, target, resize, normalize=False, log=False):
-        self.X_data1 = input_data1
-        self.X_data2 = input_data2
-        self.X_data3 = input_data3
-        self.Y_data = target
+        self.dataset1 = MRIDataset(input_data1, target, resize, normalize, log)
+        self.dataset2 = MRIDataset(input_data2, target, resize, normalize, log)
+        self.dataset3 = MRIDataset(input_data3, target, resize, normalize, log)
         self.resize = resize
         self.normalize = normalize
         self.log = log
-
-        # Mean and std for t1-weighted structural MRI
-        self.mean = 70.4099
-        self.std = 190.856
-
-        if self.normalize:
-            print('Normalization applied to t1 structural MRI of dataset')
-        if self.log:
-            print('Log applied to dataset')
     
     def __len__(self):
-        return len(self.Y_data)
+        return len(self.dataset1.get_y_data)
 
     def get_x_data(self):
-        return [[np.array(x.dataobj) for x in self.X_data1], [np.array(x.dataobj) for x in self.X_data2], [np.array(x.dataobj) for x in self.X_data2]]
+        return [self.dataset1.get_x_data(), self.dataset2.get_x_data(), self.dataset3.get_x_data()]
     
     def get_y_data(self):
-        return [y for y in self.Y_data]
+        return self.dataset1.get_y_data()
         
     def __getitem__(self, idx):
-        x1 = np.array(self.X_data1[idx].dataobj)
-        x2 = np.array(self.X_data2[idx].dataobj)
-        x3 = np.array(self.X_data3[idx].dataobj)
-        y = self.Y_data[idx]
-
-        # Resize currently only applied to t1-weighted structural MRI, if applicable
-        if self.resize > 0:
-            np.resize(x1, (self.resize, self.resize, self.resize))
-        
-        # Normalization currently only applied to t1-weighted structural MRI, if applicable
-        if self.normalize:
-            x1 = np.divide(np.subtract(x1, self.mean), self.std)
-        
-        if self.log:
-            y = np.log(y+40)
+        return ([self.dataset1[idx][0], self.dataset2[idx][0], self.dataset3[idx][0]], self.dataset1[idx][1])
     
-        return (torch.tensor([x1, x2, x3]), y)
     
-
 class SliceMRIDataset(Dataset):
     def __init__(self, dataset, collate_fn=default_collate):
         self.dataset = dataset

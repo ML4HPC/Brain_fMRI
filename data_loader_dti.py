@@ -3,9 +3,9 @@ import numpy as np
 import argparse
 
 def create_dataset(path, output_dir):
-    train_target = np.load(os.path.join(path, 'csv_train_target_vol.npy'), allow_pickle=True)
-    valid_target = np.load(os.path.join(path, 'csv_valid_target_vol.npy'), allow_pickle=True)
-    test_target = np.load(os.path.join(path, 'csv_test_target_vol.npy'), allow_pickle=True)
+    train_target = np.load(os.path.join(path, 'csv_train_target_dti.npy'), allow_pickle=True)
+    valid_target = np.load(os.path.join(path, 'csv_valid_target_dti.npy'), allow_pickle=True)
+    test_target = np.load(os.path.join(path, 'csv_test_target_dti.npy'), allow_pickle=True)
 
     all_img_fa = np.load(os.path.join(path, 'all_img_FA.npy'), allow_pickle=True)
     all_img_md = np.load(os.path.join(path, 'all_img_MD.npy'), allow_pickle=True)

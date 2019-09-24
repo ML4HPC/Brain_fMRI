@@ -25,9 +25,9 @@ if __name__ == "__main__":
             raise Exception('Could not create output directory')
 
     # Using residualized fluid intelligence scores using our own brain volumetric variable
-    train = "training_fluid_intelligence_sri.csv"
-    valid = "validation_fluid_intelligence_sri.csv"
-    test = "test_fluid_intelligence_sri.csv"
+    train = "train_fluid_intelligence_household.csv"
+    valid = "valid_fluid_intelligence_household.csv"
+    test = "test_fluid_intelligence_household.csv"
     
     csv_train = readcsv(args.data_dir, train)
     csv_valid = readcsv(args.data_dir, valid)

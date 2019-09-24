@@ -11,9 +11,9 @@ if __name__ == "__main__":
     parser.add_argument('--output_dir', help='Path to directory for saving outputs')
     args = parser.parse_args()
 
-    train = "training_fluid_intelligence_sri.csv"
-    valid = "validation_fluid_intelligence_sri.csv"
-    test = "test_fluid_intelligence_sri.csv"
+    train = "train_fluid_intelligence_household.csv"
+    valid = "valid_fluid_intelligence_household.csv"
+    test = "test_fluid_intelligence_household.csv"
 
     if not os.path.isdir(args.output_dir):
         try:
@@ -36,9 +36,9 @@ if __name__ == "__main__":
 
 
     print('saving train dict!')
-    np.save(os.path.join(args.output_dir, 'csv_train_target_vol.npy'), csv_train)
+    np.save(os.path.join(args.output_dir, 'csv_train_target_dti.npy'), csv_train)
     print('saving valid dict!')
-    np.save(os.path.join(args.output_dir, 'csv_valid_target_vol.npy'), csv_valid)
+    np.save(os.path.join(args.output_dir, 'csv_valid_target_dti.npy'), csv_valid)
     print('saving test dict!')
-    np.save(os.path.join(args.output_dir, 'csv_test_target_vol.npy'), csv_test)
+    np.save(os.path.join(args.output_dir, 'csv_test_target_dti.npy'), csv_test)
     

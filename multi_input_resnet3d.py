@@ -224,6 +224,7 @@ class ThreeInputResNet3d(nn.Module):
         self.head2  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[1])
         self.head3  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[2])
         self.tail   =  ResNet3dPost(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[3])
+        self.fc     =  nn.Linear(1000, 1).to(self.devs[3])
 
     def forward(self, x):
         x1 = self.head1(x[0])
@@ -235,6 +236,7 @@ class ThreeInputResNet3d(nn.Module):
 
         x  = torch.cat((x1,x2,x3),1)
         x  = self.tail(x)
+        x  = self.fc(x)
         x  = x.to(self.devs[0])
         return x
 

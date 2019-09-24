@@ -137,7 +137,7 @@ class MultiInputMRIDataset(Dataset):
         if self.log:
             y = np.log(y+40)
     
-        return ([x1, x2, x3], y)
+        return (torch.tensor([x1, x2, x3]), y)
     
 
 class SliceMRIDataset(Dataset):

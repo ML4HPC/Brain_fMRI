@@ -43,7 +43,7 @@ class MRIDataset(Dataset):
             x = np.divide(np.subtract(x, self.mean), self.std)
         
         if self.log:
-            y = np.log(y+40)
+            y = np.log(y+100)
     
         return (x, y)
 
@@ -89,7 +89,7 @@ class MultiMRIDataset(Dataset):
             x = np.divide(np.subtract(x, self.mean), self.std)
         
         if self.log:
-            y[0] = np.log(y[0]+40)
+            y[0] = np.log(y[0]+100)
     
         return (x, y)
 

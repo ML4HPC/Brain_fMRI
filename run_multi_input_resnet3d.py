@@ -16,7 +16,7 @@ if __name__ == "__main__":
     # Parsing arguments
     parser = argparse.ArgumentParser(description='Multi-channel/input ResNet3D for regression')
     parser.add_argument('--data_dir1', help='Directory path for first dataset')
-    parser.add_argument('--data_dir2', help-'Directory path for second dataset (second and third are same)')
+    parser.add_argument('--data_dir2', help='Directory path for second dataset (second and third are same)')
     parser.add_argument('--output_dir')
     parser.add_argument('--epoch', type=int, default=30)
     parser.add_argument('--train_batch_size', type=int, default=2)
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     parser.add_argument('--checkpoint_opt', default='')
     parser.add_argument('--resize', type=int, default=0)
     parser.add_argument('--normalize', type=bool, default=False)
-    parser.add_argument('--lr', type=float, default=0.001)
+    parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
     parser.add_argument('--optimizer', default='sgd', help='Optimizer type: adam, sgd')
     parser.add_argument('--sync_bn', default=False, help='Use sync batch norm or not (True/False)')

@@ -255,13 +255,11 @@ def train_multi_input(model, epoch, train_loader, valid_loader, test_loader, opt
             
             new_batch_img = []
             for i in range(len(batch_img)):
-                
-                new_batch_img.append(batch_img[i].unsqueeze(1).to.model.d
-
-            batch_img = [img.unsqueeze(1).to('cuda:0') for img in batch_img]
+                devs = model.get_devices()
+                new_batch_img.append(batch_img[i].unsqueeze(1).to(devs[i]))
+            
             batch_target = batch_target.float().cuda()
-            IPython.embed()
-            output = model(batch_img)
+            output = model(new_batch_img)
             res = loss(output.squeeze(), batch_target)
             res.backward() 
             optimizer.step()

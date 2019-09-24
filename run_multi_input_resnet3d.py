@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
     train_dataset = ThreeInputMRIDataset(train_img, train_img_fa, train_img_md, train_target, args.resize, args.normalize, args.log)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size)
-    valid_dataset = ThreeInputMRIDatasetc(valid_img, valid_img_fa, valid_img_md, valid_target, args.resize, args.normalize, args.log)
+    valid_dataset = ThreeInputMRIDataset(valid_img, valid_img_fa, valid_img_md, valid_target, args.resize, args.normalize, args.log)
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
     test_dataset = ThreeInputMRIDataset(test_img, test_img_fa, test_img_md, test_target, args.resize, args.normalize, args.log)
     test_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size)

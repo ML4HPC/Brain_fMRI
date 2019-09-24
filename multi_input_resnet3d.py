@@ -214,6 +214,10 @@ class ThreeInputResNet3d(nn.Module):
         x  = x.to(self.devs[0])
         return x
 
+    def get_devices(self):
+        return self.devs
+
+
 def bi_input_resnet3D50(devices, **kwargs):
     return TwoInputResNet3d(Bottleneck3d,[3, 4, 6, 3], devices, **kwargs)
 

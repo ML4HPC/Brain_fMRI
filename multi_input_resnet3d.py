@@ -81,6 +81,33 @@ class ResNet3dPre(nn.Module):
 
         return x
 
+def resnet3d_pre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer):
+    return ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer)
+
+
+class ResNet3dPrePool(nn.Module):
+    """ 
+        only upto layer 1 
+    """
+
+    def __init__(self, block, layers, num_classes=1000, zero_init_residual=False,
+                 groups=1, width_per_group=64, replace_stride_with_dilation=None,
+                 norm_layer=None):
+        super(ResNet3dPrePool, self).__init__()
+        self.resnet3dpre = resnet3d_pre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer)
+        self.avgpool = nn.AdaptiveAvgPool3d((48, 48, 48))
+
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.maxpool(x)
+        x = self.layer1(x)
+        x = self.avgpool(x)
+
+        return x
+
 class ResNet3dPost(nn.Module):
     """ 
         the next 3 layers 
@@ -197,7 +224,7 @@ class ThreeInputResNet3d(nn.Module):
         super(ThreeInputResNet3d, self).__init__()
         assert( len(devices) == 4 and torch.cuda.is_available() )
         self.devs   =  ['cuda:{}'.format(device) for device in devices]
-        self.head1  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[0])
+        self.head1  =  ResNet3dPrePool(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[0])
         self.head2  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[1])
         self.head3  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[2])
         self.tail   =  ResNet3dPost(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[3])
@@ -209,6 +236,7 @@ class ThreeInputResNet3d(nn.Module):
         x1 = x1.to(self.devs[3])
         x2 = x2.to(self.devs[3])
         x3 = x3.to(self.devs[3])
+
         x  = torch.cat((x1,x2,x3),1)
         x  = self.tail(x)
         x  = x.to(self.devs[0])

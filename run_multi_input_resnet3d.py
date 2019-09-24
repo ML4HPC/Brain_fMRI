@@ -26,6 +26,7 @@ if __name__ == "__main__":
     parser.add_argument('--checkpoint_opt', default='')
     parser.add_argument('--resize', type=int, default=0)
     parser.add_argument('--normalize', type=bool, default=False)
+    parser.add_argument('--log', type=bool, default=False)
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.5)
     parser.add_argument('--optimizer', default='sgd', help='Optimizer type: adam, sgd')
@@ -63,11 +64,11 @@ if __name__ == "__main__":
     valid_target = np.load(os.path.join(args.data_dir1, 'valid_data_target.npy'), allow_pickle=True)
     test_target = np.load(os.path.join(args.data_dir1, 'test_data_target.npy'), allow_pickle=True)
 
-    train_dataset = MultiInputMRIDataset(train_img, train_img_fa, train_img_md, train_target, args.resize, args.normalize)
+    train_dataset = MultiInputMRIDataset(train_img, train_img_fa, train_img_md, train_target, args.resize, args.normalize, args.log)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size)
-    valid_dataset = MultiInputMRIDataset(valid_img, valid_img_fa, valid_img_md, valid_target, args.resize, args.normalize)
+    valid_dataset = MultiInputMRIDataset(valid_img, valid_img_fa, valid_img_md, valid_target, args.resize, args.normalize, args.log)
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
-    test_dataset = MultiInputMRIDataset(test_img, test_img_fa, test_img_md, test_target, args.resize, args.normalize)
+    test_dataset = MultiInputMRIDataset(test_img, test_img_fa, test_img_md, test_target, args.resize, args.normalize, args.log)
     test_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size)
 
     if args.optimizer == 'sgd':

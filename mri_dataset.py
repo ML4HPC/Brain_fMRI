@@ -6,6 +6,7 @@ from scipy.ndimage import zoom
 
 class MRIDataset(Dataset):
     def __init__(self, input_data, target, resize, normalize=False, log=False):
+        assert(!np.isnan(input_data.numpy()).any())
         self.X_data = input_data
         self.Y_data = target
         self.resize = resize

@@ -223,6 +223,82 @@ def train(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss
             #torch.save(model.state_dict(), os.path.join(output_dir, 'best_{}_epoch.pth'.format(i)))
     
     results.close()
+
+def train_multi_input(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss, output_dir, checkpoint_epoch=0):
+    model.train()
+    loss = nn.L1Loss()
+
+    loss = loss.cuda()
+    best_mse = float('inf')
+
+    if checkpoint_epoch <= 0:
+        # Create output directory and results file
+        try:
+            os.mkdir(output_dir)
+            #results = open(os.path.join(output_dir, 'results.txt'), 'w+')
+        except: 
+            raise Exception('Output directory / results file cannot be created')
+
+    results = open((output_dir+'/results.txt'), 'a+')
+
+    start_epoch = 0
+    if checkpoint_epoch > 0:
+        start_epoch = checkpoint_epoch
+
+    for i in range(start_epoch, epoch):
+        epoch_start = time.time()
+
+        for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
+            LOGGER.info('Starting batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
+            batch_img = torch.tensor([img.unsqueeze(1) for img in batch_img.unsqueeze(1)])
+
+            optimizer.zero_grad()
+
+            batch_img = batch_img.cuda()
+            batch_target = batch_target.float().cuda()
+
+            output = model(batch_img)
+            res = loss(output.squeeze(), batch_target)
+            res.backward() 
+            optimizer.step()
+            
+            LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, batch_idx * train_loader.batch_size, len(train_loader.dataset)))
+
+            if batch_idx % 10 == 0:
+                LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+                    i, batch_idx * train_loader.batch_size, len(train_loader.dataset), 
+                    train_loader.batch_size * batch_idx / len(train_loader.dataset) * 100, res.item()))
+            
+            #torch.cuda.empty_cache()
+            #del batch_img, batch_target
+        
+        epoch_end = time.time()
+        epoch_train_time = epoch_end - epoch_start
+
+        cur_mse = eval(model, valid_loader, loss)
+        test_mse = eval(model, test_loader, loss)
+        results.write('Epoch {}: Validation {} Test {} ({} s)\n'.format(i, cur_mse, test_mse, epoch_train_time))
+        results.flush()
+        torch.save({
+            'epoch': i,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'loss': loss
+        }, '{}_epoch_{}.pth'.format(model._get_name(), i))
+        #torch.save(model.state_dict(), os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
+        #torch.save(optimizer.state_dict(), os.path.join(output_dir, 'optimizer.pth'))
+
+        if cur_mse < best_mse:
+            best_mse = cur_mse
+            torch.save({
+                'epoch': i,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'loss': loss
+            }, 'best_epoch_{}.pth'.format(i))
+            #torch.save(model.state_dict(), os.path.join(output_dir, 'best_{}_epoch.pth'.format(i)))
+    
+    results.close()
             
 
 def eval(model, valid_loader, loss):
@@ -265,6 +341,8 @@ def eval(model, valid_loader, loss):
     LOGGER.info('Mean squared error: {}'.format(mse))
 
     return mse
+
+
     
 
 

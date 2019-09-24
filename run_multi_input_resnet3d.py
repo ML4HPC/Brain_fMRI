@@ -3,8 +3,8 @@ import torch.optim as optim
 import torch.nn as nn
 import multi_input_resnet3d 
 import numpy as np
-from mri_dataset import MultiInputMRIDataset
-from model_3d import train, eval
+from mri_dataset import ThreeInputMRIDataset
+from model_3d import train_multi_input, eval
 import argparse
 import os
 import apex
@@ -64,11 +64,11 @@ if __name__ == "__main__":
     valid_target = np.load(os.path.join(args.data_dir1, 'valid_data_target.npy'), allow_pickle=True)
     test_target = np.load(os.path.join(args.data_dir1, 'test_data_target.npy'), allow_pickle=True)
 
-    train_dataset = MultiInputMRIDataset(train_img, train_img_fa, train_img_md, train_target, args.resize, args.normalize, args.log)
+    train_dataset = ThreeInputMRIDataset(train_img, train_img_fa, train_img_md, train_target, args.resize, args.normalize, args.log)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size)
-    valid_dataset = MultiInputMRIDataset(valid_img, valid_img_fa, valid_img_md, valid_target, args.resize, args.normalize, args.log)
+    valid_dataset = ThreeInputMRIDatasetc(valid_img, valid_img_fa, valid_img_md, valid_target, args.resize, args.normalize, args.log)
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
-    test_dataset = MultiInputMRIDataset(test_img, test_img_fa, test_img_md, test_target, args.resize, args.normalize, args.log)
+    test_dataset = ThreeInputMRIDataset(test_img, test_img_fa, test_img_md, test_target, args.resize, args.normalize, args.log)
     test_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size)
 
     if args.optimizer == 'sgd':
@@ -84,6 +84,6 @@ if __name__ == "__main__":
     loss = nn.L1Loss()
 
     if not args.checkpoint_state:
-        train(model, args.epoch, train_loader, valid_loader, test_loader, optimizer, loss, args.output_dir)
+        train_multi_input(model, args.epoch, train_loader, valid_loader, test_loader, optimizer, loss, args.output_dir)
     else:
-        train(model, args.epoch, train_loader, valid_loader, test_loader, optimizer, loss, args.output_dir, checkpoint_epoch=args.checkpoint_epoch)
+        train_multi_input(model, args.epoch, train_loader, valid_loader, test_loader, optimizer, loss, args.output_dir, checkpoint_epoch=args.checkpoint_epoch)

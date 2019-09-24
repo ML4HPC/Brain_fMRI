@@ -84,6 +84,6 @@ if __name__ == "__main__":
     loss = nn.L1Loss()
 
     if not args.checkpoint_state:
-        train(model, args.epoch, train_loader, valid_loader, optimizer, loss, args.output_dir)
+        train(model, args.epoch, train_loader, valid_loader, test_loader, optimizer, loss, args.output_dir)
     else:
-        train(model, args.epoch, train_loader, valid_loader, optimizer, loss, args.output_dir, checkpoint_epoch=args.checkpoint_epoch)
+        train(model, args.epoch, train_loader, valid_loader, test_loader, optimizer, loss, args.output_dir, checkpoint_epoch=args.checkpoint_epoch)

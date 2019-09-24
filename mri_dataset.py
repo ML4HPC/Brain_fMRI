@@ -103,7 +103,7 @@ class ThreeInputMRIDataset(Dataset):
         self.log = log
     
     def __len__(self):
-        return len(self.dataset1.get_y_data)
+        return len(self.dataset1.get_y_data())
 
     def get_x_data(self):
         return [self.dataset1.get_x_data(), self.dataset2.get_x_data(), self.dataset3.get_x_data()]

@@ -99,11 +99,7 @@ class ResNet3dPrePool(nn.Module):
 
 
     def forward(self, x):
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu(x)
-        x = self.maxpool(x)
-        x = self.layer1(x)
+        x = self.resnet3dpre(x)
         x = self.avgpool(x)
 
         return x

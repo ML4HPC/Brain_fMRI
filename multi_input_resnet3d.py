@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from resnet3d import Bottleneck3d
+from resnet3d import Bottleneck3d, conv1x1_3d, conv3x3_3d
 
 class ResNet3dPre(nn.Module):
     """ 

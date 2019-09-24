@@ -1,3 +1,7 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
 class ResNet3dPre(nn.Module):
     """ 
         only upto layer 1 

@@ -6,7 +6,7 @@ then
     exit 1
 fi
 
-bsz=4
+bsz=3
 outdir=$1
 cwd=$(pwd)
 cur_filepath="${cwd}/${0}"

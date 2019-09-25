@@ -17,6 +17,9 @@ def check_count_nan(path):
         nan_count.append(cur_nan_count)
         cur_ratio = cur_nan_count / x.shape[0] * 100
         nan_ratio.append(cur_ratio)
+    
+    np.save('nan_count.npy', nan_count)
+    np.save('nan_ratio.npy', nan_ratio)
 
     return nan_count, nan_ratio
 

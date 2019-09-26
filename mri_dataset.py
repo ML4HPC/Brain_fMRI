@@ -99,8 +99,8 @@ class MultiMRIDataset(Dataset):
 class ThreeInputMRIDataset(Dataset):
     def __init__(self, input_data1, input_data2, input_data3, target, resize, normalize=False, log=False):
         self.dataset1 = MRIDataset(input_data1, target, resize, normalize, log)
-        self.dataset2 = MRIDataset(input_data2, target, resize, normalize=False, log=False)
-        self.dataset3 = MRIDataset(input_data3, target, resize, normalize=False, log=False)
+        self.dataset2 = MRIDataset(input_data2, target, resize, normalize=False, log=False, nan=True)
+        self.dataset3 = MRIDataset(input_data3, target, resize, normalize=False, log=False, nan=True)
         self.resize = resize
         self.normalize = normalize
         self.log = log

@@ -254,9 +254,11 @@ def train_multi_input(model, epoch, train_loader, valid_loader, test_loader, opt
             optimizer.zero_grad()
             
             new_batch_img = []
-            for i in range(len(batch_img)):
+            
+            # Moving each type of image to respective GPUs
+            for j in range(len(batch_img)):
                 devs = model.get_devices()
-                new_batch_img.append(batch_img[i].unsqueeze(1).to(devs[i]))
+                new_batch_img.append(batch_img[j].unsqueeze(1).to(devs[j]))
             
             batch_target = batch_target.float().cuda()
             output = model(new_batch_img)

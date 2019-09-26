@@ -5,13 +5,13 @@ import numpy as np
 from scipy.ndimage import zoom
 
 class MRIDataset(Dataset):
-    def __init__(self, input_data, target, resize, normalize=False, log=False):
-        assert(!np.isnan(input_data.numpy()).any())
+    def __init__(self, input_data, target, resize, normalize=False, log=False, nan=False):
         self.X_data = input_data
         self.Y_data = target
         self.resize = resize
         self.normalize = normalize
         self.log = log
+        self.nan = nan
         self.mean = 70.4099
         self.std = 190.856
 
@@ -19,6 +19,8 @@ class MRIDataset(Dataset):
             print('Normalization applied to dataset')
         if self.log:
             print('Log applied to dataset')
+        if self.nan:
+            print('NaN replaced with 0s')
     
     def __len__(self):
         return len(self.Y_data)
@@ -30,13 +32,13 @@ class MRIDataset(Dataset):
         return [y for y in self.Y_data]
         
     def __getitem__(self, idx):
-        # img_data = np.array(self.X_data[idx].dataobj)
-        # if self.resize:
-        #     img_data = zoom(img_data, self.resize)
-        #dim = 90
         x = np.array(self.X_data[idx].dataobj)
         y = self.Y_data[idx]
-
+        
+        if self.nan:
+            x = np.nan_to_num(x)
+            assert(not np.isnan(x).any())
+            
         if self.resize > 0:
             np.resize(x, (self.resize, self.resize, self.resize))
         

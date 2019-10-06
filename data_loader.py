@@ -20,17 +20,17 @@ def create_dataset(path, output_dir, mri_type):
     for key in train_target.item().keys():
         if key in all_img.item().keys():
             train_data_img.append(all_img.item()[key])
-            train_data_target.append(np.float(train_target.item()[key]))
+            train_data_target.append([np.float(target) for target in train_target.item()[key]])
 
     for key in valid_target.item().keys():
         if key in all_img.item().keys():
             valid_data_img.append(all_img.item()[key])
-            valid_data_target.append(np.float(valid_target.item()[key]))
+            valid_data_target.append([np.float(target) for target in valid_target.item()[key]])
 
     for key in test_target.item().keys():
         if key in all_img.item().keys():
             test_data_img.append(all_img.item()[key])
-            test_data_target.append(np.float(test_target.item()[key]))
+            test_data_target.append([np.float(target) for target in test_target.item()[key]])
 
     assert(len(train_data_img) == len(train_data_target))
     assert(len(valid_data_img) == len(valid_data_target))

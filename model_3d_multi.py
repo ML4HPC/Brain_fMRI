@@ -153,7 +153,7 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
         cur_mse = eval_multi(model, valid_loader, losses)
         results.write('Epoch {}: {} ({} s)\n'.format(i, cur_mse, epoch_train_time))
         results.flush()
-                torch.save({
+        torch.save({
             'epoch': i,
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
@@ -268,7 +268,7 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
                 target = torch.tensor([t[j] for t in batch_target]).squeeze().cuda()
 
                 # For cross entropy loss, need long tensors
-                if k in [3, 4, 5, 6, 7]:
+                if k in [2, 3, 4, 5, 6]:
                     cur_loss = criterion(output, target.long())
                 else:
                     cur_loss = criterion(output, target.float())
@@ -290,8 +290,8 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
         epoch_end = time.time()
         epoch_train_time = epoch_end - epoch_start
 
-        cur_mse = eval(model, valid_loader, loss)
-        test_mse = eval(model, test_loader, loss)
+        cur_mse = eval_multi_input_output(model, valid_loader, loss)
+        test_mse = eval_multi_input_output(model, test_loader, loss)
         results.write('Epoch {}: Validation {} Test {} ({} s)\n'.format(i, cur_mse, test_mse, epoch_train_time))
         results.flush()
         torch.save({

@@ -243,9 +243,163 @@ class ThreeInputResNet3d(nn.Module):
     def get_devices(self):
         return self.devs
 
+class SixInputResNet3d(nn.Module):
+    """
+        require four devices
+    """
+    def __init__(self, block, layers, devices, num_classes=1000, zero_init_residual=False,
+                 groups=1, width_per_group=64, replace_stride_with_dilation=None,
+                 norm_layer=None):
+        super(SixInputResNet3d, self).__init__()
+        assert( len(devices) == 7 and torch.cuda.is_available() )
+        self.devs   =  ['cuda:{}'.format(device) for device in devices]
+        self.head1  =  ResNet3dPrePool(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[0])
+        self.head2  =  ResNet3dPrePool(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[1])
+        self.head3  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[2])
+        self.head4  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[3])
+        self.head5  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[4])
+        self.head6  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[5])
+        self.tail   =  ResNet3dPost(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[6])
+        self.fc     =  nn.Linear(1000, 1).to(self.devs[6])
+
+    def forward(self, x):
+        x1 = self.head1(x[0])
+        x2 = self.head2(x[1])
+        x3 = self.head3(x[2])
+        x4 = self.head4(x[3])
+        x5 = self.head5(x[4])
+        x6 = self.head6(x[5])
+
+        x1 = x1.to(self.devs[6])
+        x2 = x2.to(self.devs[6])
+        x3 = x3.to(self.devs[6])
+        x4 = x3.to(self.devs[6])
+        x5 = x3.to(self.devs[6])
+        x6 = x3.to(self.devs[6])
+
+        x  = torch.cat((x1,x2,x3,x4,x5,x6),1)
+        x  = self.tail(x)
+        x  = self.fc(x)
+        x  = x.to(self.devs[0])
+        return x
+
+    def get_devices(self):
+        return self.devs
+
+
+class SixInputMultiOutputResNet3d(nn.Module):
+    """
+        require four devices
+    """
+    def __init__(self, block, layers, devices, num_classes=1000, zero_init_residual=False,
+                 groups=1, width_per_group=64, replace_stride_with_dilation=None,
+                 norm_layer=None):
+        super(SixInputMultiOutputResNet3d, self).__init__()
+        assert( len(devices) == 8 and torch.cuda.is_available() )
+        self.devs   =  ['cuda:{}'.format(device) for device in devices]
+        self.head1  =  ResNet3dPrePool(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[0])
+        self.head2  =  ResNet3dPrePool(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[1])
+        self.head3  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[2])
+        self.head4  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[3])
+        self.head5  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[4])
+        self.head6  =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[5])
+        self.tail   =  ResNet3dPost(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[6])
+        # Age
+        self.fc1    =  nn.Linear(1000, 1).to(self.devs[7])
+        # Gender
+        self.fc2    =  nn.Linear(1000, 1).to(self.devs[7])
+        # Race
+        self.fc3    =  nn.Linear(1000, 5).to(self.devs[7])
+        # Education
+        self.fc4    =  nn.Linear(1000, 23).to(self.devs[7])
+        # Income
+        self.fc5    =  nn.Linear(1000, 10).to(self.devs[7])
+        # Married
+        self.fc6    =  nn.Linear(1000, 6).to(self.devs[7])
+        # ABCD site
+        self.fc7    =  nn.Linear(1000, 22).to(self.devs[7])
+        # Volume
+        self.fc8    =  nn.Linear(1000, 1).to(self.devs[7])
+        # Height
+        self.fc9    =  nn.Linear(1000, 1).to(self.devs[7])
+        # Weight
+        self.fc10    =  nn.Linear(1000, 1).to(self.devs[7])
+        # BMI
+        self.fc11    =  nn.Linear(1000, 1).to(self.devs[7])
+        # Fluid intelligence
+        self.fc12    =  nn.Linear(1000, 1).to(self.devs[7])
+        # Crystallized intelligence
+        self.fc13    =  nn.Linear(1000, 1).to(self.devs[7])
+        # Pattern score
+        self.fc14    =  nn.Linear(1000, 1).to(self.devs[7])
+        # Picture score
+        self.fc15    =  nn.Linear(1000, 1).to(self.devs[7])
+        # List score
+        self.fc16    =  nn.Linear(1000, 1).to(self.devs[7])
+        # Flanker score
+        self.fc17    =  nn.Linear(1000, 1).to(self.devs[7])
+        # Pic/Vocab score
+        self.fc18    =  nn.Linear(1000, 1).to(self.devs[7])
+        # Cards sort score
+        self.fc19    =  nn.Linear(1000, 1).to(self.devs[7])
+        # Total score
+        self.fc20    =  nn.Linear(1000, 1).to(self.devs[7])
+        # Reading score
+        self.fc21    =  nn.Linear(1000, 1).to(self.devs[7])
+
+
+    def forward(self, x):
+        x1 = self.head1(x[0])
+        x2 = self.head2(x[1])
+        x3 = self.head3(x[2])
+        x4 = self.head4(x[3])
+        x5 = self.head5(x[4])
+        x6 = self.head6(x[5])
+
+        x1 = x1.to(self.devs[6])
+        x2 = x2.to(self.devs[6])
+        x3 = x3.to(self.devs[6])
+        x4 = x3.to(self.devs[6])
+        x5 = x3.to(self.devs[6])
+        x6 = x3.to(self.devs[6])
+
+        x  = torch.cat((x1,x2,x3,x4,x5,x6),1)
+        x  = self.tail(x)
+
+        x_final = []
+        x_final.append(self.fc1(x))
+        x_final.append(self.fc2(x))
+        x_final.append(self.fc3(x))
+        x_final.append(self.fc4(x))
+        x_final.append(self.fc5(x))
+        x_final.append(self.fc6(x))
+        x_final.append(self.fc7(x))
+        x_final.append(self.fc8(x))
+        x_final.append(self.fc9(x))
+        x_final.append(self.fc10(x))
+        x_final.append(self.fc11(x))
+        x_final.append(self.fc12(x))
+        x_final.append(self.fc13(x))
+        x_final.append(self.fc14(x))
+        x_final.append(self.fc15(x))
+        x_final.append(self.fc16(x))
+        x_final.append(self.fc17(x))
+        x_final.append(self.fc18(x))
+        x_final.append(self.fc19(x))
+        x_final.append(self.fc20(x))
+        x_final.append(self.fc21(x))
+
+        x_final = [i.to(self.devs[0]) for i in x_final]
+        return x_final
+
+    def get_devices(self):
+        return self.devs
 
 def bi_input_resnet3D50(devices, **kwargs):
     return TwoInputResNet3d(Bottleneck3d,[3, 4, 6, 3], devices, **kwargs)
 
 def tri_input_resnet3D50(devices, **kwargs):
     return ThreeInputResNet3d(Bottleneck3d,[3, 4, 6, 3], devices, **kwargs)
+
+def hex_input_multi_output_resnet3D50(devices, **kwargs):
+    return SixInputMultiOutputResNet3d(Bottleneck3d,[3, 4, 6, 3], devices, **kwargs)

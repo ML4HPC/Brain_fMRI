@@ -3,19 +3,31 @@ import nibabel as nib
 import numpy as np
 import argparse
 from scipy.ndimage import zoom
+import IPython
 
 
-def readimages(path, data_for, lattername, resize, output_dir):
-    filenames = os.listdir(path+data_for)
+def readimages(path, resize,  mri_type, output_dir):
+    filenames = os.listdir(path)
     images = {}
     batch_idx = 0
     for i in range(len(filenames)):
         batch_idx += 1
         name = filenames[i]
+
+        sub_start = name.index('-') + 1
+        sub_end = name.index('_')
+        type_start = name.rfind('_') + 1
+
+        if name[type_start:type_start+2].upper() != mri_type.upper():
+            continue
+        
+        subject = name[sub_start:sub_start+4] + '_' + name[sub_start+4:sub_end]
+
+        # Print progress
         if i % 100 == 0:
             print(i)
-        #print(name)
-        full_path = path+data_for+'/'+name+lattername
+        
+        full_path = os.path.abspath(path+'/'+name)
         img = nib.load(full_path)
 
         # Resize, if necessary
@@ -24,11 +36,11 @@ def readimages(path, data_for, lattername, resize, output_dir):
             img_data = zoom(img_data, resize)
             img = nib.Nifti1Image(img_data, img.affine, img.header)
 
-        images[name] = img
+        images[subject] = img
 
         if resize:
             if (i != 0)  and (i % 1000 == 0 or i == (len(filenames) - 1)):
-                np.save(os.path.join(args.output_dir, '{}_img_{}.npy'.format(data_for, batch_idx)), images)
+                np.save(os.path.join(args.output_dir, 'img_{}.npy'.format(batch_idx)), images)
                 images.clear()
     
     return images
@@ -36,16 +48,11 @@ def readimages(path, data_for, lattername, resize, output_dir):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Read and process images')
-    parser.add_argument('--resize', type=float)
+    parser.add_argument('--resize', type=float, default=None)
     parser.add_argument('--data_dir', help='Path to dataset images')
     parser.add_argument('--output_dir', help='Path to directory for saving outputs')
+    parser.add_argument('--mri_type', help="T1 / T2 / FA / MD / AD / RD")
     args = parser.parse_args()
-
-    #path = '/global/cscratch1/sd/yanzhang/data_brain/image03/'
-    train = 'training'
-    valid = 'validation'
-    test = 'testing'
-    lattername = '/baseline/structural/t1_brain.nii.gz'
 
     if not os.path.isdir(args.output_dir):
         try:
@@ -53,17 +60,8 @@ if __name__ == "__main__":
         except:
             raise Exception('Could not create output directory')
 
-    print('processing training!')
-    train_img = readimages(args.data_dir, train, lattername, args.resize, args.output_dir) 
-    np.save(os.path.join(args.output_dir, 'train_img.npy'), train_img)
-    #print('saved train')
-    print('processing valid!')
-    valid_img = readimages(args.data_dir, valid, lattername, args.resize, args.output_dir) 
-    np.save(os.path.join(args.output_dir, 'valid_img.npy'), valid_img)
-    print('saved train')
-    print('processing test!')
-    test_img = readimages(args.data_dir, test, lattername, args.resize, args.output_dir)
-    np.save(os.path.join(args.output_dir, 'test_img.npy'), test_img)
-    print('done saving!')
+    print('Processing all images: train, valid, and test!')
+    all_img = readimages(args.data_dir, args.resize, args.mri_type, args.output_dir) 
+    np.save(os.path.join(args.output_dir, 'all_img_{}.npy'.format(args.mri_type)), all_img)
 
 

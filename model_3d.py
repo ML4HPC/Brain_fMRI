@@ -226,7 +226,6 @@ def train(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss
 
 def train_multi_input(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss, output_dir, checkpoint_epoch=0):
     model.train()
-    loss = nn.L1Loss()
 
     loss = loss.cuda()
     best_mse = float('inf')
@@ -240,6 +239,7 @@ def train_multi_input(model, epoch, train_loader, valid_loader, test_loader, opt
             raise Exception('Output directory / results file cannot be created')
 
     results = open((output_dir+'/results.txt'), 'a+')
+    loss_hist = []
 
     start_epoch = 0
     if checkpoint_epoch > 0:
@@ -265,6 +265,8 @@ def train_multi_input(model, epoch, train_loader, valid_loader, test_loader, opt
             res = loss(output.squeeze(), batch_target)
             res.backward() 
             optimizer.step()
+
+            loss_hist.append(res.item())
             
             LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, batch_idx * train_loader.batch_size, len(train_loader.dataset)))
 
@@ -289,8 +291,6 @@ def train_multi_input(model, epoch, train_loader, valid_loader, test_loader, opt
             'optimizer_state_dict': optimizer.state_dict(),
             'loss': loss
         }, '{}_epoch_{}.pth'.format(model._get_name(), i))
-        #torch.save(model.state_dict(), os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
-        #torch.save(optimizer.state_dict(), os.path.join(output_dir, 'optimizer.pth'))
 
         if cur_mse < best_mse:
             best_mse = cur_mse
@@ -300,7 +300,8 @@ def train_multi_input(model, epoch, train_loader, valid_loader, test_loader, opt
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': loss
             }, 'best_epoch_{}.pth'.format(i))
-            #torch.save(model.state_dict(), os.path.join(output_dir, 'best_{}_epoch.pth'.format(i)))
+        
+        np.save(os.path.join(output_dir, 'loss_history_train.npy'), loss_hist)
     
     results.close()
             

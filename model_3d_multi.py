@@ -95,6 +95,7 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
             raise Exception('Output directory / results file cannot be created')
 
     results = open((output_dir+'/results.txt'), 'a+')
+    loss_hist = []
 
     start_epoch = 0
     if checkpoint_epoch > 0:
@@ -131,6 +132,8 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
                 loss_print.append(cur_loss)
                 loss += cur_loss
             
+            loss_hist.append(loss)
+            
             LOGGER.info('Loss fi: {}\n Loss age: {}\nLoss gender: {}\nLoss race: {}\nLoss edu: {}\nLoss married: {}\nLoss site: {}\n'.format(*loss_print))
             
             loss.backward() 
@@ -150,12 +153,23 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
         cur_mse = eval_multi(model, valid_loader, losses)
         results.write('Epoch {}: {} ({} s)\n'.format(i, cur_mse, epoch_train_time))
         results.flush()
-        torch.save(model.state_dict(), os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
-        torch.save(optimizer.state_dict(), os.path.join(output_dir, 'optimizer.pth'))
+                torch.save({
+            'epoch': i,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'loss': loss
+        }, '{}_epoch_{}.pth'.format(model._get_name(), i))
 
         if cur_mse < best_mse:
             best_mse = cur_mse
-            torch.save(model.state_dict(), os.path.join(output_dir, 'best_{}_epoch.pth'.format(i)))
+            torch.save({
+                'epoch': i,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'loss': loss
+            }, 'best_epoch_{}.pth'.format(i))
+
+        np.save(os.path.join(output_dir, 'loss_history_train.npy'), loss_hist)
     
     results.close()
             
@@ -198,6 +212,137 @@ def eval_multi(model, valid_loader, losses, save=False, output_dir=None):
     print(target_pred)
 
     mse = mean_squared_error(target_true, target_pred)
+    LOGGER.info('Mean squared error: {}'.format(mse))
+
+    if save:
+        try:
+            np.save(os.path.join(output_dir, 'target_true.npy'), target_true)
+            np.save(os.path.join(output_dir, 'target_pred.npy'), target_pred)
+        except:
+            raise Exception('Could not save ground truth & predictions to file')
+
+    return mse
+
+def train_multi_input_output(model, epoch, train_loader, valid_loader, test_loader, optimizer, losses, output_dir, checkpoint_epoch=0):
+    model.train()
+
+    best_mse = float('inf')
+
+    if checkpoint_epoch <= 0:
+        # Create output directory and results file
+        try:
+            os.mkdir(output_dir)
+            #results = open(os.path.join(output_dir, 'results.txt'), 'w+')
+        except: 
+            raise Exception('Output directory / results file cannot be created')
+
+    results = open((output_dir+'/results.txt'), 'a+')
+    loss_hist = []
+
+    start_epoch = 0
+    if checkpoint_epoch > 0:
+        start_epoch = checkpoint_epoch
+
+    for i in range(start_epoch, epoch):
+        epoch_start = time.time()
+
+        for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
+            LOGGER.info('Starting batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
+
+            optimizer.zero_grad()
+            
+            new_batch_img = []
+            loss = 0
+            
+            # Moving each type of image to respective GPUs
+            for j in range(len(batch_img)):
+                devs = model.get_devices()
+                new_batch_img.append(batch_img[j].unsqueeze(1).to(devs[j]))
+            
+            batch_target = batch_target
+            outputs = model(new_batch_img)
+
+            for k in range(len(outputs)):
+                criterion = losses[k]
+                output = outputs[k]
+                target = torch.tensor([t[j] for t in batch_target]).squeeze().cuda()
+
+                # For cross entropy loss, need long tensors
+                if k in [3, 4, 5, 6, 7]:
+                    cur_loss = criterion(output, target.long())
+                else:
+                    cur_loss = criterion(output, target.float())
+                
+                loss += cur_loss
+            
+            loss_hist.append(loss.item())
+            loss.backward()
+            optimizer.step()
+            
+            LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, batch_idx * train_loader.batch_size, len(train_loader.dataset)))
+
+            if batch_idx % 10 == 0:
+                LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+                    i, batch_idx * train_loader.batch_size, len(train_loader.dataset), 
+                    train_loader.batch_size * batch_idx / len(train_loader.dataset) * 100, loss.item()))
+
+        
+        epoch_end = time.time()
+        epoch_train_time = epoch_end - epoch_start
+
+        cur_mse = eval(model, valid_loader, loss)
+        test_mse = eval(model, test_loader, loss)
+        results.write('Epoch {}: Validation {} Test {} ({} s)\n'.format(i, cur_mse, test_mse, epoch_train_time))
+        results.flush()
+        torch.save({
+            'epoch': i,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'loss': loss
+        }, '{}_epoch_{}.pth'.format(model._get_name(), i))
+
+        if cur_mse < best_mse:
+            best_mse = cur_mse
+            torch.save({
+                'epoch': i,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'loss': loss
+            }, 'best_epoch_{}.pth'.format(i))
+        
+        np.save(os.path.join(output_dir, 'loss_history_train.npy'), loss_hist)
+    
+    results.close()
+
+def eval_multi_input_output(model, valid_loader, losses, save=False, output_dir=None):
+    model.eval()
+    
+    target_true = [[] for i in range(21)]
+    target_pred = [[] for i in range(21)]
+
+    with torch.no_grad():
+        for batch_idx, (batch_img, batch_target) in enumerate(valid_loader):
+            LOGGER.info('Evaluating batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(valid_loader.dataset)))
+            batch_img = batch_img.unsqueeze(1).cuda()
+
+            outputs = model(batch_img)
+    
+            # Adding predicted and true targets
+            for j in range(len(outputs)):
+                target_true[j].extend(torch.tensor([t[j] for t in batch_target]).squeeze().cpu())
+                target_pred[j].extend(outputs[j].squeeze().cpu())
+
+            if batch_idx % 10 == 0:
+                LOGGER.info('Eval Progress: [{}/{} ({:.0f}%)]'.format(
+                batch_idx * len(batch_img), len(valid_loader.dataset), 
+                valid_loader.batch_size * batch_idx / len(valid_loader)))     
+    
+    if valid_loader.dataset.log:
+        target_true = np.subtract(np.exp(target_true), 40)
+        target_pred = np.subtract(np.exp(target_pred), 40)
+
+    # MSE of fluid intelligence
+    mse = mean_squared_error(target_true[11], target_pred[11])
     LOGGER.info('Mean squared error: {}'.format(mse))
 
     if save:

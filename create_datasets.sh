@@ -9,6 +9,6 @@ for mri_type in T1 T2 MD FA AD RD
 do
     python3 readcsv.py --data_dir=$csv_data_dir --output_dir=$output_dir
     python3 readimage.py --data_dir=$struct_data_dir --output_dir=$output_dir --mri_type=$mri_type
-    python3 data_loader.py --data_dir=$struct_data_dir --output_dir=$output_dir --mri_type=$mri_type
+    python3 data_loader.py --data_dir=$output_dir --output_dir=$output_dir --mri_type=$mri_type
 done
 

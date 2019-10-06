@@ -88,6 +88,8 @@ if __name__ == "__main__":
             raise Exception('Could not create output directory')
     
     # single_output_read_target(args)
+    print(args.data_dir)
+    print(args.output_dir)
     multi_output_read_target(args)
 
 

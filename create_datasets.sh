@@ -1,5 +1,13 @@
 #!/bin/bash
 
+trap ctrl_c INT
+
+function ctrl_c()
+{
+    echo "Trap: CTRL+C received, exit"
+    exit
+}
+
 csv_data_dir="/home/seungwook/data/intelligence/"
 struct_data_dir="/home/seungwook/data/data_T1_T2_201909/"
 dti_data_dir="/home/seungwook/data/data_DTI_tensor/"

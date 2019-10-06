@@ -59,14 +59,14 @@ def multi_output_read_target(args):
     csv_valid = readcsv_multi_output(args.data_dir, valid)
     csv_test = readcsv_multi_output(args.data_dir, test)
     
-    for key, value in csv_train.items():
-        print(key, value)
+    # for key, value in csv_train.items():
+    #     print(key, value)
 
-    for key, value in csv_valid.items():
-        print(key, value)
+    # for key, value in csv_valid.items():
+    #     print(key, value)
 
-    for key, value in csv_test.items():
-        print(key, value)
+    # for key, value in csv_test.items():
+    #     print(key, value)
 
     print('saving train dict!')
     np.save(os.path.join(args.output_dir, 'csv_train_target.npy'), csv_train)

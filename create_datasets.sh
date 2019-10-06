@@ -4,9 +4,11 @@ csv_data_dir="/home/seungwook/data/intelligence/"
 struct_data_dir="/home/seungwook/data/data_T1_T2_201909/"
 dti_data_dir="/home/seungwook/data/data_DTI_tensor/"
 output_dir="/home/seungwook/data/processed/"
-mri_type="T1"
 
-python3 readcsv.py --data_dir=$csv_data_dir --output_dir=$output_dir
-python3 readimage.py --data_dir=$struct_data_dir --output_dir=$output_dir --mri_type=$mri_type
-python3 data_loader.py --data_dir=$struct_data_dir --output_dir=$output_dir --mri_type=$mri_type
+for mri_type in T1 T2 MD FA AD RD
+do
+    python3 readcsv.py --data_dir=$csv_data_dir --output_dir=$output_dir
+    python3 readimage.py --data_dir=$struct_data_dir --output_dir=$output_dir --mri_type=$mri_type
+    python3 data_loader.py --data_dir=$struct_data_dir --output_dir=$output_dir --mri_type=$mri_type
+done
 

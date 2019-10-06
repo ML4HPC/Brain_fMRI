@@ -40,9 +40,9 @@ def create_dataset(path, output_dir, mri_type):
     np.save(os.path.join(output_dir, 'valid_data_img_{}.npy'.format(mri_type)), valid_data_img)
     np.save(os.path.join(output_dir, 'test_data_img_{}.npy'.format(mri_type)), test_data_img)
 
-    np.save(os.path.join(output_dir, 'train_data_target_{}.npy'.format(mri_type)), train_data_target)
-    np.save(os.path.join(output_dir, 'valid_data_target_{}.npy'.format(mri_type)), valid_data_target)
-    np.save(os.path.join(output_dir, 'test_data_target_{}.npy'.format(mri_type)), test_data_target)
+    np.save(os.path.join(output_dir, 'train_data_target.npy'), train_data_target)
+    np.save(os.path.join(output_dir, 'valid_data_target.npy'), valid_data_target)
+    np.save(os.path.join(output_dir, 'test_data_target.npy'), test_data_target)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Read and process images')

@@ -25,9 +25,9 @@ def readcsv_multi_output(path, filename):
 
 def single_output_read_target(args):
     # Using residualized fluid intelligence scores using our own brain volumetric variable
-    train = 'intell_train_residual.csv'
-    valid = 'intell_valid_residual.csv'
-    test = 'intell_test_residual.csv'
+    train = 'intell_residual_train.csv'
+    valid = 'intell_residual_valid.csv'
+    test = 'intell_residual_test.csv'
     
     csv_train = readcsv(args.data_dir, train)
     csv_valid = readcsv(args.data_dir, valid)
@@ -51,9 +51,9 @@ def single_output_read_target(args):
 
 def multi_output_read_target(args):
     # Using residualized fluid intelligence scores using our own brain volumetric variable
-    train = 'intell_train_residual.csv'
-    valid = 'intell_valid_residual.csv'
-    test = 'intell_test_residual.csv'
+    train = 'intell_residual_train.csv'
+    valid = 'intell_residual_valid.csv'
+    test = 'intell_residual_test.csv'
     
     csv_train = readcsv_multi_output(args.data_dir, train)
     csv_valid = readcsv_multi_output(args.data_dir, valid)

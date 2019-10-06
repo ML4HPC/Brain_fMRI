@@ -28,7 +28,10 @@ def readimages(path, resize,  mri_type, output_dir):
             print(i)
         
         full_path = os.path.abspath(path+'/'+name)
-        img = nib.load(full_path)
+        try:
+            img = nib.load(full_path)
+        except:
+            continue
 
         # Resize, if necessary
         if resize:

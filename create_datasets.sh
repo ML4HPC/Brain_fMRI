@@ -1,7 +1,7 @@
 #!/bin/bash
 
-struct_data_dir="/home/seungwook/data/data_T1_T2_201909"
-dti_data_dir="/home/seungwook/data/data_DTI_tensor"
+struct_data_dir="/home/seungwook/data/data_T1_T2_201909/"
+dti_data_dir="/home/seungwook/data/data_DTI_tensor/"
 output_dir="/home/seungwook/data/processed/"
 mri_type="T1"
 

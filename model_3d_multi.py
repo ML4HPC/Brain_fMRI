@@ -257,7 +257,7 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
             # Moving each type of image to respective GPUs
             for j in range(len(batch_img)):
                 devs = model.get_devices()
-                new_batch_img.append(batch_img[j].unsqueeze(1).to(devs[j]))
+                new_batch_img.append(batch_img[j].unsqueeze(1).float().to(devs[j]))
             
             batch_target = batch_target
             outputs = model(new_batch_img)

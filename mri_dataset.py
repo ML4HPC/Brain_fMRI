@@ -32,7 +32,7 @@ class MRIDataset(Dataset):
         return [y for y in self.Y_data]
         
     def __getitem__(self, idx):
-        x = np.array(self.X_data[idx].dataobj).byteswap().newbyteorder()
+        x = np.array(self.X_data[idx].dataobj).astype(float, copy=False)
         y = self.Y_data[idx]
         
         if self.nan:

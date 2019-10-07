@@ -250,17 +250,14 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
             LOGGER.info('Starting batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
 
             optimizer.zero_grad()
-            
-            new_batch_img = []
             loss = 0
             
             # Moving each type of image to respective GPUs
             for j in range(len(batch_img)):
                 devs = model.get_devices()
-                new_batch_img.append(batch_img[j].unsqueeze(1).float().to(devs[j]))
+                batch_img[j] = batch_img[j].unsqueeze(1).float().to(devs[j])
             
-            batch_target = batch_target
-            outputs = model(new_batch_img)
+            outputs = model(batch_img)
 
             for k in range(len(outputs)):
                 criterion = losses[k]

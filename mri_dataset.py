@@ -32,7 +32,7 @@ class MRIDataset(Dataset):
         return [y for y in self.Y_data]
         
     def __getitem__(self, idx):
-        x = np.array(self.X_data[idx].dataobj)
+        x = np.array(self.X_data[idx].dataobj).byteswap().newbyteorder()
         y = self.Y_data[idx]
         
         if self.nan:
@@ -78,7 +78,7 @@ class MultiMRIDataset(Dataset):
         return [y for y in self.Y_data]
         
     def __getitem__(self, idx):
-        x = np.array(self.X_data[idx].dataobj).newbyteorder('N')
+        x = np.array(self.X_data[idx].dataobj).byteswap().newbyteorder()
         y = []
         # Perform y data modification, if available
         if len(self.Y_data) > 0:

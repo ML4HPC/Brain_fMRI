@@ -124,11 +124,11 @@ class ThreeInputMRIDataset(Dataset):
 class SixInputMultiOutputMRIDataset(Dataset):
     def __init__(self, input_data1, input_data2, input_data3, input_data4, input_data5, input_data6, target, resize, normalize=False, log=False):
         self.dataset1 = MultiMRIDataset(input_data1, target, resize, normalize, log)
-        self.dataset2 = MultiMRIDataset(input_data1, target, resize, normalize, log)
-        self.dataset3 = MultiMRIDataset(input_data2, target, resize, normalize=False, log=False, nan=True)
-        self.dataset4 = MultiMRIDataset(input_data3, target, resize, normalize=False, log=False, nan=True)
-        self.dataset5 = MultiMRIDataset(input_data3, target, resize, normalize=False, log=False, nan=True)
-        self.dataset6 = MultiMRIDataset(input_data3, target, resize, normalize=False, log=False, nan=True)
+        self.dataset2 = MultiMRIDataset(input_data2, target, resize, normalize, log)
+        self.dataset3 = MultiMRIDataset(input_data3, target, resize, normalize=False, log=False, nan=True)
+        self.dataset4 = MultiMRIDataset(input_data4, target, resize, normalize=False, log=False, nan=True)
+        self.dataset5 = MultiMRIDataset(input_data5, target, resize, normalize=False, log=False, nan=True)
+        self.dataset6 = MultiMRIDataset(input_data6, target, resize, normalize=False, log=False, nan=True)
         self.resize = resize
         self.normalize = normalize
         self.log = log

@@ -273,9 +273,9 @@ class SixInputResNet3d(nn.Module):
         x1 = x1.to(self.devs[6])
         x2 = x2.to(self.devs[6])
         x3 = x3.to(self.devs[6])
-        x4 = x3.to(self.devs[6])
-        x5 = x3.to(self.devs[6])
-        x6 = x3.to(self.devs[6])
+        x4 = x4.to(self.devs[6])
+        x5 = x5.to(self.devs[6])
+        x6 = x6.to(self.devs[6])
 
         x  = torch.cat((x1,x2,x3,x4,x5,x6),1)
         x  = self.tail(x)

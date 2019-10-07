@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     train_dataset_T1 = MRIDataset(train_img_T1, [], args.resize)
     train_dataset_T2 = MRIDataset(train_img_T2, [], args.resize)
-    train_dataset_FA = MRIDataset(train_img_FA, []], args.resize)
+    train_dataset_FA = MRIDataset(train_img_FA, [], args.resize)
     train_dataset_MD = MRIDataset(train_img_MD, [], args.resize)
     train_dataset_AD = MRIDataset(train_img_AD, [], args.resize)
     train_dataset_RD = MRIDataset(train_img_RD, [], args.resize)

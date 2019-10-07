@@ -78,7 +78,7 @@ class MultiMRIDataset(Dataset):
         return [y for y in self.Y_data]
         
     def __getitem__(self, idx):
-        x = np.array(self.X_data[idx].dataobj)
+        x = np.array(self.X_data[idx].dataobj).newbyteorder('N')
         y = []
         # Perform y data modification, if available
         if len(self.Y_data) > 0:
@@ -154,10 +154,8 @@ class SixInputMultiOutputMRIDataset(Dataset):
         return self.dataset1.get_y_data()
         
     def __getitem__(self, idx):
-        dataset1_item = self.dataset1[idx]
-
-        return ([dataset1_item[0], self.dataset2[idx][0], self.dataset3[idx][0], self.dataset4[idx][0], self.dataset5[idx][0], self.dataset6[idx][0]]
-                , dataset1_item[1])
+        return ([self.dataset1[idx][0], self.dataset2[idx][0], self.dataset3[idx][0], self.dataset4[idx][0], self.dataset5[idx][0], self.dataset6[idx][0]]
+                , self.dataset1[idx][1])
     
 """
 class SliceMRIDataset(Dataset):

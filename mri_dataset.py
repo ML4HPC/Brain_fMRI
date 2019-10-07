@@ -79,7 +79,7 @@ class MultiMRIDataset(Dataset):
         
     def __getitem__(self, idx):
         x = np.array(self.X_data[idx].dataobj)
-
+        y = []
         # Perform y data modification, if available
         if len(self.Y_data) > 0:
             y = self.Y_data[idx]

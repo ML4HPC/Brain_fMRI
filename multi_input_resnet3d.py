@@ -311,7 +311,7 @@ class SixInputMultiOutputResNet3d(nn.Module):
         # Race
         self.fc3    =  nn.Linear(1000, 5).to(self.devs[7])
         # Education
-        self.fc4    =  nn.Linear(1000, 23).to(self.devs[7])
+        self.fc4    =  nn.Linear(1000, 21).to(self.devs[7])
         # Income
         self.fc5    =  nn.Linear(1000, 10).to(self.devs[7])
         # Married
@@ -355,7 +355,7 @@ class SixInputMultiOutputResNet3d(nn.Module):
         x4 = self.head4(x[3])
         x5 = self.head5(x[4])
         x6 = self.head6(x[5])
-
+        
         x1 = x1.to(self.devs[6])
         x2 = x2.to(self.devs[6])
         x3 = x3.to(self.devs[6])

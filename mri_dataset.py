@@ -81,7 +81,7 @@ class MultiMRIDataset(Dataset):
         x = np.array(self.X_data[idx].dataobj)
 
         # Perform y data modification, if available
-        if len(self.Y_data) > 0:
+        if (self.Y_data).any():
             y = self.Y_data[idx]
 
             # Converting age from months to year

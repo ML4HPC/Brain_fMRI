@@ -54,6 +54,8 @@ if __name__ == "__main__":
                 img_shape = batch_img[0].shape
                 dims[i] = img_shape[0] * img_shape[1] * img_shape[2]
                 is_first = False
+            np.nan_to_num(batch_img, copy=False)
+            assert(not np.isnan(batch_img).any())
             means[i] += np.sum(batch_img)
         
         means[i] /= (len(train_loader.dataset) * dims[i])

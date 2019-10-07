@@ -16,7 +16,7 @@ outdir=$1
 cwd=$(pwd)
 cur_filepath="${cwd}/${0}"
 rm -rf $outdir
-python3 run_multi_input_resnet3d.py --data_dir=../data/processed/ --output_dir=$outdir --train_batch_size=$train_bsz --valid_batch_size=$valid_bsz --epoch=$epoch --optimizer=sgd --lr=$lr --momentum=$momentum --weight_decay=$weight_decay
+python3 run_6_input_multi_output_resnet3d.py --data_dir=../data/processed/ --output_dir=$outdir --train_batch_size=$train_bsz --valid_batch_size=$valid_bsz --epoch=$epoch --optimizer=sgd --lr=$lr --momentum=$momentum --weight_decay=$weight_decay
 cp $cur_filepath $outdir 
 
 

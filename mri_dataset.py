@@ -89,6 +89,13 @@ class MultiMRIDataset(Dataset):
         # Converting age from months to year
         y[0] = y[0] / 12.0
 
+        # Subtracting 1 to re-adjust range to start from 0
+        y[2] = y[2] - 1
+        y[3] = y[3] - 1
+        y[4] = y[4] - 1
+        y[5] = y[5] - 1
+        y[6] = y[6] - 1
+
         if self.resize > 0:
             np.resize(x, (self.resize, self.resize, self.resize))
         

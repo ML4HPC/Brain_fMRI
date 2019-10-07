@@ -102,8 +102,6 @@ class MultiMRIDataset(Dataset):
             x = np.nan_to_num(x)
             assert(not np.isnan(x).any())
 
-
-
         if self.resize > 0:
             np.resize(x, (self.resize, self.resize, self.resize))
         
@@ -156,8 +154,10 @@ class SixInputMultiOutputMRIDataset(Dataset):
         return self.dataset1.get_y_data()
         
     def __getitem__(self, idx):
-        return ([self.dataset1[idx][0], self.dataset2[idx][0], self.dataset3[idx][0], self.dataset4[idx][0], self.dataset5[idx][0], self.dataset6[idx][0]]
-                , self.dataset1[idx][1])
+        dataset1_item = self.dataset1[idx]
+
+        return ([dataset1_item[0], self.dataset2[idx][0], self.dataset3[idx][0], self.dataset4[idx][0], self.dataset5[idx][0], self.dataset6[idx][0]]
+                , dataset1_item[1])
     
 """
 class SliceMRIDataset(Dataset):

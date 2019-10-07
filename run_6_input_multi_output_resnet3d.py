@@ -91,7 +91,6 @@ if __name__ == "__main__":
         optimizer.load_state_dict(saved_opt_state)
         print('Loaded optimizer from saved state')
 
-    IPython.embed()
     # Creating list of losses of size of output
     losses = [None] * 21
     reg_loss = nn.L1Loss()

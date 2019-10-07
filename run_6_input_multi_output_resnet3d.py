@@ -33,7 +33,7 @@ if __name__ == "__main__":
     parser.add_argument('--sync_bn', default=False, help='Use sync batch norm or not (True/False)')
     args = parser.parse_args()
 
-    model = multi_input_resnet3d.tri_input_resnet3D50(devices=[0,1,2,3])
+    model = multi_input_resnet3d.hex_input_multi_output_resnet3D50(devices=[0,1,2,3,4,5,6,7])
     
     # Load from checkpoint, if available
     if args.checkpoint_state:

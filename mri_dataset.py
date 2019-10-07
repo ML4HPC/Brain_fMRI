@@ -83,10 +83,12 @@ class MultiMRIDataset(Dataset):
         # Perform y data modification, if available
         if len(self.Y_data) > 0:
             y = self.Y_data[idx].clone().detach()
+            print('Processing y')
 
             # Converting age from months to year
+            print(y[0])
             y[0] = y[0] / 12.0
-
+            print(y[0])
             # Subtracting 1 to re-adjust range to start from 0
             y[2] = y[2] - 1
             y[3] = y[3] - 1

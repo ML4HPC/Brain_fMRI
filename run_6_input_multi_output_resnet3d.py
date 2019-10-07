@@ -8,7 +8,7 @@ from model_3d_multi import train_multi_input_output, eval_multi_input_output
 import argparse
 import os
 import apex
-
+import IPython
 
 if __name__ == "__main__":
     torch.cuda.set_device(0)
@@ -90,7 +90,8 @@ if __name__ == "__main__":
         saved_opt_state = torch.load(args.checkpoint_opt, map_location='cpu')
         optimizer.load_state_dict(saved_opt_state)
         print('Loaded optimizer from saved state')
-    
+
+    IPython.embed()
     # Creating list of losses of size of output
     losses = [None] * 21
     reg_loss = nn.L1Loss()

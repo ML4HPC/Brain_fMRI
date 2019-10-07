@@ -79,31 +79,36 @@ class MultiMRIDataset(Dataset):
         
     def __getitem__(self, idx):
         x = np.array(self.X_data[idx].dataobj)
-        y = self.Y_data[idx]
+
+        # Perform y data modification, if available
+        if self.Y_data:
+            y = self.Y_data[idx]
+
+            # Converting age from months to year
+            y[0] = y[0] / 12.0
+
+            # Subtracting 1 to re-adjust range to start from 0
+            y[2] = y[2] - 1
+            y[3] = y[3] - 1
+            y[4] = y[4] - 1
+            y[5] = y[5] - 1
+            y[6] = y[6] - 1
+
+            if self.log:
+                y[11] = np.log(y[11]+10)
 
         # Replacing NaN values with 0
         if self.nan:
             x = np.nan_to_num(x)
             assert(not np.isnan(x).any())
 
-        # Converting age from months to year
-        y[0] = y[0] / 12.0
 
-        # Subtracting 1 to re-adjust range to start from 0
-        y[2] = y[2] - 1
-        y[3] = y[3] - 1
-        y[4] = y[4] - 1
-        y[5] = y[5] - 1
-        y[6] = y[6] - 1
 
         if self.resize > 0:
             np.resize(x, (self.resize, self.resize, self.resize))
         
         if self.normalize:
             x = np.divide(np.subtract(x, self.mean), self.std)
-        
-        if self.log:
-            y[11] = np.log(y[11]+10)
     
         return (x, y)
 

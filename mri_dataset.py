@@ -78,7 +78,7 @@ class MultiMRIDataset(Dataset):
         return [y for y in self.Y_data]
         
     def __getitem__(self, idx):
-        x = np.array(self.X_data[idx].dataobj).newbyteorder('=')
+        x = np.array(self.X_data[idx].dataobj)
         y = self.Y_data[idx]
 
         # Replacing NaN values with 0

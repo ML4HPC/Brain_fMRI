@@ -6,8 +6,8 @@ then
     exit 1
 fi
 
-train_bsz=4
-valid_bsz=8
+train_bsz=3
+valid_bsz=6
 epoch=10
 lr=0.001
 momentum=0.5

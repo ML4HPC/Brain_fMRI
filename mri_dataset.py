@@ -81,7 +81,7 @@ class MultiMRIDataset(Dataset):
         x = np.array(self.X_data[idx].dataobj)
 
         # Perform y data modification, if available
-        if (self.Y_data).any():
+        if len(self.Y_data) > 0:
             y = self.Y_data[idx]
 
             # Converting age from months to year
@@ -136,11 +136,11 @@ class ThreeInputMRIDataset(Dataset):
 class SixInputMultiOutputMRIDataset(Dataset):
     def __init__(self, input_data1, input_data2, input_data3, input_data4, input_data5, input_data6, target, resize, normalize, log, nan):
         self.dataset1 = MultiMRIDataset(input_data1, target, resize, normalize, log, nan)
-        self.dataset2 = MultiMRIDataset(input_data2, None, resize, normalize, log, nan)
-        self.dataset3 = MultiMRIDataset(input_data3, None, resize, normalize, log, nan)
-        self.dataset4 = MultiMRIDataset(input_data4, None, resize, normalize, log, nan)
-        self.dataset5 = MultiMRIDataset(input_data5, None, resize, normalize, log, nan)
-        self.dataset6 = MultiMRIDataset(input_data6, None, resize, normalize, log, nan)
+        self.dataset2 = MultiMRIDataset(input_data2, [], resize, normalize, log, nan)
+        self.dataset3 = MultiMRIDataset(input_data3, [], resize, normalize, log, nan)
+        self.dataset4 = MultiMRIDataset(input_data4, [], resize, normalize, log, nan)
+        self.dataset5 = MultiMRIDataset(input_data5, [], resize, normalize, log, nan)
+        self.dataset6 = MultiMRIDataset(input_data6, [], resize, normalize, log, nan)
         self.resize = resize
         self.normalize = normalize
         self.log = log

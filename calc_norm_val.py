@@ -24,12 +24,12 @@ if __name__ == "__main__":
     train_img_AD = np.load(os.path.join(args.data_dir, 'train_data_img_AD.npy'), allow_pickle=True)
     train_img_RD = np.load(os.path.join(args.data_dir, 'train_data_img_RD.npy'), allow_pickle=True)
 
-    train_dataset_T1 = MRIDataset(train_img_T1, [], args.resize)
-    train_dataset_T2 = MRIDataset(train_img_T2, [], args.resize)
-    train_dataset_FA = MRIDataset(train_img_FA, [], args.resize)
-    train_dataset_MD = MRIDataset(train_img_MD, [], args.resize)
-    train_dataset_AD = MRIDataset(train_img_AD, [], args.resize)
-    train_dataset_RD = MRIDataset(train_img_RD, [], args.resize)
+    train_dataset_T1 = MRIDataset(train_img_T1, [0] * len(train_img_T1), args.resize)
+    train_dataset_T2 = MRIDataset(train_img_T2, [0] * len(train_img_T2), args.resize)
+    train_dataset_FA = MRIDataset(train_img_FA, [0] * len(train_img_FA), args.resize)
+    train_dataset_MD = MRIDataset(train_img_MD, [0] * len(train_img_MD), args.resize)
+    train_dataset_AD = MRIDataset(train_img_AD, [0] * len(train_img_AD), args.resize)
+    train_dataset_RD = MRIDataset(train_img_RD, [0] * len(train_img_RD), args.resize)
 
     train_loader_T1 = torch.utils.data.DataLoader(train_dataset_T1, batch_size=args.train_batch_size)
     train_loader_T2 = torch.utils.data.DataLoader(train_dataset_T2, batch_size=args.train_batch_size)

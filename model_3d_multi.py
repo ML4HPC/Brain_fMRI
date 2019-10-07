@@ -265,7 +265,7 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
             for k in range(len(outputs)):
                 criterion = losses[k]
                 output = outputs[k]
-                target = torch.tensor([t[j] for t in batch_target]).squeeze().cuda()
+                target = torch.tensor([t[k] for t in batch_target]).squeeze().cuda()
 
                 # For cross entropy loss, need long tensors
                 if k in [2, 3, 4, 5, 6]:

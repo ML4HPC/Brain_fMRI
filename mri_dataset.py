@@ -86,7 +86,6 @@ class MultiMRIDataset(Dataset):
 
             # Converting age from months to year
             y[0] = y[0] / 12.0
-
             # Subtracting 1 to re-adjust range to start from 0
             y[2] = y[2] - 1
             y[3] = y[3] - 1

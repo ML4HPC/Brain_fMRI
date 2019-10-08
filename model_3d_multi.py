@@ -282,8 +282,8 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
 
             if batch_idx % 10 == 0:
                 LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                    i, batch_idx * train_loader.batch_size, len(train_loader.dataset), 
-                    train_loader.batch_size * batch_idx / len(train_loader.dataset) * 100, loss.item()))
+                    i, progress, len(train_loader.dataset), progress / len(train_loader.dataset) * 100,
+                    loss.item()))
 
         
         epoch_end = time.time()

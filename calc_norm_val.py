@@ -62,6 +62,7 @@ if __name__ == "__main__":
             print('Minimum: {}'.format(torch.min(batch_img)))
             means[i] += np.sum(batch_img)
             progress_count += len(batch_img)
+            sys.stdout.flush()
         
         means[i] /= (len(train_loader.dataset) * dims[i])
         
@@ -72,6 +73,7 @@ if __name__ == "__main__":
         stds[i] = np.sqrt(varis[i])
         print('Finished {}: Mean {} Std {}\n'.format(i, means[i], stds[i]))
         sys.stdout.flush()
+        
     
     np.save('means.npy', means)
     np.save('stds.npy', stds)

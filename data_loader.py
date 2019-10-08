@@ -17,20 +17,27 @@ def create_dataset(path, output_dir, mri_type):
     valid_data_target = []
     test_data_target = []
 
+    train_subjects = []
+    valid_subjects = []
+    test_subjects = []
+
     for key in train_target.item().keys():
         if key in all_img.item().keys():
             train_data_img.append(all_img.item()[key])
             train_data_target.append([np.float(target) for target in train_target.item()[key]])
+            train_subjects.append(key)
 
     for key in valid_target.item().keys():
         if key in all_img.item().keys():
             valid_data_img.append(all_img.item()[key])
             valid_data_target.append([np.float(target) for target in valid_target.item()[key]])
+            valid_subjects.append(key)
 
     for key in test_target.item().keys():
         if key in all_img.item().keys():
             test_data_img.append(all_img.item()[key])
             test_data_target.append([np.float(target) for target in test_target.item()[key]])
+            test_subjects.append(key)
 
     assert(len(train_data_img) == len(train_data_target))
     assert(len(valid_data_img) == len(valid_data_target))
@@ -39,10 +46,15 @@ def create_dataset(path, output_dir, mri_type):
     np.save(os.path.join(output_dir, 'train_data_img_{}.npy'.format(mri_type)), train_data_img)
     np.save(os.path.join(output_dir, 'valid_data_img_{}.npy'.format(mri_type)), valid_data_img)
     np.save(os.path.join(output_dir, 'test_data_img_{}.npy'.format(mri_type)), test_data_img)
-
+    
     np.save(os.path.join(output_dir, 'train_data_target.npy'), train_data_target)
     np.save(os.path.join(output_dir, 'valid_data_target.npy'), valid_data_target)
     np.save(os.path.join(output_dir, 'test_data_target.npy'), test_data_target)
+
+    np.save(os.path.join(output_dir, 'train_subjects.npy'), train_data_target)
+    np.save(os.path.join(output_dir, 'valid_subjects.npy'), valid_data_target)
+    np.save(os.path.join(output_dir, 'test_subjects.npy'), test_data_target)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Read and process images')

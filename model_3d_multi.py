@@ -330,7 +330,7 @@ def eval_multi_input_output(model, valid_loader, losses, save=False, output_dir=
             # Adding predicted and true targets
             for j in range(len(outputs)):
                 target_true[j].extend(torch.tensor([t[j] for t in batch_target]).squeeze().cpu())
-                target_pred[j].extend(torch.tensor([o[j] for o in outputs]).squeeze().cpu())
+                target_pred[j].extend(outputs[j].squeeze().cpu())
 
             if batch_idx % 10 == 0:
                 LOGGER.info('Eval Progress: [{}/{} ({:.0f}%)]'.format(

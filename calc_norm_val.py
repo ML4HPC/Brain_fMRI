@@ -60,20 +60,19 @@ if __name__ == "__main__":
             assert(not np.isnan(batch_img).any())
             print('Maximum: {}'.format(torch.max(batch_img)))
             print('Minimum: {}'.format(torch.min(batch_img)))
-            means[i] += np.sum(batch_img)
+            means[i] += torch.sum(batch_img)
             progress_count += len(batch_img)
             sys.stdout.flush()
         
         means[i] /= (len(train_loader.dataset) * dims[i])
         
         for batch_img, _ in train_loader:
-            varis[i] += np.sum(np.power(np.subtract(batch_img, means[i]), 2))
+            varis[i] += torch.sum(torch.pow((batch_img - means[i]), 2))
         
         varis[i] /= (len(train_loader.dataset) * dims[i])
-        stds[i] = np.sqrt(varis[i])
+        stds[i] = torch.sqrt(varis[i])
         print('Finished {}: Mean {} Std {}\n'.format(i, means[i], stds[i]))
         sys.stdout.flush()
-        
     
     np.save('means.npy', means)
     np.save('stds.npy', stds)

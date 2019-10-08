@@ -75,7 +75,7 @@ if __name__ == "__main__":
     if args.normalize:
         means   =   np.load(os.path.join(args.data_dir, 'means_reordered.npy'), allow_pickle=True)
         stds    =   np.load(os.path.join(args.data_dir, 'stds_reordered.npy'), allow_pickle=True)
-        norms   =   zip(means, stds)
+        norms   =   list(zip(means, stds))
 
     train_dataset = SixInputMultiOutputMRIDataset(train_img_T1, train_img_T2, train_img_FA, train_img_MD, train_img_RD, train_img_AD, 
                                                     train_target, args.resize, norms, args.log, args.nan)

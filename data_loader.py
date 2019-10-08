@@ -51,9 +51,9 @@ def create_dataset(path, output_dir, mri_type):
     np.save(os.path.join(output_dir, 'valid_data_target.npy'), valid_data_target)
     np.save(os.path.join(output_dir, 'test_data_target.npy'), test_data_target)
 
-    np.save(os.path.join(output_dir, 'train_subjects.npy'), train_data_target)
-    np.save(os.path.join(output_dir, 'valid_subjects.npy'), valid_data_target)
-    np.save(os.path.join(output_dir, 'test_subjects.npy'), test_data_target)
+    np.save(os.path.join(output_dir, 'train_subjects.npy'), train_subjects)
+    np.save(os.path.join(output_dir, 'valid_subjects.npy'), valid_subjects)
+    np.save(os.path.join(output_dir, 'test_subjects.npy'), test_subjects)
 
 
 if __name__ == "__main__":

@@ -246,8 +246,9 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
     for i in range(start_epoch, epoch):
         epoch_start = time.time()
 
+        progress = 0
         for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
-            LOGGER.info('Starting batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
+            LOGGER.info('Starting batch {}: [{}/{}]'.format(batch_idx, progress, len(train_loader.dataset)))
 
             optimizer.zero_grad()
             loss = 0
@@ -276,7 +277,8 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
             loss.backward()
             optimizer.step()
             
-            LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, batch_idx * train_loader.batch_size, len(train_loader.dataset)))
+            progress += len(batch_img)
+            LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, progress, len(train_loader.dataset)))
 
             if batch_idx % 10 == 0:
                 LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
@@ -318,8 +320,9 @@ def eval_multi_input_output(model, valid_loader, losses, save=False, output_dir=
     target_pred = [[] for i in range(21)]
 
     with torch.no_grad():
+        progress = 0
         for batch_idx, (batch_img, batch_target) in enumerate(valid_loader):
-            LOGGER.info('Evaluating batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(valid_loader.dataset)))
+            LOGGER.info('Evaluating batch {}: [{}/{}]'.format(batch_idx, progress, len(valid_loader.dataset)))
             batch_img = batch_img.unsqueeze(1).cuda()
 
             outputs = model(batch_img)
@@ -327,12 +330,14 @@ def eval_multi_input_output(model, valid_loader, losses, save=False, output_dir=
             # Adding predicted and true targets
             for j in range(len(outputs)):
                 target_true[j].extend(torch.tensor([t[j] for t in batch_target]).squeeze().cpu())
-                target_pred[j].extend(outputs[j].squeeze().cpu())
+                target_pred[j].extend(torch.tensor([o[j] for o in outputs]).squeeze().cpu())
 
             if batch_idx % 10 == 0:
                 LOGGER.info('Eval Progress: [{}/{} ({:.0f}%)]'.format(
                 batch_idx * len(batch_img), len(valid_loader.dataset), 
                 valid_loader.batch_size * batch_idx / len(valid_loader)))     
+            
+            progress += len(batch_img)
     
     if valid_loader.dataset.log:
         target_true = np.subtract(np.exp(target_true), 40)

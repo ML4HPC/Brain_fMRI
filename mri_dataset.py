@@ -5,17 +5,17 @@ import numpy as np
 from scipy.ndimage import zoom
 
 class MRIDataset(Dataset):
-    def __init__(self, input_data, target, resize, normalize=False, log=False, nan=False):
+    def __init__(self, input_data, target, resize, norms=None, log=False, nan=False):
         self.X_data = input_data
         self.Y_data = target
         self.resize = resize
-        self.normalize = normalize
+        self.normalize = norms
         self.log = log
         self.nan = nan
-        self.mean = 70.4099
-        self.std = 190.856
 
         if self.normalize:
+            self.mean = norms[0]
+            self.std = norms[1]
             print('Normalization applied to dataset')
         if self.log:
             print('Log applied to dataset')
@@ -51,17 +51,17 @@ class MRIDataset(Dataset):
         return (x, y)
 
 class MultiMRIDataset(Dataset):
-    def __init__(self, input_data, target, resize, normalize=False, log=False, nan=False):
+    def __init__(self, input_data, target, resize, norms=None, log=False, nan=False):
         self.X_data = input_data
         self.Y_data = target
         self.resize = resize
-        self.normalize = normalize
+        self.normalize = norms
         self.log = log
         self.nan = nan
-        self.mean = 70.4099
-        self.std = 190.856
 
         if self.normalize:
+            self.mean = norms[0]
+            self.std = norms[1]
             print('Normalization applied to dataset')
         if self.log:
             print('Log applied to dataset')
@@ -110,12 +110,12 @@ class MultiMRIDataset(Dataset):
         return (x, y)
 
 class ThreeInputMRIDataset(Dataset):
-    def __init__(self, input_data1, input_data2, input_data3, target, resize, normalize=False, log=False):
-        self.dataset1 = MRIDataset(input_data1, target, resize, normalize, log)
-        self.dataset2 = MRIDataset(input_data2, target, resize, normalize=False, log=False, nan=True)
-        self.dataset3 = MRIDataset(input_data3, target, resize, normalize=False, log=False, nan=True)
+    def __init__(self, input_data1, input_data2, input_data3, target, resize, norms=None, log=False):
+        self.dataset1 = MRIDataset(input_data1, target, resize, norms[0], log)
+        self.dataset2 = MRIDataset(input_data2, target, resize, norms[1], log=False, nan=True)
+        self.dataset3 = MRIDataset(input_data3, target, resize, norms[2], log=False, nan=True)
         self.resize = resize
-        self.normalize = normalize
+        self.normalize = norms
         self.log = log
     
     def __len__(self):
@@ -131,15 +131,15 @@ class ThreeInputMRIDataset(Dataset):
         return ([self.dataset1[idx][0], self.dataset2[idx][0], self.dataset3[idx][0]], self.dataset1[idx][1])
 
 class SixInputMultiOutputMRIDataset(Dataset):
-    def __init__(self, input_data1, input_data2, input_data3, input_data4, input_data5, input_data6, target, resize, normalize, log, nan):
-        self.dataset1 = MultiMRIDataset(input_data1, target, resize, normalize, log, nan)
-        self.dataset2 = MultiMRIDataset(input_data2, [], resize, normalize, log, nan)
-        self.dataset3 = MultiMRIDataset(input_data3, [], resize, normalize, log, nan)
-        self.dataset4 = MultiMRIDataset(input_data4, [], resize, normalize, log, nan)
-        self.dataset5 = MultiMRIDataset(input_data5, [], resize, normalize, log, nan)
-        self.dataset6 = MultiMRIDataset(input_data6, [], resize, normalize, log, nan)
+    def __init__(self, input_data1, input_data2, input_data3, input_data4, input_data5, input_data6, target, resize, norms, log, nan):
+        self.dataset1 = MultiMRIDataset(input_data1, target, resize, norms[0], log, nan)
+        self.dataset2 = MultiMRIDataset(input_data2, [], resize, norms[1], log, nan)
+        self.dataset3 = MultiMRIDataset(input_data3, [], resize, norms[2], log, nan)
+        self.dataset4 = MultiMRIDataset(input_data4, [], resize, norms[3], log, nan)
+        self.dataset5 = MultiMRIDataset(input_data5, [], resize, norms[4], log, nan)
+        self.dataset6 = MultiMRIDataset(input_data6, [], resize, norms[5], log, nan)
         self.resize = resize
-        self.normalize = normalize
+        self.normalize = norms
         self.log = log
     
     def __len__(self):

@@ -71,14 +71,20 @@ if __name__ == "__main__":
     valid_target = np.load(os.path.join(args.data_dir, 'valid_data_target.npy'), allow_pickle=True)
     test_target = np.load(os.path.join(args.data_dir, 'test_data_target.npy'), allow_pickle=True)
 
+    norms = None
+    if args.normalize:
+        means   =   np.load(os.path.join(args.data_dir, 'means_reordered.npy'), allow_pickle=True)
+        stds    =   np.load(os.path.join(args.data_dir, 'stds_reordered.npy'), allow_pickle=True)
+        norms   =   zip(means, stds)
+
     train_dataset = SixInputMultiOutputMRIDataset(train_img_T1, train_img_T2, train_img_FA, train_img_MD, train_img_RD, train_img_AD, 
-                                                    train_target, args.resize, args.normalize, args.log, args.nan)
+                                                    train_target, args.resize, norms, args.log, args.nan)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size)
     valid_dataset = SixInputMultiOutputMRIDataset(valid_img_T1, valid_img_T2, valid_img_FA, valid_img_MD, valid_img_RD, valid_img_AD, 
-                                                    valid_target, args.resize, args.normalize, args.log, args.nan)
+                                                    valid_target, args.resize, norms, args.log, args.nan)
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
     test_dataset = SixInputMultiOutputMRIDataset(test_img_T1, test_img_T2, test_img_FA, test_img_MD, test_img_RD, test_img_AD, 
-                                                    test_target, args.resize, args.normalize, args.log, args.nan)
+                                                    test_target, args.resize, norms, args.log, args.nan)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=args.valid_batch_size)
 
     if args.optimizer == 'sgd':

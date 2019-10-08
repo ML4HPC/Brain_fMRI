@@ -277,7 +277,7 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
             loss.backward()
             optimizer.step()
             
-            progress += len(batch_img)
+            progress += len(batch_img[0])
             LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, progress, len(train_loader.dataset)))
 
             if batch_idx % 10 == 0:
@@ -337,7 +337,7 @@ def eval_multi_input_output(model, valid_loader, losses, save=False, output_dir=
                 batch_idx * len(batch_img), len(valid_loader.dataset), 
                 valid_loader.batch_size * batch_idx / len(valid_loader)))     
             
-            progress += len(batch_img)
+            progress += len(batch_img[0])
     
     if valid_loader.dataset.log:
         target_true = np.subtract(np.exp(target_true), 40)

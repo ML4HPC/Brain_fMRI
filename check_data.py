@@ -45,19 +45,22 @@ def check_dim(path, mri_type):
     test_err = []
 
     for i in range(len(train_images)):
-        x_shape = np.array(train_images[i].dataobj).astype(float, copy=False).shape()
+        print(i)
+        x_shape = train_images[i].header.get_data_shape()
 
         if x_shape[0] != correct_dim or x_shape[1] != correct_dim or x_shape[2] != correct_dim:
             train_err.append(train_subjects[i])
     
     for i in range(len(valid_images)):
-        x_shape = np.array(valid_images[i].dataobj).astype(float, copy=False).shape()
+        print(i)
+        x_shape = valid_images[i].header.get_data_shape()
 
         if x_shape[0] != correct_dim or x_shape[1] != correct_dim or x_shape[2] != correct_dim:
             valid_err.append(valid_subjects[i])
     
     for i in range(len(test_images)):
-        x_shape = np.array(test_images[i].dataobj).astype(float, copy=False).shape()
+        print(i)
+        x_shape = test_images[i].header.get_data_shape()
 
         if x_shape[0] != correct_dim or x_shape[1] != correct_dim or x_shape[2] != correct_dim:
             test_err.append(test_subjects[i])

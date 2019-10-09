@@ -79,7 +79,7 @@ class MultiCNN(nn.Module):
         return [x_fi, x_age, x_gender, x_race, x_edu, x_married, x_site]
 
 
-def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, output_dir, checkpoint_epoch=0):
+def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer, losses, output_dir, checkpoint_epoch=0):
     model.train()
     loss = nn.L1Loss()
 
@@ -176,42 +176,37 @@ def train_multi(model, epoch, train_loader, valid_loader, optimizer, losses, out
 
 def eval_multi(model, valid_loader, losses, save=False, output_dir=None):
     model.eval()
-    #model.cuda()
-    #loss = loss.cuda()
-    
-    target_true = []
-    target_pred = []
+
+    target_true = [[] for i in range(21)]
+    target_pred = [[] for i in range(21)]
 
     with torch.no_grad():
+        progress = 0
         for batch_idx, (batch_img, batch_target) in enumerate(valid_loader):
-            LOGGER.info('Evaluating batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(valid_loader.dataset)))
-            batch_img = batch_img.unsqueeze(1).cuda()
+            LOGGER.info('Evaluating batch {}: [{}/{}]'.format(batch_idx, progress, len(valid_loader.dataset)))
+            
+            devs = model.get_devices()
+            batch_img = batch_img.unsqueeze(1).float().to(devs[0])
 
             outputs = model(batch_img)
     
-            fi_output = outputs[0].squeeze()
-            #LOGGER.info('current output is: {}\nground truth is: {}'.format(output.cpu().detach().numpy(), batch_target.cpu().detach().numpy()))
-            #res = loss(output.squeeze(), batch_target)
-
             # Adding predicted and true targets
-            target_true.extend(torch.tensor([t[0] for t in batch_target]).squeeze().cpu())
-            target_pred.extend(fi_output.cpu())
+            for j in range(len(outputs)):
+                target_true[j].extend(torch.tensor([t[j] for t in batch_target]).squeeze().cpu())
+                target_pred[j].extend(outputs[j].squeeze().cpu())
 
             if batch_idx % 10 == 0:
                 LOGGER.info('Eval Progress: [{}/{} ({:.0f}%)]'.format(
-                batch_idx * len(batch_img), len(valid_loader.dataset), 
-                valid_loader.batch_size * batch_idx / len(valid_loader)))     
+                progress, len(valid_loader.dataset), progress / len(valid_loader)))     
+            
+            progress += len(batch_img)
     
     if valid_loader.dataset.log:
         target_true = np.subtract(np.exp(target_true), 40)
         target_pred = np.subtract(np.exp(target_pred), 40)
 
-    print('Target true:')
-    print(target_true)
-    print('Target pred:')
-    print(target_pred)
-
-    mse = mean_squared_error(target_true, target_pred)
+    # MSE of fluid intelligence
+    mse = mean_squared_error(target_true[11], target_pred[11])
     LOGGER.info('Mean squared error: {}'.format(mse))
 
     if save:
@@ -297,7 +292,7 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
             'epoch': i,
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
-            'loss': loss
+            'loss': losses
         }, '{}_epoch_{}.pth'.format(model._get_name(), i))
 
         if cur_mse < best_mse:
@@ -306,7 +301,7 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
                 'epoch': i,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
-                'loss': loss
+                'loss': losses
             }, 'best_epoch_{}.pth'.format(i))
         
         np.save(os.path.join(output_dir, 'loss_history_train.npy'), loss_hist)

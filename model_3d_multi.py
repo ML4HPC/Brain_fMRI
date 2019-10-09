@@ -337,8 +337,7 @@ def eval_multi_input_output(model, valid_loader, losses, save=False, output_dir=
 
             if batch_idx % 10 == 0:
                 LOGGER.info('Eval Progress: [{}/{} ({:.0f}%)]'.format(
-                batch_idx * len(batch_img), len(valid_loader.dataset), 
-                valid_loader.batch_size * batch_idx / len(valid_loader)))     
+                progress, len(valid_loader.dataset), progress / len(valid_loader)))     
             
             progress += len(batch_img[0])
     

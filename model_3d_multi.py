@@ -323,7 +323,10 @@ def eval_multi_input_output(model, valid_loader, losses, save=False, output_dir=
         progress = 0
         for batch_idx, (batch_img, batch_target) in enumerate(valid_loader):
             LOGGER.info('Evaluating batch {}: [{}/{}]'.format(batch_idx, progress, len(valid_loader.dataset)))
-            batch_img = batch_img.unsqueeze(1).cuda()
+            
+            for j in range(len(batch_img)):
+                devs = model.get_devices()
+                batch_img[j] = batch_img[j].unsqueeze(1).float().to(devs[j])
 
             outputs = model(batch_img)
     

@@ -94,7 +94,7 @@ def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer
         except: 
             raise Exception('Output directory / results file cannot be created')
 
-    results = open((output_dir+'/results.txt'), 'a+')
+    results = open(os.path.join(output_dir, 'results.txt'), 'a+')
     loss_hist = []
 
     start_epoch = 0
@@ -102,47 +102,40 @@ def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer
         start_epoch = checkpoint_epoch
 
     for i in range(start_epoch, epoch):
+        progress = 0
         epoch_start = time.time()
 
         for batch_idx, (batch_img, batch_target) in enumerate(train_loader):            
-            LOGGER.info('Starting batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
-            batch_img = batch_img.unsqueeze(1)
+            LOGGER.info('Starting batch {}: [{}/{}]'.format(batch_idx, progress, len(train_loader.dataset)))
+            batch_img = batch_img.unsqueeze(1).cuda()
 
             optimizer.zero_grad()
-            batch_img = batch_img.cuda()
-            #batch_target = [target.cuda() for target in batch_target]
 
             outputs = model(batch_img)
             loss = 0
-            loss_print = []
-            #res = loss(output.squeeze(), batch_target)
+            
             for j in range(len(outputs)):
                 criterion = losses[j]
                 output = outputs[j]
                 target = torch.tensor([t[j] for t in batch_target]).squeeze().cuda()
 
-                if output.shape[1] == 1:
-                    output = output.squeeze()
-
-                if j in [3, 4, 5, 6]:
+                # For cross entropy loss, need long tensors
+                if k in [2, 3, 4, 5, 6]:
                     cur_loss = criterion(output, target.long())
                 else:
                     cur_loss = criterion(output, target.float())
                 
-                loss_print.append(cur_loss)
                 loss += cur_loss
             
-            loss_hist.append(loss)
-            
-            LOGGER.info('Loss fi: {}\n Loss age: {}\nLoss gender: {}\nLoss race: {}\nLoss edu: {}\nLoss married: {}\nLoss site: {}\n'.format(*loss_print))
-            
+            loss_hist.append(loss.item())
             loss.backward() 
             optimizer.step()
             
+            progress += len(batch_img)
             LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
 
             if batch_idx % 10 == 0:
-                LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, batch_idx * len(batch_img), len(train_loader.dataset), len(batch_img) * batch_idx / len(train_loader.dataset) * 100, loss.item()))
+                LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, progress, len(train_loader.dataset), progress / len(train_loader.dataset) * 100, loss.item()))
             
             #torch.cuda.empty_cache()
             #del batch_img, batch_target

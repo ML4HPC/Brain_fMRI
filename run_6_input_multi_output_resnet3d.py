@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
     train_dataset = SixInputMultiOutputMRIDataset(train_img_T1, train_img_T2, train_img_FA, train_img_MD, train_img_RD, train_img_AD, 
                                                     train_target, args.resize, norms, args.log, args.nan)
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size, shuffle=True)
     valid_dataset = SixInputMultiOutputMRIDataset(valid_img_T1, valid_img_T2, valid_img_FA, valid_img_MD, valid_img_RD, valid_img_AD, 
                                                     valid_target, args.resize, norms, args.log, args.nan)
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)

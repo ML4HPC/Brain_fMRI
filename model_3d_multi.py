@@ -6,7 +6,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.autograd import Variable
 from mri_dataset import MRIDataset
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import r2_score
 import logging
 import os, sys, time
 import IPython
@@ -84,7 +84,7 @@ def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer
     loss = nn.L1Loss()
 
     loss = loss.cuda()
-    best_mse = float('inf')
+    best_r2 = float('-inf')
 
     if checkpoint_epoch <= 0:
         # Create output directory and results file
@@ -116,7 +116,7 @@ def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer
             
             for j in range(len(outputs)):
                 criterion = losses[j]
-                output = outputs[j]
+                output = outputs[j].squeeze()
                 target = torch.tensor([t[j] for t in batch_target]).squeeze().cuda()
 
                 # For cross entropy loss, need long tensors
@@ -126,7 +126,7 @@ def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer
                     cur_loss = criterion(output, target.float())
                 
                 loss += cur_loss
-            
+             
             loss_hist.append(loss.item())
             loss.backward() 
             optimizer.step()
@@ -143,8 +143,8 @@ def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer
         epoch_end = time.time()
         epoch_train_time = epoch_end - epoch_start
 
-        cur_mse = eval_multi(model, valid_loader, losses)
-        results.write('Epoch {}: {} ({} s)\n'.format(i, cur_mse, epoch_train_time))
+        cur_r2 = eval_multi(model, valid_loader, losses)
+        results.write('Epoch {}: {} ({} s)\n'.format(i, cur_r2, epoch_train_time))
         results.flush()
         torch.save({
             'epoch': i,
@@ -153,8 +153,8 @@ def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer
             'loss': loss
         }, '{}_epoch_{}.pth'.format(model._get_name(), i))
 
-        if cur_mse < best_mse:
-            best_mse = cur_mse
+        if cur_r2 > best_r2:
+            best_r2 = cur_r2
             torch.save({
                 'epoch': i,
                 'model_state_dict': model.state_dict(),
@@ -199,8 +199,8 @@ def eval_multi(model, valid_loader, losses, save=False, output_dir=None):
         target_pred = np.subtract(np.exp(target_pred), 40)
 
     # MSE of fluid intelligence
-    mse = mean_squared_error(target_true[11], target_pred[11])
-    LOGGER.info('Mean squared error: {}'.format(mse))
+    r2 = r2_score(target_true[11], target_pred[11])
+    LOGGER.info('R2 Score: {}'.format(r2))
 
     if save:
         try:
@@ -277,9 +277,9 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
         epoch_end = time.time()
         epoch_train_time = epoch_end - epoch_start
 
-        cur_mse = eval_multi_input_output(model, valid_loader, loss)
-        test_mse = eval_multi_input_output(model, test_loader, loss)
-        results.write('Epoch {}: Validation {} Test {} ({} s)\n'.format(i, cur_mse, test_mse, epoch_train_time))
+        cur_r2 = eval_multi_input_output(model, valid_loader, loss)
+        test_r2 = eval_multi_input_output(model, test_loader, loss)
+        results.write('Epoch {}: Validation {} Test {} ({} s)\n'.format(i, cur_r2, test_r2, epoch_train_time))
         results.flush()
         torch.save({
             'epoch': i,
@@ -288,8 +288,8 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
             'loss': losses
         }, '{}_epoch_{}.pth'.format(model._get_name(), i))
 
-        if cur_mse < best_mse:
-            best_mse = cur_mse
+        if cur_r2 > best_r2:
+            best_r2 = cur_r2
             torch.save({
                 'epoch': i,
                 'model_state_dict': model.state_dict(),
@@ -334,8 +334,8 @@ def eval_multi_input_output(model, valid_loader, losses, save=False, output_dir=
         target_pred = np.subtract(np.exp(target_pred), 40)
 
     # MSE of fluid intelligence
-    mse = mean_squared_error(target_true[11], target_pred[11])
-    LOGGER.info('Mean squared error: {}'.format(mse))
+    r2 = r2_score(target_true[11], target_pred[11])
+    LOGGER.info('R2 Score: {}'.format(r2))
 
     if save:
         try:
@@ -344,4 +344,4 @@ def eval_multi_input_output(model, valid_loader, losses, save=False, output_dir=
         except:
             raise Exception('Could not save ground truth & predictions to file')
 
-    return mse
+    return r2

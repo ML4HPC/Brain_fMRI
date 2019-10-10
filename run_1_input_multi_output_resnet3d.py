@@ -66,7 +66,7 @@ if __name__ == "__main__":
         norms       =   list(zip(means, stds))[norms_idx]
 
     train_dataset   =   MultiMRIDataset(train_img, train_target, args.resize, norms, args.log, args.nan)
-    train_loader    =   torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size. shuffle=True)
+    train_loader    =   torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size, shuffle=True)
     valid_dataset   =   MultiMRIDataset(valid_img, valid_target, args.resize, norms, args.log, args.nan)
     valid_loader    =   torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
     test_dataset    =   MultiMRIDataset(test_img,test_target, args.resize, norms, args.log, args.nan)

@@ -35,7 +35,10 @@ if __name__ == "__main__":
     parser.add_argument('--mri_type', default=None, help='MRI type: T1, T2, FA, MD, RD, AD')
     args = parser.parse_args()
 
-    model = multi_input_resnet3d.one_struct_input_multi_output_resnet3D50(devices=[0,1,2,3,4,5,6,7])
+    if args.mri_type == 'T1' or args.mri_type == 'T2':
+        model = multi_input_resnet3d.one_struct_input_multi_output_resnet3D50(devices=[0,1,2,3])
+    else:
+        model = multi_input_resnet3d.one_dti_input_multi_output_resnet3D50(devices=[0,1,2,3])
 
     # Load from checkpoint, if available
     if args.checkpoint_state:

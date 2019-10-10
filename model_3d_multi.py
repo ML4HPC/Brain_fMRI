@@ -209,7 +209,7 @@ def eval_multi(model, valid_loader, losses, save=False, output_dir=None):
         except:
             raise Exception('Could not save ground truth & predictions to file')
 
-    return mse
+    return r2
 
 def train_multi_input_output(model, epoch, train_loader, valid_loader, test_loader, optimizer, losses, output_dir, checkpoint_epoch=0):
     model.train()

@@ -120,7 +120,7 @@ def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer
                 target = torch.tensor([t[j] for t in batch_target]).squeeze().cuda()
 
                 # For cross entropy loss, need long tensors
-                if k in [2, 3, 4, 5, 6]:
+                if j in [2, 3, 4, 5, 6]:
                     cur_loss = criterion(output, target.long())
                 else:
                     cur_loss = criterion(output, target.float())

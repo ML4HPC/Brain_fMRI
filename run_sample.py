@@ -67,8 +67,8 @@ if __name__ == "__main__":
     valid_img_AD    =   np.load(os.path.join(args.data_dir, 'valid_data_img_AD.npy'), allow_pickle=True)
     test_img_AD     =   np.load(os.path.join(args.data_dir, 'test_data_img_AD.npy'), allow_pickle=True)
 
-    train_target = np.load(os.path.join(args.data_dir, 'train_data_target.npy_sample'), allow_pickle=True)
-    valid_target = np.load(os.path.join(args.data_dir, 'valid_data_target.npy'), allow_pickle=True)
+    train_target = np.load(os.path.join(args.data_dir, 'train_data_target_sample.npy'), allow_pickle=True)
+    valid_target = np.load(os.path.join(args.data_dir, 'valid_data_target_sample.npy'), allow_pickle=True)
     test_target = np.load(os.path.join(args.data_dir, 'test_data_target.npy'), allow_pickle=True)
 
     norms = None

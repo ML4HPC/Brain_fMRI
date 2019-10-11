@@ -184,7 +184,7 @@ def eval_multi(model, valid_loader, save=False, output_dir=None, valid_type=None
             # Adding predicted and true targets
             for j in range(len(outputs)):
                 target_true[j].extend(torch.tensor([t[j] for t in batch_target]).squeeze().cpu())
-                target_pred[j].extend(outputs[j].squeeze().cpu())
+                target_pred[j].extend(outputs[j].squeeze().cpu().numpy())
 
             if batch_idx % 10 == 0:
                 LOGGER.info('Eval Progress: [{}/{} ({:.0f}%)]'.format(

@@ -140,8 +140,8 @@ def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer
         epoch_end = time.time()
         epoch_train_time = epoch_end - epoch_start
 
-        cur_r2 = eval_multi(model, valid_loader, losses)
-        test_r2 = eval_multi(model, test_loader, losses)
+        cur_r2 = eval_multi(model, valid_loader)
+        test_r2 = eval_multi(model, test_loader)
         results.write('Epoch {}: Validation {} Test {} ({} s)\n'.format(i, cur_r2, test_r2, epoch_train_time))
         results.flush()
         torch.save({
@@ -165,7 +165,7 @@ def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer
     results.close()
             
 
-def eval_multi(model, valid_loader, losses, save=False, output_dir=None):
+def eval_multi(model, valid_loader, save=False, output_dir=None):
     model.eval()
 
     target_true = [[] for i in range(21)]
@@ -275,8 +275,8 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
         epoch_end = time.time()
         epoch_train_time = epoch_end - epoch_start
 
-        cur_r2 = eval_multi_input_output(model, valid_loader, loss)
-        test_r2 = eval_multi_input_output(model, test_loader, loss)
+        cur_r2 = eval_multi_input_output(model, valid_loader)
+        test_r2 = eval_multi_input_output(model, test_loader)
         results.write('Epoch {}: Validation {} Test {} ({} s)\n'.format(i, cur_r2, test_r2, epoch_train_time))
         results.flush()
         torch.save({
@@ -299,7 +299,7 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
     
     results.close()
 
-def eval_multi_input_output(model, valid_loader, losses, save=False, output_dir=None):
+def eval_multi_input_output(model, valid_loader, save=False, output_dir=None):
     model.eval()
     
     target_true = [[] for i in range(21)]

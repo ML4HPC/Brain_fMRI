@@ -202,9 +202,8 @@ def eval_multi(model, valid_loader, save=False, output_dir=None, valid_type=None
 
     if save:
         try:
-            for i in range(len(target_true)):
-                np.save(os.path.join(output_dir, '{}_target_true_{}.npy'.format(valid_type, i)), target_true[i])
-                np.save(os.path.join(output_dir, '{}_target_pred_{}.npy'.format(valid_type, i)), target_pred[i])
+            np.save(os.path.join(output_dir, '{}_target_true.npy'.format(valid_type)), target_true)
+            np.save(os.path.join(output_dir, '{}_target_pred.npy'.format(valid_type)), target_pred)
         except:
             raise Exception('Could not save ground truth & predictions to file')
 

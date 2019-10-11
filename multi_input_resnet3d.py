@@ -286,7 +286,7 @@ class OneDTIInputMultiOutputResNet3d(nn.Module):
         super(OneDTIInputMultiOutputResNet3d, self).__init__()
         assert( len(devices) >= 3 and torch.cuda.is_available() )
         self.devs   =  ['cuda:{}'.format(device) for device in devices]
-        self.head   =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[2])
+        self.head   =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[0])
         self.tail   =  ResNet3dPost(block, layers, num_classes, post_inplanes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[1])
         # Age
         self.fc1    =  nn.Linear(1000, 1).to(self.devs[2])

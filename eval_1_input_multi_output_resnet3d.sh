@@ -13,7 +13,7 @@ mri_type=$2
 saved_state=$3
 cwd=$(pwd)
 cur_filepath="${cwd}/${0}"
-python3 eval_1_input_multi_output_resnet3d.py --data_dir=../data/processed_resid/ --output_dir=$outdir --saved_state=$saved_state --valid_batch_size=$valid_bsz --normalize=$normalize --mri_type=$mri_type
+python3 eval_1_input_multi_output_resnet3d.py --data_dir=../data/processed/ --output_dir=$outdir --saved_state=$saved_state --valid_batch_size=$valid_bsz --normalize=$normalize --mri_type=$mri_type
 cp $cur_filepath $outdir 
 
 

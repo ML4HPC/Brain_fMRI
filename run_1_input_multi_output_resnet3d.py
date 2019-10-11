@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     # Load from checkpoint, if available
     if args.checkpoint_state:
-        saved_state = torch.load(args.checkpoint_state, map_location='cpu')
+        saved_state = torch.load(args.checkpoint_state)
         model.load_state_dict(saved_state)
         print('Loaded model from checkpoint')
 

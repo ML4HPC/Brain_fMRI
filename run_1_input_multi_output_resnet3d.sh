@@ -7,7 +7,7 @@ then
 fi
 
 train_bsz=3
-valid_bsz=6
+valid_bsz=10
 epoch=10
 normalize=True
 optim=adam

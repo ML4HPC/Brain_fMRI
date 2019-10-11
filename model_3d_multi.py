@@ -81,9 +81,7 @@ class MultiCNN(nn.Module):
 
 def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer, losses, output_dir, checkpoint_epoch=0):
     model.train()
-    loss = nn.L1Loss()
 
-    loss = loss.cuda()
     best_r2 = float('-inf')
 
     if checkpoint_epoch <= 0:
@@ -110,15 +108,14 @@ def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer
             batch_img = batch_img.unsqueeze(1).cuda()
 
             optimizer.zero_grad()
-
-            outputs = model(batch_img)
-            loss = 0
+            loss = 0 
+            
+            outputs = model(batch_img) 
             
             for j in range(len(outputs)):
                 criterion = losses[j]
                 output = outputs[j].squeeze()
                 target = torch.tensor([t[j] for t in batch_target]).squeeze().cuda()
-
                 # For cross entropy loss, need long tensors
                 if j in [2, 3, 4, 5, 6]:
                     cur_loss = criterion(output, target.long())

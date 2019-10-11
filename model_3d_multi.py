@@ -188,7 +188,7 @@ def eval_multi(model, valid_loader, save=False, output_dir=None):
 
             if batch_idx % 10 == 0:
                 LOGGER.info('Eval Progress: [{}/{} ({:.0f}%)]'.format(
-                progress, len(valid_loader.dataset), progress / len(valid_loader.dataset)))     
+                progress, len(valid_loader.dataset), progress / len(valid_loader.dataset) * 100))     
             
             progress += len(batch_img)
     

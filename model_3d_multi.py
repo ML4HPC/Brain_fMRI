@@ -141,13 +141,14 @@ def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer
         epoch_train_time = epoch_end - epoch_start
 
         cur_r2 = eval_multi(model, valid_loader, losses)
-        results.write('Epoch {}: {} ({} s)\n'.format(i, cur_r2, epoch_train_time))
+        test_r2 = eval_multi(model, test_loader, losses)
+        results.write('Epoch {}: Validation {} Test {} ({} s)\n'.format(i, cur_r2, test_r2, epoch_train_time))
         results.flush()
         torch.save({
             'epoch': i,
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
-            'loss': loss
+            'loss': losses
         }, os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
 
         if cur_r2 > best_r2:
@@ -156,7 +157,7 @@ def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer
                 'epoch': i,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
-                'loss': loss
+                'loss': losses
             }, os.path.join(output_dir, 'best_epoch_{}.pth'.format(i)))
 
         np.save(os.path.join(output_dir, 'loss_history_train.npy'), loss_hist)

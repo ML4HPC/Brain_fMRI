@@ -148,7 +148,7 @@ def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
             'loss': loss
-        }, '{}_epoch_{}.pth'.format(model._get_name(), i))
+        }, os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
 
         if cur_r2 > best_r2:
             best_r2 = cur_r2
@@ -157,7 +157,7 @@ def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': loss
-            }, 'best_epoch_{}.pth'.format(i))
+            }, os.path.join(output_dir, 'best_epoch_{}.pth'.format(i)))
 
         np.save(os.path.join(output_dir, 'loss_history_train.npy'), loss_hist)
     
@@ -283,7 +283,7 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
             'loss': losses
-        }, '{}_epoch_{}.pth'.format(model._get_name(), i))
+        }, os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
 
         if cur_r2 > best_r2:
             best_r2 = cur_r2
@@ -292,7 +292,7 @@ def train_multi_input_output(model, epoch, train_loader, valid_loader, test_load
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': losses
-            }, 'best_epoch_{}.pth'.format(i))
+            }, os.path.join(output_dir, 'best_epoch_{}.pth'.format(i)))
         
         np.save(os.path.join(output_dir, 'loss_history_train.npy'), loss_hist)
     

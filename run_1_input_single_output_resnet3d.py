@@ -33,7 +33,7 @@ if __name__ == "__main__":
     parser.add_argument('--optimizer', default='sgd', help='Optimizer type: adam, sgd')
     parser.add_argument('--sync_bn', default=False, help='Use sync batch norm or not (True/False)')
     parser.add_argument('--mri_type', default=None, help='MRI type: T1, T2, FA, MD, RD, AD')
-    parser.add_argument('--target_idx', default=0, help='Index of target lable that we want to use from the multi-label dataset')
+    parser.add_argument('--target_idx', default=0, type=int, help='Index of target lable that we want to use from the multi-label dataset')
     args = parser.parse_args()
 
     if args.mri_type == 'T1' or args.mri_type == 'T2':

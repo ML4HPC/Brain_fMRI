@@ -102,7 +102,7 @@ if __name__ == "__main__":
     
     if args.target_idx in bin_idx:
         loss = bin_loss
-    elif i in cat_idx:
+    elif args.target_idx in cat_idx:
         loss = cat_loss
     else:
         loss = reg_loss

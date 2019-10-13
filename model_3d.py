@@ -191,7 +191,7 @@ def train(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss
             LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
 
             if batch_idx % 10 == 0:
-                LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, progress, len(train_loader.dataset), progress / len(train_loader.dataset) * 100, loss.item()))
+                LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, progress, len(train_loader.dataset), progress / len(train_loader.dataset) * 100, cur_loss.item()))
             
             #torch.cuda.empty_cache()
             #del batch_img, batch_target

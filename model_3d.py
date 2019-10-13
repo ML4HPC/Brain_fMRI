@@ -9,7 +9,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.autograd import Variable
 from mri_dataset import MRIDataset
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import r2_score
 import logging
 import os, sys, time
 import IPython
@@ -150,10 +150,8 @@ args = Args()
 
 def train(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss, output_dir, checkpoint_epoch=0):
     model.train()
-    loss = nn.L1Loss()
 
-    loss = loss.cuda()
-    best_mse = float('inf')
+    best_r2 = float('-inf')
 
     if checkpoint_epoch <= 0:
         # Create output directory and results file
@@ -163,35 +161,37 @@ def train(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss
         except: 
             raise Exception('Output directory / results file cannot be created')
 
-    results = open((output_dir+'/results.txt'), 'a+')
+    results = open(os.path.join(output_dir, 'results.txt'), 'a+')
+    loss_hist = []
 
     start_epoch = 0
     if checkpoint_epoch > 0:
         start_epoch = checkpoint_epoch
 
     for i in range(start_epoch, epoch):
+        progress = 0
         epoch_start = time.time()
 
-        for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
-            LOGGER.info('Starting batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
-            batch_img = batch_img.unsqueeze(1)
+        for batch_idx, (batch_img, batch_target) in enumerate(train_loader):            
+            LOGGER.info('Starting batch {}: [{}/{}]'.format(batch_idx, progress, len(train_loader.dataset)))
+            batch_img = batch_img.unsqueeze(1).cuda()
 
             optimizer.zero_grad()
-
-            batch_img = batch_img.cuda()
-            batch_target = batch_target.float().cuda()
-
-            output = model(batch_img)
-            res = loss(output.squeeze(), batch_target)
-            res.backward() 
+            cur_loss = 0 
+            
+            outputs = model(batch_img).squeeze()
+            batch_target = batch_target.squeeze().float().cuda()
+            cur_loss = loss(outputs, batch_target)
+             
+            loss_hist.append(cur_loss.item())
+            cur_loss.backward() 
             optimizer.step()
             
-            LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, batch_idx * train_loader.batch_size, len(train_loader.dataset)))
+            progress += len(batch_img)
+            LOGGER.info('End batch {}: [{}/{}]'.format(batch_idx, batch_idx * len(batch_img), len(train_loader.dataset)))
 
             if batch_idx % 10 == 0:
-                LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                    i, batch_idx * train_loader.batch_size, len(train_loader.dataset), 
-                    train_loader.batch_size * batch_idx / len(train_loader.dataset) * 100, res.item()))
+                LOGGER.info('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(i, progress, len(train_loader.dataset), progress / len(train_loader.dataset) * 100, loss.item()))
             
             #torch.cuda.empty_cache()
             #del batch_img, batch_target
@@ -199,30 +199,73 @@ def train(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss
         epoch_end = time.time()
         epoch_train_time = epoch_end - epoch_start
 
-        cur_mse = eval(model, valid_loader, loss)
-        test_mse = eval(model, test_loader, loss)
-        results.write('Epoch {}: Validation {} Test {} ({} s)\n'.format(i, cur_mse, test_mse, epoch_train_time))
+        cur_r2 = eval(model, valid_loader)
+        test_r2 = eval(model, test_loader)
+        results.write('Epoch {}: Validation {} Test {} ({} s)\n'.format(i, cur_r2, test_r2, epoch_train_time))
         results.flush()
         torch.save({
             'epoch': i,
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
             'loss': loss
-        }, '{}_epoch_{}.pth'.format(model._get_name(), i))
-        #torch.save(model.state_dict(), os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
-        #torch.save(optimizer.state_dict(), os.path.join(output_dir, 'optimizer.pth'))
+        }, os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
 
-        if cur_mse < best_mse:
-            best_mse = cur_mse
+        if cur_r2 > best_r2:
+            best_r2 = cur_r2
             torch.save({
                 'epoch': i,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': loss
-            }, 'best_epoch_{}.pth'.format(i))
-            #torch.save(model.state_dict(), os.path.join(output_dir, 'best_{}_epoch.pth'.format(i)))
+            }, os.path.join(output_dir, 'best_epoch_{}.pth'.format(i)))
+
+        np.save(os.path.join(output_dir, 'loss_history_train.npy'), loss_hist)
     
     results.close()
+
+
+def eval(model, valid_loader, save=False, output_dir=None, valid_type=None):
+    model.eval()
+
+    target_true = []
+    target_pred = []
+
+    with torch.no_grad():
+        progress = 0
+        for batch_idx, (batch_img, batch_target) in enumerate(valid_loader):
+            LOGGER.info('Evaluating batch {}: [{}/{}]'.format(batch_idx, progress, len(valid_loader.dataset)))
+            
+            devs = model.get_devices()
+            batch_img = batch_img.unsqueeze(1).float().to(devs[0])
+
+            outputs = model(batch_img).squeeze()
+
+            # Adding predicted and true targets
+            target_true.extend(batch_target.squeeze().cpu())
+            target_pred.extend(outputs.cpu().numpy())
+
+            if batch_idx % 10 == 0:
+                LOGGER.info('Eval Progress: [{}/{} ({:.0f}%)]'.format(
+                progress, len(valid_loader.dataset), progress / len(valid_loader.dataset) * 100))     
+            
+            progress += len(batch_img)
+    
+    if valid_loader.dataset.log:
+        target_true = np.subtract(np.exp(target_true), 40)
+        target_pred = np.subtract(np.exp(target_pred), 40)
+
+    # MSE of fluid intelligence
+    r2 = r2_score(target_true, target_pred)
+    LOGGER.info('R2 Score: {}'.format(r2))
+
+    if save:
+        try:
+            np.save(os.path.join(output_dir, '{}_target_true.npy'.format(valid_type)), target_true)
+            np.save(os.path.join(output_dir, '{}_target_pred.npy'.format(valid_type)), target_pred)
+        except:
+            raise Exception('Could not save ground truth & predictions to file')
+
+    return r2
 
 def train_multi_input(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss, output_dir, checkpoint_epoch=0):
     model.train()
@@ -304,48 +347,6 @@ def train_multi_input(model, epoch, train_loader, valid_loader, test_loader, opt
         np.save(os.path.join(output_dir, 'loss_history_train.npy'), loss_hist)
     
     results.close()
-            
-
-def eval(model, valid_loader, loss):
-    model.eval()
-    loss = nn.L1Loss()
-    loss = loss.cuda()
-    
-    target_true = []
-    target_pred = []
-
-    with torch.no_grad():
-        for batch_idx, (batch_img, batch_target) in enumerate(valid_loader):
-            LOGGER.info('Evaluating batch {}: [{}/{}]'.format(batch_idx, batch_idx * valid_loader.batch_size, len(valid_loader.dataset)))
-            batch_img = batch_img.unsqueeze(1)
-
-            batch_img = batch_img.cuda()
-            batch_target = batch_target.float().cuda()
-
-            output = model(batch_img)
-            #LOGGER.info('current output is: {}\nground truth is: {}'.format(output.cpu().detach().numpy(), batch_target.cpu().detach().numpy()))
-            res = loss(output.squeeze(), batch_target)
-
-            # Adding predicted and true targets
-            target_true.extend(batch_target.cpu())
-            for pred in output:
-                target_pred.extend(pred.cpu())
-
-            if batch_idx % 10 == 0:
-                LOGGER.info('Eval Progress: [{}/{} ({:.0f}%)]'.format(
-                batch_idx * valid_loader.batch_size, len(valid_loader.dataset), 
-                valid_loader.batch_size * batch_idx / len(valid_loader.dataset) * 100))  
-    
-    target_true = np.subtract(np.exp(target_true), 40)
-    target_pred = np.subtract(np.exp(target_pred),40)
-    print('Target true:')
-    print(target_true)
-    print('Target pred:')
-    print(target_pred)
-    mse = mean_squared_error(target_true, target_pred)
-    LOGGER.info('Mean squared error: {}'.format(mse))
-
-    return mse
 
 
     

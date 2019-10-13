@@ -185,6 +185,36 @@ class ResNet3dPost(nn.Module):
         x = self.fc(x)
         return x
 
+class OneStructInputSingleOutputResNet3d(nn.Module):
+    """
+        require four devices
+    """
+    def __init__(self, block, layers, devices, num_classes=1000, output_classes=1, post_inplanes=256, 
+                 zero_init_residual=False, groups=1, width_per_group=64, replace_stride_with_dilation=None,
+                 norm_layer=None):
+        super(OneStructInputSingleOutputResNet3d, self).__init__()
+        assert( len(devices) >= 3 and torch.cuda.is_available() )
+        self.devs   =  ['cuda:{}'.format(device) for device in devices]
+        self.head   =  ResNet3dPrePool(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[0])
+        self.tail   =  ResNet3dPost(block, layers, num_classes, post_inplanes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[1])
+        self.fc     =  nn.Linear(1000, output_classes).to(self.devs[2])
+
+
+    def forward(self, x):
+        x = self.head(x)
+        x = x.to(self.devs[1])
+
+        x = self.tail(x)
+        x = x.to(self.devs[2])
+
+        x = self.fc(x)
+        x = x.to(self.devs[0])
+
+        return x
+
+    def get_devices(self):
+        return self.devs
+
 class OneStructInputMultiOutputResNet3d(nn.Module):
     """
         require four devices
@@ -275,6 +305,37 @@ class OneStructInputMultiOutputResNet3d(nn.Module):
 
     def get_devices(self):
         return self.devs
+
+class OneDTIInputSingleOutputResNet3d(nn.Module):
+    """
+        require four devices
+    """
+    def __init__(self, block, layers, devices, num_classes=1000, output_classes=1, post_inplanes=256, 
+                 zero_init_residual=False, groups=1, width_per_group=64, replace_stride_with_dilation=None,
+                 norm_layer=None):
+        super(OneDTIInputSingleOutputResNet3d, self).__init__()
+        assert( len(devices) >= 3 and torch.cuda.is_available() )
+        self.devs   =  ['cuda:{}'.format(device) for device in devices]
+        self.head   =  ResNet3dPre(block, layers, num_classes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[0])
+        self.tail   =  ResNet3dPost(block, layers, num_classes, post_inplanes, zero_init_residual, groups, width_per_group, replace_stride_with_dilation, norm_layer).to(self.devs[1])
+        self.fc     =  nn.Linear(1000, output_classes).to(self.devs[2])
+
+
+    def forward(self, x):
+        x = self.head(x)
+        x = x.to(self.devs[1])
+
+        x = self.tail(x)
+        x = x.to(self.devs[2])
+
+        x = self.fc(x)
+        x = x.to(self.devs[0])
+
+        return x
+
+    def get_devices(self):
+        return self.devs
+
 
 class OneDTIInputMultiOutputResNet3d(nn.Module):
     """
@@ -577,6 +638,12 @@ class SixInputMultiOutputResNet3d(nn.Module):
 
     def get_devices(self):
         return self.devs
+
+def one_struct_input_single_output_resnet3D50(devices, **kwargs):
+    return OneStructInputSingleOutputResNet3d(Bottleneck3d,[3, 4, 6, 3], devices, **kwargs)
+
+def one_dti_input_single_output_resnet3D50(devices, **kwargs):
+    return OneDTIInputSingleOutputResNet3d(Bottleneck3d,[3, 4, 6, 3], devices, **kwargs)
 
 def one_struct_input_multi_output_resnet3D50(devices, **kwargs):
     return OneStructInputMultiOutputResNet3d(Bottleneck3d,[3, 4, 6, 3], devices, **kwargs)

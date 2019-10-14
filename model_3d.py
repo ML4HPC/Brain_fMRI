@@ -148,10 +148,10 @@ class Args:
 args = Args()
 
 
-def train(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss, output_dir, checkpoint_epoch=0):
+def train(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss, output_dir, metric=r2_score, checkpoint_epoch=0):
     model.train()
 
-    best_r2 = float('-inf')
+    best_score = float('-inf')
 
     if checkpoint_epoch <= 0:
         # Create output directory and results file
@@ -199,9 +199,9 @@ def train(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss
         epoch_end = time.time()
         epoch_train_time = epoch_end - epoch_start
 
-        cur_r2 = eval(model, valid_loader)
-        test_r2 = eval(model, test_loader)
-        results.write('Epoch {}: Validation {} Test {} ({} s)\n'.format(i, cur_r2, test_r2, epoch_train_time))
+        cur_score= eval(model, valid_loader, metric)
+        test_score = eval(model, test_loader, metric)
+        results.write('Epoch {}: Validation {} Test {} ({} s)\n'.format(i, cur_score, test_score, epoch_train_time))
         results.flush()
         torch.save({
             'epoch': i,
@@ -210,8 +210,9 @@ def train(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss
             'loss': loss
         }, os.path.join(output_dir, '{}_epoch_{}.pth'.format(model._get_name(), i)))
 
-        if cur_r2 > best_r2:
-            best_r2 = cur_r2
+        # Higher the better
+        if cur_score > best_score:
+            best_score = cur_score
             torch.save({
                 'epoch': i,
                 'model_state_dict': model.state_dict(),
@@ -224,7 +225,7 @@ def train(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss
     results.close()
 
 
-def eval(model, valid_loader, save=False, output_dir=None, valid_type=None):
+def eval(model, valid_loader, metric, save=False, output_dir=None, valid_type=None):
     model.eval()
 
     target_true = []
@@ -255,8 +256,8 @@ def eval(model, valid_loader, save=False, output_dir=None, valid_type=None):
         target_pred = np.subtract(np.exp(target_pred), 40)
 
     # MSE of fluid intelligence
-    r2 = r2_score(target_true, target_pred)
-    LOGGER.info('R2 Score: {}'.format(r2))
+    score = metric(target_true, target_pred)
+    LOGGER.info('Score: {}'.format(score))
 
     if save:
         try:
@@ -265,7 +266,7 @@ def eval(model, valid_loader, save=False, output_dir=None, valid_type=None):
         except:
             raise Exception('Could not save ground truth & predictions to file')
 
-    return r2
+    return score
 
 def train_multi_input(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss, output_dir, checkpoint_epoch=0):
     model.train()

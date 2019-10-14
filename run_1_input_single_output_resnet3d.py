@@ -12,7 +12,8 @@ import IPython
 
 if __name__ == "__main__":
     torch.cuda.set_device(0)
-
+    torch.backends.cudnn.benchmark = True
+    
     # Parsing arguments
     parser = argparse.ArgumentParser(description='Single input, single output ResNet3D for regression')
     parser.add_argument('--data_dir', help='Directory path for datasets')

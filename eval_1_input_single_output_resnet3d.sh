@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ "$#" -lt 3 ]
+if [ "$#" -lt 4 ]
 then
-    echo 'Provide output directory as command line argument!'
+    echo 'Provide all command line arguments!'
     exit 1
 fi
 
@@ -11,6 +11,7 @@ normalize=True
 outdir=$1
 mri_type=$2
 saved_state=$3
+target_idx=$4
 metric=MSE
 cwd=$(pwd)
 cur_filepath="${cwd}/${0}"

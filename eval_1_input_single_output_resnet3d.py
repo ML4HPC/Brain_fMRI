@@ -26,6 +26,7 @@ if __name__ == "__main__":
     parser.add_argument('--log', type=bool, default=False)
     parser.add_argument('--nan', type=bool, default=True)
     parser.add_argument('--mri_type', default=None, help='MRI type: T1, T2, FA, MD, RD, AD')
+    parser.add_argument('--target_idx', default=0, type=int, help='Index of output from multi output dataset')
     parser.add_argument('--metric', default='R2', help='Scoring metric: R2, MSE')
     args = parser.parse_args()
 

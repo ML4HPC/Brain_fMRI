@@ -59,7 +59,7 @@ if __name__ == "__main__":
     test_img        =   np.load(os.path.join(args.data_dir, 'train_data_img_{}.npy'.format(args.mri_type)), allow_pickle=True)
 
     print('Extracting target index of {} from multi-label dataset'.format(args.target_idx))
-    # Loading only 'Age' target at index 0
+    # Loading only target at target_idx
     train_target    =   np.load(os.path.join(args.data_dir, 'train_data_target.npy'), allow_pickle=True)
     train_target    =   [t[args.target_idx] for t in train_target]
     valid_target    =   np.load(os.path.join(args.data_dir, 'valid_data_target.npy'), allow_pickle=True)

@@ -68,10 +68,9 @@ if __name__ == "__main__":
     # Metrics
     if args.metric == 'R2':
         metric = r2_score
-    elif args.metric == 'MSE'
+    elif args.metric == 'MSE':
         metric = mean_squared_error
 
-    eval(model, valid_loader, metric, save=True, output_dir=args.output_dir, valid_type='valid')
-    eval(model, test_loader, metric, save=True, output_dir=args.output_dir, valid_type='test')
-
-    
+    valid_score     =   eval(model, valid_loader, metric, save=True, output_dir=args.output_dir, valid_type='valid')
+    test_score      =   eval(model, test_loader, metric, save=True, output_dir=args.output_dir, valid_type='test')
+    print('Validation: {} Test: {}'.format(valid_score, test_score))

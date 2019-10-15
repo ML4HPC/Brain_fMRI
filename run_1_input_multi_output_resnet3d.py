@@ -12,6 +12,7 @@ import IPython
 
 if __name__ == "__main__":
     torch.cuda.set_device(0)
+    torch.backends.cudnn.benchmark = True
 
     # Parsing arguments
     parser = argparse.ArgumentParser(description='Multi-channel/input ResNet3D for regression')

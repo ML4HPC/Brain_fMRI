@@ -155,7 +155,7 @@ class MultiMRIDatasetBySite(Dataset):
             X_data = self.ds.get_x_data()
             Y_data = self.ds.get_y_data()
 
-            for i in range(Y_data):
+            for i in range(len(Y_data)):
                 if Y_data[i][6] in site:
                     site_indices.append(i)
             

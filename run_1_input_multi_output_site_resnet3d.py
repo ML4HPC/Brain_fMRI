@@ -71,7 +71,7 @@ if __name__ == "__main__":
         norms       =   list(zip(means, stds))[norms_idx]
 
     if args.site:
-        parsed_site =   map(int, args.site.strip('[]').split(','))
+        parsed_site =   list(map(int, args.site.strip('[]').split(',')))
 
     train_dataset   =   MultiMRIDatasetBySite(train_img, train_target, args.resize, norms, args.log, args.nan, parsed_site)
     train_loader    =   torch.utils.data.DataLoader(train_dataset, batch_size=args.train_batch_size, shuffle=True)

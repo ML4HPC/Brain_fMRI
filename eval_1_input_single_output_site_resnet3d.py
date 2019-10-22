@@ -39,11 +39,11 @@ if __name__ == "__main__":
     else:
         model = multi_input_resnet3d.one_dti_input_single_output_resnet3D50(devices=[0,1,2,3], output_classes=1)
 
-    # Load from checkpoint, if available
-    if args.checkpoint_state:
-        saved_state = torch.load(args.checkpoint_state)
-        model.load_state_dict(saved_state)
-        print('Loaded model from checkpoint')
+    # Load from saved state, if available
+    if args.saved_state:
+        saved_state = torch.load(args.saved_state)
+        model.load_state_dict(saved_state['model_state_dict'])
+        print('Loaded model from saved state')
 
     # Convert async batch norm to sync batch norm, if applicable
     if args.sync_bn:

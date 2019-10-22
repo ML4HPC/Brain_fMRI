@@ -4,7 +4,7 @@ import torch.nn as nn
 import multi_input_resnet3d 
 import numpy as np
 from mri_dataset import MultiMRIDatasetBySite
-from model_3d import train, eval
+from model_3d_multi import train_multi, eval_multi
 import argparse
 import os
 import apex
@@ -38,9 +38,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.mri_type == 'T1' or args.mri_type == 'T2':
-        model = multi_input_resnet3d.one_struct_input_single_output_resnet3D50(devices=[0,1,2,3], output_classes=1)
+        model = multi_input_resnet3d.one_struct_input_multi_output_resnet3D50(devices=[0,1,2,3])
     else:
-        model = multi_input_resnet3d.one_dti_input_single_output_resnet3D50(devices=[0,1,2,3], output_classes=1)
+        model = multi_input_resnet3d.one_dti_input_multi_output_resnet3D50(devices=[0,1,2,3])
 
     # Load from checkpoint, if available
     if args.checkpoint_state:
@@ -91,7 +91,7 @@ if __name__ == "__main__":
         print('Loaded optimizer from saved state')
 
     # Creating list of losses of size of output
-    loss = None
+    losses = [None] * 21
     reg_loss = nn.L1Loss()
     bin_loss = nn.BCEWithLogitsLoss()
     cat_loss = nn.CrossEntropyLoss()
@@ -99,14 +99,15 @@ if __name__ == "__main__":
     bin_idx = [1]
     cat_idx = [2, 3, 4, 5, 6]
     
-    if args.target_idx in bin_idx:
-        loss = bin_loss
-    elif args.target_idx in cat_idx:
-        loss = cat_loss
-    else:
-        loss = reg_loss
+    for i in range(len(losses)):
+        if i in bin_idx:
+            losses[i] = bin_loss
+        elif i in cat_idx:
+            losses[i] = cat_loss
+        else:
+            losses[i] = reg_loss
 
     if not args.checkpoint_state:
-        train(model, args.epoch, train_loader, valid_loader, test_loader, optimizer, loss, args.output_dir)
+        train_multi(model, args.epoch, train_loader, valid_loader, test_loader, optimizer, losses, args.output_dir)
     else:
-        train(model, args.epoch, train_loader, valid_loader, test_loader, optimizer, loss, args.output_dir, args.checkpoint_epoch)
+        train_multi(model, args.epoch, train_loader, valid_loader, test_loader, optimizer, losses, args.output_dir, args.checkpoint_epoch)

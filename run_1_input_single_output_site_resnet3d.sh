@@ -11,7 +11,7 @@ valid_bsz=10
 epoch=10
 normalize=True
 optim=adam
-lr=0.01
+lr=0.0001
 weight_decay=0
 outdir=$1
 mri_type=$2
@@ -20,7 +20,7 @@ target_idx=11
 cwd=$(pwd)
 cur_filepath="${cwd}/${0}"
 rm -rf $outdir
-python3 run_1_input_single_output_site_resnet3d.py --data_dir=../data/processed_norm/ --output_dir=$outdir --train_batch_size=$train_bsz --valid_batch_size=$valid_bsz --epoch=$epoch --normalize=$normalize --optimizer=$optim --lr=$lr --weight_decay=$weight_decay --mri_type=$mri_type --target_idx=$target_idx --site=$site
+python3 run_1_input_single_output_site_resnet3d.py --data_dir=../data/processed/ --output_dir=$outdir --train_batch_size=$train_bsz --valid_batch_size=$valid_bsz --epoch=$epoch --normalize=$normalize --optimizer=$optim --lr=$lr --weight_decay=$weight_decay --mri_type=$mri_type --target_idx=$target_idx --site=$site
 cp $cur_filepath $outdir 
 
 

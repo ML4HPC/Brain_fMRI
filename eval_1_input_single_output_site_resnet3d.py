@@ -45,11 +45,6 @@ if __name__ == "__main__":
         model.load_state_dict(saved_state['model_state_dict'])
         print('Loaded model from saved state')
 
-    # Convert async batch norm to sync batch norm, if applicable
-    if args.sync_bn:
-        model = apex.parallel.convert_syncbn_model(model)
-        print('Using sync batch norm')
-
     # Load and create datasets
     valid_img       =   np.load(os.path.join(args.data_dir, 'train_data_img_{}.npy'.format(args.mri_type)), allow_pickle=True)
     test_img        =   np.load(os.path.join(args.data_dir, 'train_data_img_{}.npy'.format(args.mri_type)), allow_pickle=True)

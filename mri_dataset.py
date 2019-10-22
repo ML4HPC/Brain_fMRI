@@ -141,7 +141,7 @@ class MRIDatasetBySite(Dataset):
         return (x, y)
 
 class MultiMRIDatasetBySite(Dataset):
-    def __init__(self, input_data, target, resize, norms=None, log=False, nan=False, site=[], site_excl):
+    def __init__(self, input_data, target, resize, norms=None, log=False, nan=False, site=[], site_excl=False):
         self.ds = MultiMRIDataset(input_data, target, resize, norms, log, nan)
 
         self.resize = resize

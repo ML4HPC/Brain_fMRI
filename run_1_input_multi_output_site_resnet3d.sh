@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$#" -lt 3 ]
+if [ "$#" -lt 2 ]
 then
     echo 'Provide output directory as command line argument!'
     exit 1

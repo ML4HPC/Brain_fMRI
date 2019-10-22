@@ -149,6 +149,8 @@ class MultiMRIDatasetBySite(Dataset):
         self.log = log
         self.nan = nan
         self.site = site
+        if self.site_excl:
+            print('Excluding specified sites: TRUE')
 
         if self.site:
             site_indices = []

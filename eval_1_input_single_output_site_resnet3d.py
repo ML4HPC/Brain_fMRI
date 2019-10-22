@@ -29,6 +29,7 @@ if __name__ == "__main__":
     parser.add_argument('--nan', type=bool, default=True)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--site', default=None)
+    parser.add_argument('--site_excl', type=bool, default=False)
     parser.add_argument('--mri_type', default=None, help='MRI type: T1, T2, FA, MD, RD, AD')
     parser.add_argument('--target_idx', default=0, type=int, help='Index of target lable that we want to use from the multi-label dataset')
     parser.add_argument('--metric', default='R2', help='Scoring metric: R2, MSE')
@@ -63,9 +64,9 @@ if __name__ == "__main__":
     if args.site:
         parsed_site =   list(map(int, args.site.strip('[]').split(',')))
 
-    valid_dataset   =   MRIDatasetBySite(valid_img, valid_target, args.resize, norms, args.log, args.nan, parsed_site, args.target_idx)
+    valid_dataset   =   MRIDatasetBySite(valid_img, valid_target, args.resize, norms, args.log, args.nan, parsed_site, args.target_idx, args.site_excl)
     valid_loader    =   torch.utils.data.DataLoader(valid_dataset, batch_size=args.valid_batch_size)
-    test_dataset    =   MRIDatasetBySite(test_img,test_target, args.resize, norms, args.log, args.nan, parsed_site, args.target_idx)
+    test_dataset    =   MRIDatasetBySite(test_img,test_target, args.resize, norms, args.log, args.nan, parsed_site, args.target_idx, args.site_excl)
     test_loader     =   torch.utils.data.DataLoader(test_dataset, batch_size=args.valid_batch_size)
 
     # Metrics

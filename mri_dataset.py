@@ -72,7 +72,7 @@ class MultiMRIDataset(Dataset):
         return len(self.Y_data)
 
     def get_x_data(self):
-        return [np.array(x.dataobj) for x in self.X_data]
+        return [x for x in self.X_data]
     
     def get_y_data(self):
         return [y for y in self.Y_data]
@@ -108,6 +108,75 @@ class MultiMRIDataset(Dataset):
             x = np.divide(np.subtract(x, self.mean), self.std)
     
         return (x, y)
+
+class MRIDatasetBySite(Dataset):
+    def __init__(self, input_data, target, resize, norms=None, log=False, nan=False, site=[], target_idx=None):
+        self.ds = MultiMRIDatasetBySite(input_data, target, resize, norms, log, nan, site)
+        
+        self.resize = resize
+        self.normalize = norms
+        self.log = log
+        self.nan = nan
+        self.site = site
+        self.target_idx = target_idx
+
+        if self.target_idx:
+            print('Using target idx {} in dataset for prediction'.format(self.target_idx))
+            
+    def __len__(self):
+        return len(self.ds)
+
+    def get_x_data(self):
+        return self.ds.get_x_data()
+    
+    def get_y_data(self):
+        return self.ds.get_y_data()
+        
+    def __getitem__(self, idx):
+        x, y = self.ds[idx]
+
+        if self.target_idx:
+            y = y[self.target_idx]
+
+        return (x, y)
+
+class MultiMRIDatasetBySite(Dataset):
+    def __init__(self, input_data, target, resize, norms=None, log=False, nan=False, site=[]):
+        self.ds = MultiMRIDataset(input_data, target, resize, norms, log, nan)
+
+        self.resize = resize
+        self.normalize = norms
+        self.log = log
+        self.nan = nan
+        self.site = site
+
+        if self.site:
+            site_indices = []
+            X_data = self.ds.get_x_data()
+            Y_data = self.ds.get_y_data()
+
+            for i in range(Y_data):
+                if Y_data[i][6] in site:
+                    site_indices.append(i)
+            
+            X_data = X_data[site_indices]
+            Y_data = Y_data[site_indices]
+
+            self.ds = MultiMRIDataset(X_data, Y_data, resize, norms, log, nan)
+            
+            print('Filtering sites: {}'.format(site))
+            
+    def __len__(self):
+        return len(self.ds)
+
+    def get_x_data(self):
+        return self.ds.get_x_data()
+    
+    def get_y_data(self):
+        return self.ds.get_y_data()
+        
+    def __getitem__(self, idx):
+        return self.ds[idx]
 
 class ThreeInputMRIDataset(Dataset):
     def __init__(self, input_data1, input_data2, input_data3, target, resize, norms=None, log=False):

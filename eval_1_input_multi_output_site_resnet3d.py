@@ -28,7 +28,7 @@ if __name__ == "__main__":
     parser.add_argument('--log', type=bool, default=False)
     parser.add_argument('--nan', type=bool, default=True)
     parser.add_argument('--site', default=None)
-    parser.add_argument('--site_excl', type=bool, default=False)
+    parser.add_argument('--site_excl', type=int, default=0)
     parser.add_argument('--mri_type', default=None, help='MRI type: T1, T2, FA, MD, RD, AD')
     args = parser.parse_args()
 

@@ -52,8 +52,13 @@ if __name__ == "__main__":
     for i in range(len(test_target_pred)):
         print('Processing class {}/21'.format(i+1))
         score = None
-        y_true = torch.from_numpy(test_target_true[i].astype(np.float32))
-        y_pred = torch.from_numpy(test_target_pred[i].astype(np.float32))
+        y_true = torch.from_numpy(valid_target_true[i].astype(np.float32))
+        y_pred = None
+
+        if valid_target_pred[i].shape:
+            y_pred = torch.tensor([t.astype(np.float32) for t in valid_target_pred[i]])
+        else:
+            y_pred = torch.from_numpy(valid_target_pred[i].astype(np.float32))
 
         if i in bin_idx:
             score = outputs_bin_classification_report(y_true, y_pred)

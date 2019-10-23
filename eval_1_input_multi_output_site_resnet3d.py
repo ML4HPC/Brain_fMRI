@@ -33,9 +33,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.mri_type == 'T1' or args.mri_type == 'T2':
-        model = multi_input_resnet3d.one_struct_input_multi_output_resnet3D50(devices=[0,1,2,3], output_classes=1)
+        model = multi_input_resnet3d.one_struct_input_multi_output_resnet3D50(devices=[0,1,2,3])
     else:
-        model = multi_input_resnet3d.one_dti_input_multi_output_resnet3D50(devices=[0,1,2,3], output_classes=1)
+        model = multi_input_resnet3d.one_dti_input_multi_output_resnet3D50(devices=[0,1,2,3])
 
     # Load from saved state, if available
     if args.saved_state:

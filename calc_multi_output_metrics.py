@@ -29,7 +29,8 @@ if __name__ == "__main__":
     # Indices for each type of variable
     bin_idx = [1]
     cat_idx = [2, 3, 4, 5, 6]
-    scores = []
+    valid_scores = []
+    test_scores = []
 
     for i in range(len(valid_target_pred)):
         print('Processing class {}/21'.format(i+1))
@@ -46,9 +47,27 @@ if __name__ == "__main__":
             cur_mse = mean_squared_error(y_true, y_pred)
             score = {'R2': cur_r2, 'MSE': cur_mse}
         
-        scores.append(score)
+        valid_scores.append(score)
     
-    np.save(os.path.join(args.output_dir, 'multi_output_scores.npy'), scores)
+    for i in range(len(test_target_pred)):
+        print('Processing class {}/21'.format(i+1))
+        score = None
+        y_true = valid_target_true[i]
+        y_pred = valid_target_pred[i]
+
+        if i in bin_idx:
+            score = outputs_bin_classification_report(y_true, y_pred)
+        elif i in cat_idx:
+            score = outputs_multi_classification_report(y_true, y_pred)
+        else:
+            cur_r2 = r2_score(y_true, y_pred)
+            cur_mse = mean_squared_error(y_true, y_pred)
+            score = {'R2': cur_r2, 'MSE': cur_mse}
+        
+        test_scores.append(score)
+    
+    np.save(os.path.join(args.output_dir, 'multi_output_valid_scores.npy'), valid_scores)
+    np.save(os.path.join(args.output_dir, 'multi_output_test_scores.npy'), test_scores)
     print('Scores saved')
     
 

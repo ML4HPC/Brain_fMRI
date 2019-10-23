@@ -32,6 +32,7 @@ if __name__ == "__main__":
     scores = []
 
     for i in range(len(valid_target_pred)):
+        print('Processing class {}/21'.format(i+1))
         score = None
         y_true = valid_target_true[i]
         y_pred = valid_target_pred[i]
@@ -46,6 +47,10 @@ if __name__ == "__main__":
             score = {'R2': cur_r2, 'MSE': cur_mse}
         
         scores.append(score)
+    
+    np.save(os.path.join(args.output_dir, 'multi_output_scores.npy'), scores)
+    print('Scores saved')
+    
 
 
     

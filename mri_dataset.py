@@ -51,7 +51,7 @@ class MRIDataset(Dataset):
         return (x, y)
 
 class MultiMRIDataset(Dataset):
-    def __init__(self, input_data, target, resize, norms=None, log=False, nan=False):
+    def __init__(self, input_data, target, resize, norms=None, log=False, nan=True):
         self.X_data = input_data
         self.Y_data = target
         self.resize = resize

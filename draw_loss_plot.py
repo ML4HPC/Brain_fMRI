@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     train_loss = np.load(os.path.join(args.data_dir, 'loss_history_train.npy'), allow_pickle=True)
 
-    plt.plot(range(len(train_loss)), train_loss, 'o', color='black', s=0)
+    plt.scatter(range(len(train_loss)), train_loss, color='black', s=0)
     plt.xlabel('Iterations')
     plt.ylabel('Training loss')
     plt.title('Loss LR: {}'.format(args.lr))

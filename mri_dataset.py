@@ -51,7 +51,7 @@ class MRIDataset(Dataset):
         return (x, y)
 
 class MultiMRIDataset(Dataset):
-    def __init__(self, input_data, target, resize, norms=None, log=False, nan=False):
+    def __init__(self, input_data, target, resize, norms=None, log=False, nan=True):
         self.X_data = input_data
         self.Y_data = target
         self.resize = resize
@@ -110,8 +110,8 @@ class MultiMRIDataset(Dataset):
         return (x, y)
 
 class MRIDatasetBySite(Dataset):
-    def __init__(self, input_data, target, resize, norms=None, log=False, nan=False, site=[], target_idx=None):
-        self.ds = MultiMRIDatasetBySite(input_data, target, resize, norms, log, nan, site)
+    def __init__(self, input_data, target, resize, norms=None, log=False, nan=False, site=[], target_idx=None, site_excl=False):
+        self.ds = MultiMRIDatasetBySite(input_data, target, resize, norms, log, nan, site, site_excl)
         
         self.resize = resize
         self.normalize = norms
@@ -141,7 +141,7 @@ class MRIDatasetBySite(Dataset):
         return (x, y)
 
 class MultiMRIDatasetBySite(Dataset):
-    def __init__(self, input_data, target, resize, norms=None, log=False, nan=False, site=[]):
+    def __init__(self, input_data, target, resize, norms=None, log=False, nan=False, site=[], site_excl=False):
         self.ds = MultiMRIDataset(input_data, target, resize, norms, log, nan)
 
         self.resize = resize
@@ -149,15 +149,28 @@ class MultiMRIDatasetBySite(Dataset):
         self.log = log
         self.nan = nan
         self.site = site
+        self.site_excl = site_excl
+        if self.site_excl:
+            print('Excluding specified sites: TRUE')
 
         if self.site:
             site_indices = []
             X_data = np.asarray(self.ds.get_x_data())
             Y_data = np.asarray(self.ds.get_y_data())
 
-            for i in range(len(Y_data)):
-                if Y_data[i][6] in site:
-                    site_indices.append(i)
+            # Only excludes from specified sites
+            if site_excl:
+                for i in range(len(Y_data)):
+                    if Y_data[i][6] not in site:
+                        site_indices.append(i)
+            
+            # Includes specified sites
+            else:
+                for i in range(len(Y_data)):
+                    if Y_data[i][6] in site:
+                        site_indices.append(i)
+            
+            
             
             X_data = X_data[site_indices]
             Y_data = Y_data[site_indices]

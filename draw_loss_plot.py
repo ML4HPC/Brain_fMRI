@@ -15,7 +15,7 @@ if __name__ == "__main__":
     train_loss = np.load(os.path.join(args.data_dir, 'loss_history_train.npy'), allow_pickle=True)
     
     if args.move_mean:
-        train_loss = bn.move_mean(t, window=5, min_count=1)
+        train_loss = bn.move_mean(train_loss, window=5, min_count=1)
 
     plt.scatter(range(len(train_loss)), train_loss, color='black', s=1)
     plt.xlabel('Iterations')

@@ -30,8 +30,8 @@ if __name__ == "__main__":
     for i in range(len(valid_target_pred)):
         print('Processing class {}/21'.format(i+1))
         score = None
-        y_true = torch.from_numpy(valid_target_true[i])
-        y_pred = torch.from_numpy(valid_target_pred[i])
+        y_true = torch.from_numpy(valid_target_true[i].astype(np.float32))
+        y_pred = torch.from_numpy(valid_target_pred[i].astype(np.float32))
 
         if i in bin_idx:
             score = outputs_bin_classification_report(y_true, y_pred)
@@ -47,8 +47,8 @@ if __name__ == "__main__":
     for i in range(len(test_target_pred)):
         print('Processing class {}/21'.format(i+1))
         score = None
-        y_true = valid_target_true[i]
-        y_pred = valid_target_pred[i]
+        y_true = torch.from_numpy(test_target_true[i].astype(np.float32))
+        y_pred = torch.from_numpy(test_target_pred[i].astype(np.float32))
 
         if i in bin_idx:
             score = outputs_bin_classification_report(y_true, y_pred)

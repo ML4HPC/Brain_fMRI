@@ -27,6 +27,7 @@ if __name__ == "__main__":
     while i <  len(train_dataset):
         batch_img = []
         batch_size = min(10, len(train_dataset)-i-1)
+        print('Processing {}'.format(i))
         for j in range(batch_size):
             batch_img.append(train_dataset[i][0].flatten())
             i += 1
@@ -41,6 +42,7 @@ if __name__ == "__main__":
         batch_img = []
         batch_target = []
         batch_size = min(10, len(train_dataset)-i-1)
+        print('Processing {}'.format(i))
         for j in range(batch_size):
             x, y = train_dataset[i]
             batch_img.append(x.flatten())

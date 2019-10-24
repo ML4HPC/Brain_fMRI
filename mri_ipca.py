@@ -24,7 +24,7 @@ if __name__ == "__main__":
     print('Fitting IPCA')
     # Partially fitting batch at a time
     for batch_img, _ in train_loader:
-        batch_img = [img.flatten().numpy() for img in batch_img]
+        batch_img = [img.numpy().flatten() for img in batch_img]
         ipca.partial_fit(batch_img)
 
     print('Transforming images')
@@ -36,6 +36,8 @@ if __name__ == "__main__":
 
         cur_sites = [t[6] for t in batch_target]
         sites.extend(cur_sites)
+
+    
     
 
 

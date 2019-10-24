@@ -30,12 +30,12 @@ if __name__ == "__main__":
     sites           =   []
     transformed_img =   []
 
-    LOGGER.info'Fitting IPCA')
+    LOGGER.info('Fitting IPCA')
     # Partially fitting batch at a time
     """
     i = 0
     while i <  len(train_dataset):
-        LOGGER.info'Processing {}'.format(i))
+        LOGGER.info('Processing {}'.format(i))
 
         batch_size = min(10, len(train_dataset)-i-1)
         batch_img = [None] * batch_size
@@ -47,11 +47,11 @@ if __name__ == "__main__":
         ipca.partial_fit(batch_img)
 
     
-    LOGGER.info'Transforming images')
+    LOGGER.info('Transforming images')
     # Transforming the imgs batch at a time
     i = 0
     while i <  len(train_dataset):
-        LOGGER.info'Processing {}'.format(i))
+        LOGGER.info('Processing {}'.format(i))
 
         batch_size = min(10, len(train_dataset)-i-1)
         batch_img = [None] * batch_size
@@ -70,12 +70,12 @@ if __name__ == "__main__":
     """
 
     for batch_idx, (batch_img, _) in enumerate(train_loader):
-        LOGGER.info'Processing batch idx: {}'.format(batch_idx))
+        LOGGER.info('Processing batch idx: {}'.format(batch_idx))
         batch_img = [img.numpy().flatten() for img in batch_img]
         ipca.partial_fit(batch_img)
     
     for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
-        LOGGER.info'Processing batch idx: {}'.format(batch_idx))
+        LOGGER.info('Processing batch idx: {}'.format(batch_idx))
 
         batch_img = [img.numpy().flatten() for img in batch_img]
         batch_target = [t[6] for t in batch_target]
@@ -84,7 +84,7 @@ if __name__ == "__main__":
         sites.extend(batch_target)
 
     
-    LOGGER.info'Saving pca data')
+    LOGGER.info('Saving pca data')
     np.save('pca_img.npy', transformed_img)
     np.save('pca_sites.npy', sites)
     

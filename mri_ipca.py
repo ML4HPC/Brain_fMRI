@@ -23,6 +23,7 @@ if __name__ == "__main__":
 
     print('Fitting IPCA')
     # Partially fitting batch at a time
+    """
     i = 0
     while i <  len(train_dataset):
         print('Processing {}'.format(i))
@@ -57,6 +58,22 @@ if __name__ == "__main__":
         transformed_img.extend(cur_trans)
 
         sites.extend(batch_target)
+    """
+
+    for batch_idx, (batch_img, _) in enumerate(train_loader):
+        print('Processing batch idx: {}'.format(batch_idx))
+        batcH_img = [img.numpy().flatten() for img in batch_img]
+        ipca.partial_fit(batch_img)
+    
+    for batch_idx, (batch_img, batch_target) in enumerate(train_loader):
+        print('Processing batch idx: {}'.format(batch_idx))
+        
+        batch_img = [img.numpy().flatten() for img in batch_img]
+        batch_target = [t[6] for t in batch_target]
+        cur_trans = ipca.transform(batch_img)
+        transformed_img.extend(cur_trans)
+        sites.extend(batch_target)
+
     
     print('Saving pca data')
     np.save('pca_img.npy', transformed_img)

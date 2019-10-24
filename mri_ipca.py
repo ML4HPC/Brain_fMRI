@@ -21,17 +21,23 @@ if __name__ == "__main__":
     sites           =   []
     transformed_img =   []
 
+    print('Fitting IPCA')
     # Partially fitting batch at a time
-    for batch_img, batch_target in train_loader:
+    for batch_img, _ in train_loader:
+        batch_img = [img.flatten() for img in batch_img]
         ipca.partial_fit(batch_img)
 
+    print('Transforming images')
     # Transforming the imgs batch at a time
     for batch_img, batch_target in train_loader:
+        batch_img = [img.flatten() for img in batch_img]
         cur_trans = ipca.transform(batch_img)
         transformed_img.extend(cur_trans)
 
         cur_sites = [t[6] for t in batch_target]
         sites.extend(cur_sites)
+    
+
 
     
 

@@ -14,7 +14,7 @@ if __name__ == "__main__":
     train_img       =   np.load(os.path.join(args.data_dir, 'train_data_img_{}.npy'.format(args.mri_type)), allow_pickle=True)
     train_target    =   np.load(os.path.join(args.data_dir, 'train_data_target.npy'), allow_pickle=True)
 
-    ipca            =   IncrementalPCA(n_components=2)
+    ipca            =   IncrementalPCA(n_components=2, batch_size=10)
     train_dataset   =   MultiMRIDataset(train_img, train_target, resize=0)
     train_loader    =   torch.utils.data.DataLoader(train_dataset, batch_size=10, shuffle=True)
 
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     print('Fitting IPCA')
     # Partially fitting batch at a time
     for batch_img, _ in train_loader:
-        batch_img = [img.flatten() for img in batch_img]
+        batch_img = [img.flatten().numpy() for img in batch_img]
         ipca.partial_fit(batch_img)
 
     print('Transforming images')

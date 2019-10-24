@@ -25,11 +25,13 @@ if __name__ == "__main__":
     # Partially fitting batch at a time
     i = 0
     while i <  len(train_dataset):
-        batch_img = []
-        batch_size = min(10, len(train_dataset)-i-1)
         print('Processing {}'.format(i))
+
+        batch_size = min(10, len(train_dataset)-i-1)
+        batch_img = [None] * batch_size
+        
         for j in range(batch_size):
-            batch_img.append(train_dataset[i][0].flatten())
+            batch_img[j] = train_dataset[i][0].flatten()
             i += 1
         # batch_img = [img.numpy().flatten() for img in batch_img]
         ipca.partial_fit(batch_img)
@@ -39,13 +41,15 @@ if __name__ == "__main__":
     # Transforming the imgs batch at a time
     i = 0
     while i <  len(train_dataset):
-        batch_img = []
-        batch_target = []
-        batch_size = min(10, len(train_dataset)-i-1)
         print('Processing {}'.format(i))
+
+        batch_size = min(10, len(train_dataset)-i-1)
+        batch_img = [None] * batch_size
+        batch_target = []
+
         for j in range(batch_size):
             x, y = train_dataset[i]
-            batch_img.append(x.flatten())
+            batch_img[j] = x.flatten()
             batch_target.append(y[6])
             i += 1
         #  batch_img = [img.flatten() for img in batch_img]

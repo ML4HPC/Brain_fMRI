@@ -23,20 +23,38 @@ if __name__ == "__main__":
 
     print('Fitting IPCA')
     # Partially fitting batch at a time
-    for batch_img, _ in train_loader:
-        batch_img = [img.numpy().flatten() for img in batch_img]
+    i = 0
+    while i <  len(train_dataset):
+        batch_img = []
+        batch_size = min(10, len(train_dataset)-i-1)
+        for j in range(batch_size):
+            batch_img.append(train_dataset[i][0].flatten())
+            i += 1
+        # batch_img = [img.numpy().flatten() for img in batch_img]
         ipca.partial_fit(batch_img)
 
+    
     print('Transforming images')
     # Transforming the imgs batch at a time
-    for batch_img, batch_target in train_loader:
-        batch_img = [img.flatten() for img in batch_img]
+    i = 0
+    while i <  len(train_dataset):
+        batch_img = []
+        batch_target = []
+        batch_size = min(10, len(train_dataset)-i-1)
+        for j in range(batch_size):
+            x, y = train_dataset[i]
+            batch_img.append(x.flatten())
+            batch_target.append(y[6])
+            i += 1
+        #  batch_img = [img.flatten() for img in batch_img]
         cur_trans = ipca.transform(batch_img)
         transformed_img.extend(cur_trans)
 
-        cur_sites = [t[6] for t in batch_target]
-        sites.extend(cur_sites)
-
+        sites.extend(batch_target)
+    
+    print('Saving pca data')
+    np.save('pca_img.npy', transformed_img)
+    np.save('pca_sites.npy', sites)
     
     
 

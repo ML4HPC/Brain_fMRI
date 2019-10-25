@@ -32,9 +32,9 @@ if __name__ == "__main__":
 
     LOGGER.info('Fitting IPCA')
     # Partially fitting batch at a time
-    """
+    
     i = 0
-    while i <  len(train_dataset):
+    while i <  (len(train_dataset)-1):
         LOGGER.info('Processing {}'.format(i))
 
         batch_size = min(10, len(train_dataset)-i-1)
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     LOGGER.info('Transforming images')
     # Transforming the imgs batch at a time
     i = 0
-    while i <  len(train_dataset):
+    while i <  (len(train_dataset)-1):
         LOGGER.info('Processing {}'.format(i))
 
         batch_size = min(10, len(train_dataset)-i-1)
@@ -67,8 +67,8 @@ if __name__ == "__main__":
         transformed_img.extend(cur_trans)
 
         sites.extend(batch_target)
+    
     """
-
     for batch_idx, (batch_img, _) in enumerate(train_loader):
         LOGGER.info('Processing batch idx: {}'.format(batch_idx))
         batch_img = [img.numpy().flatten() for img in batch_img]
@@ -82,6 +82,7 @@ if __name__ == "__main__":
         cur_trans = ipca.transform(batch_img)
         transformed_img.extend(cur_trans)
         sites.extend(batch_target)
+    """
 
     
     LOGGER.info('Saving pca data')

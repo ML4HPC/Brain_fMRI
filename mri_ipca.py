@@ -37,7 +37,7 @@ if __name__ == "__main__":
     while i <  (len(train_dataset)-1):
         LOGGER.info('Processing {}'.format(i))
 
-        batch_size = min(10, len(train_dataset)-i-1)
+        batch_size = min(50, len(train_dataset)-i-1)
         batch_img = [None] * batch_size
         
         for j in range(batch_size):
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     while i <  (len(train_dataset)-1):
         LOGGER.info('Processing {}'.format(i))
 
-        batch_size = min(10, len(train_dataset)-i-1)
+        batch_size = min(50, len(train_dataset)-i-1)
         batch_img = [None] * batch_size
         batch_target = []
 

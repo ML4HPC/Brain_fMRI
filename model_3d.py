@@ -177,7 +177,7 @@ def train(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss
 
             optimizer.zero_grad()
             cur_loss = 0 
-            IPython.embed()
+    
             outputs = model(batch_img).squeeze()
             batch_target = batch_target.squeeze().float().cuda()
             cur_loss = loss(outputs, batch_target)

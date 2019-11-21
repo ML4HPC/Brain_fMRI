@@ -168,6 +168,7 @@ def train(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss
 
     for i in range(start_epoch, epoch):
         model.train()
+        LOGGER.info('Model training: {}'.format(model.training))
         progress = 0
         epoch_start = time.time()
 

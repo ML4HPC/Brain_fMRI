@@ -151,13 +151,13 @@ args = Args()
 def train(model, epoch, train_loader, valid_loader, test_loader, optimizer, loss, output_dir, metric=r2_score, checkpoint_epoch=0):
     best_score = float('-inf')
 
-    if checkpoint_epoch <= 0:
-        # Create output directory and results file
-        try:
-            os.mkdir(output_dir)
-            #results = open(os.path.join(output_dir, 'results.txt'), 'w+')
-        except: 
-            raise Exception('Output directory / results file cannot be created')
+    # if checkpoint_epoch <= 0:
+    #     # Create output directory and results file
+    #     try:
+    #         os.mkdir(output_dir)
+    #         #results = open(os.path.join(output_dir, 'results.txt'), 'w+')
+    #     except: 
+    #         raise Exception('Output directory / results file cannot be created')
 
     results = open(os.path.join(output_dir, 'results.txt'), 'a+')
     loss_hist = []

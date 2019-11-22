@@ -18,8 +18,16 @@ mri_type=$2
 target_idx=0
 cwd=$(pwd)
 cur_filepath="${cwd}/${0}"
-rm -rf $outdir
-python3 run_1_input_single_output_resnet3d.py --data_dir=../data/processed/ --output_dir=$outdir --train_batch_size=$train_bsz --valid_batch_size=$valid_bsz --epoch=$epoch --normalize=$normalize --optimizer=$optim --lr=$lr --weight_decay=$weight_decay --mri_type=$mri_type --target_idx=$target_idx
+
+if [ ! -d $outdir ]
+then 
+    mkdir -p $outdir
+else
+    echo "Output directory already exists"
+    exit 1
+fi
+
 cp $cur_filepath $outdir 
+python3 run_1_input_single_output_resnet3d.py --data_dir=../data/processed/ --output_dir=$outdir --train_batch_size=$train_bsz --valid_batch_size=$valid_bsz --epoch=$epoch --normalize=$normalize --optimizer=$optim --lr=$lr --weight_decay=$weight_decay --mri_type=$mri_type --target_idx=$target_idx
 
 

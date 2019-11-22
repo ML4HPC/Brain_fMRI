@@ -25,7 +25,7 @@ if __name__ == "__main__":
     parser.add_argument('--checkpoint_epoch', type=int, default=0)
     parser.add_argument('--checkpoint_opt', default='')
     parser.add_argument('--resize', type=int, default=0)
-    parser.add_argument('--normalize', type=bool, default=False)
+    parser.add_argument('--normalize', type=int, default=0)
     parser.add_argument('--log', type=bool, default=False)
     parser.add_argument('--nan', type=bool, default=True)
     parser.add_argument('--lr', type=float, default=0.001)

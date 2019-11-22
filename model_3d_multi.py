@@ -80,8 +80,6 @@ class MultiCNN(nn.Module):
 
 
 def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer, losses, output_dir, checkpoint_epoch=0):
-    model.train()
-
     best_r2 = float('-inf')
 
     if checkpoint_epoch <= 0:
@@ -100,6 +98,7 @@ def train_multi(model, epoch, train_loader, valid_loader, test_loader, optimizer
         start_epoch = checkpoint_epoch
 
     for i in range(start_epoch, epoch):
+        model.train()
         progress = 0
         epoch_start = time.time()
 

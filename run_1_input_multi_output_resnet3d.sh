@@ -6,10 +6,10 @@ then
     exit 1
 fi
 
-train_bsz=3
+train_bsz=6
 valid_bsz=10
 epoch=10
-normalize=True
+normalize=1
 optim=adam
 lr=0.001
 weight_decay=0

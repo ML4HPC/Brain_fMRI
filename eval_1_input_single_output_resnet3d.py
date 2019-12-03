@@ -22,7 +22,7 @@ if __name__ == "__main__":
     parser.add_argument('--valid_batch_size', type=int, default=3)
     parser.add_argument('--saved_state', default=None)
     parser.add_argument('--resize', type=int, default=0)
-    parser.add_argument('--normalize', type=bool, default=False)
+    parser.add_argument('--normalize', type=int, default=0)
     parser.add_argument('--log', type=bool, default=False)
     parser.add_argument('--nan', type=bool, default=True)
     parser.add_argument('--mri_type', default=None, help='MRI type: T1, T2, FA, MD, RD, AD')

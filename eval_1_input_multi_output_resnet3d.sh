@@ -7,7 +7,7 @@ then
 fi
 
 valid_bsz=10
-normalize=True
+normalize=1
 outdir=$1
 mri_type=$2
 saved_state=$3

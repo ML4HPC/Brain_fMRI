@@ -6,7 +6,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.autograd import Variable
 from mri_dataset import MRIDataset
-from sklearn.metrics import r2_score
+from sklearn.metrics import r2_score, mean_squared_error
 import logging
 import os, sys, time
 import IPython
@@ -197,7 +197,8 @@ def eval_multi(model, valid_loader, save=False, output_dir=None, valid_type=None
 
     # MSE of fluid intelligence
     r2 = r2_score(target_true[11], target_pred[11])
-    LOGGER.info('R2 Score: {}'.format(r2))
+    mse = mean_squared_error(target_true[11], target_pred[11])
+    LOGGER.info('R2 Score: {}\t MSE: {}\n'.format(r2, mse))
 
     if save:
         try:

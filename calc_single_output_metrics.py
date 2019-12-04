@@ -26,9 +26,10 @@ if __name__ == "__main__":
     test_mse = calc_mse(test_true, test_pred)
 
     with open(os.path.join(args.data_dir, 'metrics.txt'), 'w+') as output:
+        print('Valid R2: {}\t Test R2: {}\nValid MSE: {}\t Test MSE: {}\n'.format(valid_r2, test_r2, valid_mse, test_mse))
         output.write('Valid R2: {}\t Test R2: {}\nValid MSE: {}\t Test MSE: {}\n'.format(valid_r2, test_r2, valid_mse, test_mse))
     
-    
+
         
     
     

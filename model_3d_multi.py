@@ -199,6 +199,7 @@ def eval_multi(model, valid_loader, save=False, output_dir=None, valid_type=None
     r2 = r2_score(target_true[11], target_pred[11])
     mse = mean_squared_error(target_true[11], target_pred[11])
     LOGGER.info('R2 Score: {}\t MSE: {}\n'.format(r2, mse))
+    IPython.embed()
 
     if save:
         try:

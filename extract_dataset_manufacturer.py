@@ -49,34 +49,34 @@ test_md = np.load(base_path + 'test_data_img_MD.npy')
 test_rd = np.load(base_path + 'test_data_img_RD.npy')
 test_ad = np.load(base_path + 'test_data_img_AD.npy')
 
-train_siemens_t1 = np.take(train_t1, train_idx)
-train_siemens_t2 = np.take(train_t2, train_idx)
-train_siemens_fa = np.take(train_fa, train_idx)
-train_siemens_md = np.take(train_md, train_idx)
-train_siemens_rd = np.take(train_rd, train_idx)
-train_siemens_ad = np.take(train_ad, train_idx)
+train_siemens_t1 = train_t1[train_idx]
+train_siemens_t2 = train_t2[train_idx]
+train_siemens_fa = train_fa[train_idx]
+train_siemens_md = train_md[train_idx]
+train_siemens_rd = train_rd[train_idx]
+train_siemens_ad = train_ad[train_idx]
 
-valid_siemens_t1 = np.take(valid_t1, valid_idx)
-valid_siemens_t2 = np.take(valid_t2, valid_idx)
-valid_siemens_fa = np.take(valid_fa, valid_idx)
-valid_siemens_md = np.take(valid_md, valid_idx)
-valid_siemens_rd = np.take(valid_rd, valid_idx)
-valid_siemens_ad = np.take(valid_ad, valid_idx)
+valid_siemens_t1 = valid_t1[valid_idx]
+valid_siemens_t2 = valid_t2[valid_idx]
+valid_siemens_fa = valid_fa[valid_idx]
+valid_siemens_md = valid_md[valid_idx]
+valid_siemens_rd = valid_rd[valid_idx]
+valid_siemens_ad = valid_ad[valid_idx]
 
-test_siemens_t1 = np.take(test_t1, test_idx)
-test_siemens_t2 = np.take(test_t2, test_idx)
-test_siemens_fa = np.take(test_fa, test_idx)
-test_siemens_md = np.take(test_md, test_idx)
-test_siemens_rd = np.take(test_rd, test_idx)
-test_siemens_ad = np.take(test_ad, test_idx)
+test_siemens_t1 = test_t1[test_idx]
+test_siemens_t2 = test_t2[test_idx]
+test_siemens_fa = test_fa[test_idx]
+test_siemens_md = test_md[test_idx]
+test_siemens_rd = test_rd[test_idx]
+test_siemens_ad = test_ad[test_idx]
 
 train_target = np.load(base_path + 'train_data_target.npy')
 valid_target = np.load(base_path + 'valid_data_target.npy')
 test_target = np.load(base_path + 'test_data_target.npy')
 
-train_target_siemens = np.take(train_target, train_idx)
-valid_target_siemens = np.take(valid_target, valid_idx)
-test_target_siemens = np.take(test_target, test_idx)
+train_target_siemens = train_target[train_idx]
+valid_target_siemens = valid_target[valid_idx]
+test_target_siemens = test_target[test_idx]
 
 np.save(save_path + 'train_data_img_T1.npy', train_siemens_t1)
 np.save(save_path + 'train_data_img_T2.npy', train_siemens_t2)
